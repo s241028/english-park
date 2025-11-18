@@ -1,0 +1,324 @@
+/* Google Fontsからフォントをインポート */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap');
+
+/* --- Keyframes for Animation --- */
+@keyframes recording-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 82, 82, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 82, 82, 0); }
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.1);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+/* --- Theme Colors (CSS Variables) --- */
+:root {
+    --dark-bg: #1a1a2e;
+    --dark-surface: #16213e;
+    --dark-card: #0f3460;
+    --light-text: #e3e3e3;
+    --primary-text: #ffffff;
+    --neon-cyan: #00f5d4;
+    --neon-magenta: #ff00f0;
+    --neon-green: #2eff7e;
+    --neon-red: #ff5252;
+    --neon-yellow: #f6f870;
+}
+
+/* --- General Styles --- */
+body {
+    font-family: 'Poppins', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--dark-bg);
+    color: var(--light-text);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* 画面が長くても上から表示 */
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+h1 { font-weight: 700; font-size: 2.5em; color: var(--primary-text); margin-bottom: 10px; text-shadow: 0 0 8px var(--neon-cyan); }
+.description { color: var(--light-text); margin-bottom: 40px; font-size: 1.1em; opacity: 0.8; }
+
+/* --- 画面管理 --- */
+.screen {
+    display: none; /* 初期状態は非表示 */
+    width: 100%;
+    background-color: var(--dark-surface);
+    border-radius: 20px;
+    padding: 30px 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    animation: fadeIn 0.5s ease-out;
+}
+.screen.active {
+    display: block;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- ヘッダーと戻るボタン --- */
+header {
+    text-align: center;
+    position: relative;
+    margin-bottom: 30px;
+}
+header h1 {
+    margin: 0;
+}
+.back-button {
+    position: absolute; top: 50%; left: 0; transform: translateY(-50%);
+    font-size: 0.9em; font-weight: 600;
+    padding: 8px 15px; border-radius: 8px; border: 1px solid var(--neon-cyan);
+    background-color: transparent; color: var(--neon-cyan); cursor: pointer; transition: all 0.2s ease;
+}
+.back-button:hover { background-color: var(--neon-cyan); color: var(--dark-bg); transform: translateY(-50%) scale(1.05); }
+
+/* --- 共通ボタン --- */
+.action-button {
+    font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+    font-size: 1em; font-weight: 600;
+    padding: 10px 20px; border: none; border-radius: 8px;
+    cursor: pointer; transition: all 0.3s ease;
+}
+.action-button.primary {
+    background: var(--neon-green); color: var(--dark-bg);
+    box-shadow: 0 0 15px var(--neon-green);
+}
+.action-button.primary:hover:not(:disabled) {
+    box-shadow: 0 0 25px var(--neon-green); transform: scale(1.05);
+}
+.action-button.listen-btn {
+    background: var(--neon-magenta); color: var(--primary-text);
+    box-shadow: 0 0 15px var(--neon-magenta);
+}
+.action-button.listen-btn:hover:not(:disabled) {
+    box-shadow: 0 0 25px var(--neon-magenta); transform: scale(1.05);
+}
+.action-button.small {
+    font-size: 0.9em; padding: 8px 15px;
+}
+.action-button:disabled {
+    background: #555; color: #999;
+    cursor: not-allowed; box-shadow: none; border-color: #555;
+}
+
+/* --- 共通カードスタイル --- */
+.card {
+    background-color: var(--dark-card);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: left;
+}
+.card h2 { margin-top: 0; color: var(--neon-cyan); border-bottom: 1px solid rgba(255, 255, 255, 0.2); padding-bottom: 15px; font-size: 1.3em; font-weight: 600; }
+.card p { font-size: 1.2em; min-height: auto; line-height: 1.6; }
+.card-header { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 10px; }
+.card-header h2 { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+
+/* --- オープニング画面 --- */
+#splash-screen {
+    display: none; /* JSで.activeをトグル */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: var(--dark-surface);
+    color: white;
+    font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+    position: fixed; /* 全画面表示 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000; /* 最前面に表示 */
+    padding: 20px;
+    box-sizing: border-box;
+}
+#splash-screen.active {
+    display: flex;
+}
+.splash-logo {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 20px;
+    animation: bounceIn 1s ease-out;
+}
+.splash-title {
+    font-size: 3em;
+    margin-bottom: 10px;
+    color: var(--primary-text);
+    text-shadow: 0 0 10px var(--neon-cyan);
+}
+.splash-subtitle {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    color: var(--light-text);
+    opacity: 0.9;
+}
+
+/* --- ホーム画面 --- */
+.menu-section {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+@media (min-width: 600px) {
+    .menu-section { grid-template-columns: repeat(2, 1fr); }
+}
+.menu-button {
+    font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+    font-size: 1.1em; font-weight: 600;
+    text-align: left;
+    background-color: var(--dark-card);
+    color: var(--light-text);
+    border: 1px solid var(--neon-cyan);
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 245, 212, 0.1);
+}
+.menu-button:hover {
+    background-color: var(--dark-card);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0, 245, 212, 0.3);
+}
+.menu-button .icon {
+    font-size: 1.5em;
+    margin-right: 15px;
+    display: inline-block;
+}
+
+/* 今日のイディオム */
+.idiom-of-the-day {
+    border-left: 5px solid var(--neon-yellow);
+    margin-bottom: 30px;
+}
+.idiom-of-the-day .card-header h2 {
+    color: var(--neon-yellow);
+}
+#idiom-phrase {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: var(--primary-text);
+    margin: 15px 0 10px;
+}
+#idiom-meaning {
+    font-weight: 600;
+    font-size: 1.1em;
+}
+.date-display {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--light-text);
+    opacity: 0.7;
+}
+
+/* --- スピーキング練習 --- */
+#sentence { font-weight: 600; color: var(--neon-magenta); font-size: 1.4em; }
+.sentence-meaning { font-size: 1.0em; color: var(--light-text); opacity: 0.7; font-style: italic; margin-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 10px; }
+.controls { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 15px; margin: 20px 0; }
+.status-message { display: flex; justify-content: center; align-items: center; margin: 25px 0; font-size: 1.1em; font-style: italic; color: var(--light-text); min-height: 24px; }
+.status-message.recording::before { content: ''; display: inline-block; width: 12px; height: 12px; background-color: var(--neon-red); border-radius: 50%; margin-right: 10px; animation: recording-pulse 1.5s infinite; }
+.result-container { margin-top: 30px; display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 600px) { .result-container { grid-template-columns: repeat(2, 1fr); } .result-container .feedback-card { grid-column: 1 / 3; } }
+.user-audio-player { width: 100%; margin-top: 10px; }
+#score { font-size: 3.5em; font-weight: 700; margin: 10px 0; transition: color 0.5s ease; text-align: center; }
+.score-unit { font-size: 0.4em; font-weight: 400; color: #999; }
+.score-high { color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); } .score-mid { color: var(--neon-yellow); text-shadow: 0 0 10px var(--neon-yellow); } .score-low { color: var(--neon-red); text-shadow: 0 0 10px var(--neon-red); }
+#feedback { font-size: 1.1em; white-space: pre-wrap; } #feedback .correct { color: var(--neon-green); } #feedback .your-speech { color: var(--neon-cyan); font-style: italic; }
+#feedback .incorrect { color: var(--neon-red); font-weight: bold; cursor: pointer; text-decoration: underline dotted; transition: opacity 0.2s; }
+#feedback .incorrect:hover { opacity: 0.7; }
+.feedback-pace-section { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+
+/* --- レベル選択 --- */
+.level-selection-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 600px) { .level-selection-grid { grid-template-columns: repeat(2, 1fr); } }
+.level-card {
+    background-color: var(--dark-card);
+    border-radius: 15px;
+    padding: 25px;
+    border: 1px solid var(--neon-cyan);
+    box-shadow: 0 0 15px rgba(0, 245, 212, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+}
+.level-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 0 25px rgba(0, 245, 212, 0.5);
+}
+.level-card h3 { margin: 0 0 10px 0; color: var(--primary-text); font-size: 1.4em; }
+.level-card p { margin: 0; font-size: 0.9em; color: var(--light-text); line-height: 1.5; opacity: 0.8; }
+
+/* --- 単語クイズ & 読解クイズ --- */
+.quiz-card { text-align: center; }
+#quiz-hud, #reading-hud { display: flex; justify-content: space-between; font-size: 1em; color: var(--light-text); margin-bottom: 20px; opacity: 0.8; }
+#quiz-question, #reading-question { font-size: 1.8em; font-weight: 600; color: var(--primary-text); margin-bottom: 30px; }
+#reading-question { font-size: 1.5em; }
+.quiz-options-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+@media (min-width: 600px) { .quiz-options-grid { grid-template-columns: repeat(2, 1fr); } }
+.quiz-option-btn { font-family: 'Poppins', sans-serif; font-size: 1.1em; font-weight: 600; background-color: transparent; color: var(--light-text); border: 2px solid var(--neon-cyan); border-radius: 10px; padding: 18px; cursor: pointer; transition: all 0.2s ease; text-align: left; }
+.quiz-option-btn:hover:not(:disabled) { background-color: var(--neon-cyan); color: var(--dark-bg); transform: translateY(-3px); }
+.quiz-option-btn.correct-answer { background-color: var(--neon-green); border-color: var(--neon-green); color: var(--dark-bg); box-shadow: 0 0 15px var(--neon-green); }
+.quiz-option-btn.incorrect-answer { background-color: var(--neon-red); border-color: var(--neon-red); color: var(--dark-bg); box-shadow: 0 0 15px var(--neon-red); }
+.quiz-feedback { margin-top: 20px; font-size: 1.5em; font-weight: 700; min-height: 30px; }
+.quiz-feedback.correct-feedback { color: var(--neon-green); } 
+.quiz-feedback.incorrect-feedback { color: var(--neon-red); }
+#quiz-end-screen, #reading-end-screen { text-align: center; }
+.final-score-text { font-size: 1.2em; color: var(--light-text); }
+#quiz-final-score, #reading-final-score { font-size: 3em; font-weight: 700; color: var(--neon-cyan); margin: 10px 0 30px 0; }
+
+/* --- リスニングチャレンジ --- */
+.listening-card { text-align: center; }
+.listening-controls { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; }
+.listening-textarea { width: 100%; font-family: 'Poppins', 'Noto Sans JP', sans-serif; font-size: 1.1em; padding: 15px; background-color: var(--dark-bg); color: var(--light-text); border: 2px solid var(--neon-cyan); border-radius: 10px; box-sizing: border-box; resize: vertical; margin-bottom: 20px; }
+.listening-textarea:focus { outline: none; box-shadow: 0 0 15px var(--neon-cyan); }
+#listening-feedback-area h2.correct { color: var(--neon-green); }
+#listening-feedback-area h2.incorrect { color: var(--neon-red); }
+#listening-feedback-area p { font-size: 1.1em; line-height: 1.6; }
+
+/* --- 読解練習 --- */
+.reading-passage-card {
+    background-color: var(--dark-bg);
+    border-left: 4px solid var(--neon-cyan);
+}
+.reading-passage-card p {
+    font-size: 1.1em;
+    line-height: 1.8;
+    white-space: pre-wrap; /* 改行やスペースをそのまま表示 */
+}
+
+/* --- ビデオチャット --- */
+#video-topic-card { background-color: var(--dark-card); border-left: 5px solid var(--neon-magenta); text-align: center; }
+#video-topic-card h2 { color: var(--neon-magenta); border-bottom: none; padding-bottom: 5px; font-size: 1.1em; }
+#video-topic { font-size: 1.3em; font-weight: 600; color: var(--primary-text); }
+.video-container { position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: #000; border-radius: 10px; overflow: hidden; margin: 20px 0; border: 1px solid rgba(255, 255, 255, 0.2); }
+#remote-video { width: 100%; height: 100%; object-fit: cover; }
+#local-video { position: absolute; bottom: 15px; right: 15px; width: 25%; max-width: 180px; border-radius: 8px; border: 2px solid var(--neon-cyan); }
+.video-controls { display: flex; justify-content: center; gap: 15px; }
+
