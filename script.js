@@ -381,7 +381,6 @@ const listeningChallengeSentences = pronunciationSentences;
 // =============================================
 //  Audio Context & Speech Synthesis Setup
 // =============================================
-// ユーザーによる最初の操作でオーディオコンテキストをアクティベートする
 document.body.addEventListener('click', () => {
     try {
         const audioContext = window.AudioContext || window.webkitAudioContext;
@@ -394,21 +393,18 @@ document.body.addEventListener('click', () => {
 }, { once: true });
 
 
-let usVoice = null; // アメリカ英語の音声を保持する変数
+let usVoice = null;
 
-// 利用可能な音声リストを取得し、usVoiceを設定する
 function populateVoiceList() {
     try {
         const voices = window.speechSynthesis.getVoices();
         if (voices.length === 0) {
-            // 音声が非同期でロードされる場合があるため、少し待って再試行
             setTimeout(populateVoiceList, 100);
             return;
         }
         usVoice = voices.find(voice => voice.lang === 'en-US');
 
         if (!usVoice) {
-            // en-USが見つからない場合、他の英語の音声で代用
             usVoice = voices.find(voice => voice.lang.startsWith('en-'));
         }
 
@@ -422,30 +418,25 @@ function populateVoiceList() {
     }
 }
 
-// ページ読み込み時と音声リスト変更時に実行
 populateVoiceList();
 if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
     speechSynthesis.onvoiceschanged = populateVoiceList;
 } else {
-    // onvoiceschangedがサポートされていない場合のフォールバック
     setTimeout(populateVoiceList, 500);
 }
 
 
-// テキストを音声で再生するグローバル関数
 function speak(text, callback) {
-    // 音声合成がサポートされているか確認
     if (!('speechSynthesis' in window)) {
         console.error("Speech synthesis not supported in this browser.");
-        if (statusElement) statusElement.textContent = "エラー: 音声合成が利用できません。"; // ユーザーにエラーを表示
-        if (callback) callback(); // エラーでもコールバックを実行
+        if (statusElement) statusElement.textContent = "エラー: 音声合成が利用できません。";
+        if (callback) callback();
         return;
     }
 
-    window.speechSynthesis.cancel(); // 既存の再生をキャンセル
+    window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     
-    // 音声が設定されていない場合は再取得を試みる
     if (!usVoice) {
         populateVoiceList();
     }
@@ -458,11 +449,10 @@ function speak(text, callback) {
     utterance.lang = 'en-US';
     utterance.onerror = (event) => {
         console.error('SpeechSynthesisUtterance.onerror', event);
-        // ユーザーにエラーをフィードバック
-        if (statusElement) { // statusElementが存在するか確認
+        if (statusElement) {
             statusElement.textContent = `音声再生エラー: ${event.error}`;
         }
-        if (callback) callback(); // エラーでもコールバックを実行
+        if (callback) callback();
     };
 
     if (callback) utterance.onend = callback;
@@ -472,9 +462,9 @@ function speak(text, callback) {
 // =============================================
 //  画面管理
 // =============================================
-// DOM要素の取得
 const splashScreen = document.getElementById('splash-screen');
 const enterAppButton = document.getElementById('enter-app-button');
+
 const homeScreen = document.getElementById('home-screen');
 const speakingPracticeScreen = document.getElementById('speaking-practice-screen');
 const wordQuizScreen = document.getElementById('word-quiz-screen');
@@ -496,27 +486,21 @@ const backButtonFromListening = document.getElementById('backButtonFromListening
 const backButtonFromReading = document.getElementById('backButtonFromReading');
 const backButtonFromVideo = document.getElementById('backButtonFromVideo');
 
-// 画面表示を切り替える関数
 function showScreen(screenToShow) {
-    // すべての画面を非表示にする
     document.querySelectorAll('.screen').forEach(s => {
         s.classList.remove('active');
-        s.style.display = 'none'; // 念のため
+        s.style.display = 'none'; 
     });
-    // 対象の画面だけを表示する
-    screenToShow.style.display = 'block'; // 'flex' ではなく 'block' を使用
-    screenToShow.classList.add('active'); // .active クラスを追加
+    screenToShow.style.display = 'block'; 
+    screenToShow.classList.add('active'); 
 
-    // ホーム画面が表示されたときにイディオムを読み込む
     if (screenToShow === homeScreen) {
         displayIdiomOfTheDay();
     }
 }
 
-// アプリ開始ボタン
 enterAppButton.addEventListener('click', () => showScreen(homeScreen));
 
-// ホーム画面のメニューボタン
 startSpeakingPracticeButton.addEventListener('click', () => { showScreen(speakingPracticeScreen); initializeSpeakingPractice(); });
 goToQuizLevelsButton.addEventListener('click', () => showScreen(quizLevelScreen));
 startListeningChallengeButton.addEventListener('click', () => {
@@ -534,7 +518,6 @@ startVideoChatButton.addEventListener('click', () => {
     showScreen(videoChatScreen);
 });
 
-// 各画面の戻るボタン
 backButtonSpeaking.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromLevels.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromQuiz.addEventListener('click', () => showScreen(quizLevelScreen));
@@ -544,7 +527,7 @@ backButtonFromVideo.addEventListener('click', () => { if (typeof peerConnection 
 
 
 // =============================================
-//  スピーキング練習ロジック (統合版)
+//  スピーキング練習ロジック
 // =============================================
 const sentenceElement = document.getElementById('sentence');
 const meaningElement = document.getElementById('sentence-meaning');
@@ -565,17 +548,14 @@ let audioChunks = [];
 let modelAudioDuration = 0;
 let userSpeechStartTime = 0;
 let userSpeechEndTime = 0;
-let isSpeakingPracticeInitialized = false; // 初期化済みフラグ
+let isSpeakingPracticeInitialized = false;
 
-// スピーキング練習機能の初期化（マイク許可、音声認識・録音の準備）
 function initializeSpeakingPractice() {
-    // 既に初期化済みなら、新しい文をセットするだけ
     if (isSpeakingPracticeInitialized && recognition && mediaRecorder) {
-         setNewSentence();
+         setNewSentence(); 
          return;
     }
 
-    // 必要なAPIがサポートされているか確認
     if (!('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices)) {
         statusElement.textContent = "エラー: マイクへのアクセスがブラウザでサポートされていません。";
         [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
@@ -592,11 +572,10 @@ function initializeSpeakingPractice() {
         return;
     }
 
-    // マイクへのアクセス許可を要求
+
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {
             try {
-                // 録音機能(MediaRecorder)の設定
                 mediaRecorder = new MediaRecorder(stream);
                 mediaRecorder.ondataavailable = event => { audioChunks.push(event.data); };
                 mediaRecorder.onstop = () => {
@@ -607,7 +586,7 @@ function initializeSpeakingPractice() {
                         audioChunks = [];
                     } else {
                         console.warn("No audio data recorded.");
-                         userRecordingPlayer.src = ''; // データがない場合はプレイヤーをクリア
+                         userRecordingPlayer.src = ''; 
                     }
                 };
                 mediaRecorder.onerror = (event) => {
@@ -615,18 +594,16 @@ function initializeSpeakingPractice() {
                      statusElement.textContent = `録音エラー: ${event.error.message}`;
                 };
 
-                // 音声認識機能(SpeechRecognition)の設定
                 recognition = new SpeechRecognition();
                 Object.assign(recognition, { lang: 'en-US', interimResults: false, continuous: false });
 
-                // イベントリスナーを割り当て
                 recognition.addEventListener('result', handleRecognitionResult);
                 recognition.addEventListener('speechstart', handleSpeechStart);
                 recognition.addEventListener('end', handleRecognitionEnd);
                 recognition.addEventListener('error', handleRecognitionError);
 
-                isSpeakingPracticeInitialized = true; // 初期化完了
-                setNewSentence(); // 最初の文をセット
+                isSpeakingPracticeInitialized = true; 
+                setNewSentence();
 
             } catch (err) {
                  console.error("Error initializing MediaRecorder or Recognition:", err);
@@ -635,78 +612,67 @@ function initializeSpeakingPractice() {
             }
         })
         .catch(err => {
-            // マイク許可が拒否された場合
             console.error("getUserMedia error:", err);
             statusElement.textContent = `エラー: マイクへのアクセス許可が必要です (${err.message})。`;
             [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
         });
 }
 
-// 音声認識が結果を返したときの処理
 function handleRecognitionResult(event) {
-    if (speakingPracticeScreen.style.display !== 'block') return; // この画面でないなら何もしない
-    userSpeechEndTime = performance.now(); // 発話終了時間を記録
+    if (speakingPracticeScreen.style.display !== 'block') return;
+    userSpeechEndTime = performance.now();
     const transcript = event.results[0][0].transcript;
-    generateCombinedFeedback(transcript); // フィードバックを生成
-    // 認識が完了したら録音も停止
+    generateCombinedFeedback(transcript);
     if (mediaRecorder && mediaRecorder.state === 'recording') {
         mediaRecorder.stop();
     }
 }
 
-// 発話が開始されたときの処理
 function handleSpeechStart() {
     if (speakingPracticeScreen.style.display !== 'block') return;
-    userSpeechStartTime = performance.now(); // 発話開始時間を記録
+    userSpeechStartTime = performance.now();
 }
 
-// 音声認識が終了したときの処理（発話終了後）
 function handleRecognitionEnd() {
     if (speakingPracticeScreen.style.display !== 'block') return;
-    // UIを更新（録音が開始されていた場合）
     if (startButton.disabled) {
         startButton.disabled = false;
         stopButton.disabled = true;
         statusElement.classList.remove('recording');
-        // 結果がまだ表示されていなければ（無音などでresultイベントが発火しなかった場合）
         if (feedbackElement.innerHTML === '-') {
             statusElement.textContent = "音声が認識されませんでした。もう一度試してください。";
         } else {
             statusElement.textContent = "結果を確認してください。";
         }
     }
-     // 念のため録音を停止
     if (mediaRecorder && mediaRecorder.state === 'recording') {
         mediaRecorder.stop();
     }
 }
 
-// 音声認識でエラーが発生したときの処理
 function handleRecognitionError(event) {
     if (speakingPracticeScreen.style.display !== 'block') return;
     console.error('SpeechRecognition error:', event.error);
     statusElement.textContent = `音声認識エラー: ${event.error}`;
-     // エラー時も録音を停止
     if (mediaRecorder && mediaRecorder.state === 'recording') {
         mediaRecorder.stop();
     }
 }
 
-// 結果表示をリセットする
+
 function resetResults() {
     scoreElement.innerHTML = `0 <span class="score-unit">/ 100</span>`;
     scoreElement.className = '';
     feedbackElement.innerHTML = '-';
-    userRecordingPlayer.src = ''; // オーディオプレイヤーをクリア
-    modelAudioDuration = 0; // 時間をリセット
+    userRecordingPlayer.src = ''; 
+    modelAudioDuration = 0; 
     userSpeechStartTime = 0;
     userSpeechEndTime = 0;
 }
 
-// 新しい練習文をセットする
 function setNewSentence() {
     if (!isSpeakingPracticeInitialized) {
-        initializeSpeakingPractice(); // まだ初期化されていなければ実行
+        initializeSpeakingPractice(); 
         return;
     }
     let newIndex;
@@ -717,26 +683,24 @@ function setNewSentence() {
     sentenceElement.textContent = en;
     meaningElement.textContent = ja;
     statusElement.textContent = "準備完了です。「お手本を聞く」か「録音開始」を押してください。";
-    // ボタンの状態を初期化
     listenButton.disabled = false;
     startButton.disabled = false;
     stopButton.disabled = true;
 }
 
-// [お手本を聞く] ボタン
 listenButton.addEventListener('click', () => {
     if (currentSentenceIndex < 0) return; 
     const text = pronunciationSentences[currentSentenceIndex].en;
     let startTime = performance.now(); 
     speak(text, () => {
-        modelAudioDuration = performance.now() - startTime; // 再生時間を計算
+        modelAudioDuration = performance.now() - startTime;
         console.log(`Model audio duration: ${modelAudioDuration}ms`);
-        listenButton.disabled = false; // 再生後にボタンを有効化
+        listenButton.disabled = false; 
     });
-    listenButton.disabled = true; // 再生中はボタンを無効化
+    listenButton.disabled = true; 
 });
 
-// [録音開始] ボタン
+
 startButton.addEventListener('click', () => { 
     if (!mediaRecorder || !recognition) {
         console.error("MediaRecorder or Recognition not initialized.");
@@ -744,7 +708,7 @@ startButton.addEventListener('click', () => {
         return;
     }
     try {
-        resetResults(); // 前回の結果をリセット
+        resetResults(); 
         mediaRecorder.start();
         recognition.start();
         statusElement.textContent = "話してください...";
@@ -754,31 +718,29 @@ startButton.addEventListener('click', () => {
     } catch (err) {
         console.error("Error starting recording/recognition:", err);
         statusElement.textContent = `開始エラー: ${err.message}`;
-        startButton.disabled = false; // エラー時はボタンを戻す
+        startButton.disabled = false; 
         stopButton.disabled = true;
     }
 });
 
-// [録音停止] ボタン
 stopButton.addEventListener('click', () => {
      try {
         if (mediaRecorder && mediaRecorder.state === 'recording') {
             mediaRecorder.stop();
         }
         if (recognition) {
-            recognition.stop(); // 認識が停止すると 'end' イベントが発火
+            recognition.stop(); 
         }
     } catch (err) {
         console.error("Error stopping recording/recognition:", err);
         statusElement.textContent = `停止エラー: ${err.message}`;
-        // 'end' イベントが発火しない場合に備えて強制的にUIを更新
         startButton.disabled = false;
         stopButton.disabled = true;
         statusElement.classList.remove('recording');
     }
 });
 
-// スコアとフィードバックを生成する
+
 function generateCombinedFeedback(transcript) {
     if (currentSentenceIndex < 0) return; 
 
@@ -787,7 +749,6 @@ function generateCombinedFeedback(transcript) {
     const cleanUser = transcript.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/); 
 
     let correctWords = 0;
-    // お手本の単語と比較
     const feedbackHtml = cleanOriginal.map((word, index) => {
         if (cleanUser[index] === word) { 
             correctWords++; 
@@ -798,20 +759,18 @@ function generateCombinedFeedback(transcript) {
         }
     }).join(' ');
     
-    // スコア計算
     const score = cleanOriginal.length > 0 ? Math.round((correctWords / cleanOriginal.length) * 100) : 0; 
     scoreElement.innerHTML = `${score} <span class="score-unit">/ 100</span>`;
     scoreElement.className = score >= 80 ? 'score-high' : score >= 50 ? 'score-mid' : 'score-low';
     
     let fullFeedback = `<strong>お手本との比較:</strong> ${feedbackHtml}`;
 
-    // ペースの評価
     const userSpeechDuration = userSpeechEndTime > userSpeechStartTime ? userSpeechEndTime - userSpeechStartTime : 0;
     let paceFeedback = '';
     
     console.log(`User speech duration: ${userSpeechDuration}ms`, `Model duration: ${modelAudioDuration}ms`);
 
-    if (modelAudioDuration > 50 && userSpeechDuration > 50) { // 極端に短いデータは評価しない
+    if (modelAudioDuration > 50 && userSpeechDuration > 50) { 
         const paceRatio = userSpeechDuration / modelAudioDuration;
         if (paceRatio > 1.5) { 
             paceFeedback = "🐢 <strong>ペース:</strong> 少しゆっくりでした。もう少しテンポを上げてみましょう。";
@@ -821,8 +780,6 @@ function generateCombinedFeedback(transcript) {
             paceFeedback = "👍 <strong>ペース:</strong> 素晴らしい！お手本に近い自然なスピードです。";
         }
         fullFeedback += `<div class="feedback-pace-section">${paceFeedback}</div>`;
-    } else if (modelAudioDuration === 0) {
-         fullFeedback += `<div class="feedback-pace-section">ⓘ ペースを評価するには、先にお手本を聞いてください。</div>`;
     } else {
          fullFeedback += `<div class="feedback-pace-section">ⓘ ペースの評価に必要な音声が録音されませんでした。</div>`;
     }
@@ -830,10 +787,7 @@ function generateCombinedFeedback(transcript) {
     feedbackElement.innerHTML = fullFeedback;
 }
 
-// [次の文へ] ボタン
 nextButton.addEventListener('click', setNewSentence);
-
-// フィードバック内の間違った単語をクリックして発音を聞く
 feedbackElement.addEventListener('click', (e) => {
     if (e.target.classList.contains('incorrect')) {
         const wordToSpeak = e.target.dataset.word;
@@ -868,10 +822,10 @@ function startNewQuizSet() {
     const fullQuizData = quizDataSets[currentQuizLevel];
     if (!fullQuizData || fullQuizData.length === 0) {
         console.error(`No quiz data found for level: ${currentQuizLevel}`);
-        showCustomAlert(`レベル「${currentQuizLevel}」の単語データが見つかりません。`);
+        alert(`レベル「${currentQuizLevel}」の単語データが見つかりません。`);
         return;
     }
-    questionsForCurrentQuiz = shuffleArray(fullQuizData).slice(0, 10); // 10問をランダムに選ぶ
+    questionsForCurrentQuiz = shuffleArray(fullQuizData).slice(0, 10); 
     showScreen(wordQuizScreen);
     startQuiz();
 }
@@ -1119,21 +1073,15 @@ endCallBtn.addEventListener('click', hangUp);
 async function startCall() {
     startCallBtn.disabled = true;
     endCallBtn.disabled = false;
-    videoStatus.textContent = "マイクを起動中..."; // 「カメラとマイク」から変更
+    videoStatus.textContent = "マイクを起動中..."; 
 
     try {
         // 1. ストリームを取得
-        // ▼▼▼ 【修正】 ▼▼▼
-        // video: true を video: false に変更します (カメラを要求しない)
         localStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true }); 
-        
-        // ▼▼▼ 【修正】 ▼▼▼
-        // 映像(video)トラックがないため、この行をコメントアウト（または削除）します
-        // localVideo.srcObject = localStream; 
         
     } catch (err) {
         console.error("getUserMedia error:", err);
-        videoStatus.textContent = "エラー: マイクを起動できません。"; // 「カメラまたはマイク」から変更
+        videoStatus.textContent = "エラー: マイクを起動できません。"; 
         startCallBtn.disabled = false;
         endCallBtn.disabled = true;
         return;
@@ -1142,9 +1090,8 @@ async function startCall() {
     videoStatus.textContent = "シグナリングサーバーに接続中...";
 
     // 2. シグナリングサーバー (server.js) に接続
-    // ws://localhost:8080 は server.js の起動ポートに合わせてください
-    // Live Server (例: 5500) と Node.js (例: 8080) は別ポートでOK
-    let wsUrl = 'ws://localhost:8080';
+    // ※デプロイ時はここを書き換える (例: wss://your-app.replit.co)
+    let wsUrl = 'https://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev/'; // デフォルトのローカル設定
     try {
         socket = new WebSocket(wsUrl); 
     } catch (err) {
@@ -1169,13 +1116,12 @@ async function startCall() {
             switch (data.type) {
                 case 'joined':
                     videoStatus.textContent = "ルームに参加しました。相手を待っています...";
-                    // ピア接続の準備
                     createPeerConnection();
                     break;
                 case 'user-joined':
                     videoStatus.textContent = "相手が参加しました。接続を開始します...";
                     // 4. (発信側) 相手が参加したらOfferを作成
-                    createPeerConnection(); // 相手が入室したので接続準備
+                    createPeerConnection(); 
                     const offer = await peerConnection.createOffer();
                     await peerConnection.setLocalDescription(offer);
                     socket.send(JSON.stringify({ type: 'offer', sdp: peerConnection.localDescription }));
@@ -1183,7 +1129,7 @@ async function startCall() {
                 case 'offer':
                     videoStatus.textContent = "接続リクエストを受信しました...";
                     // 5. (着信側) Offerを受信
-                    createPeerConnection(); // 相手からOfferが来たので接続準備
+                    createPeerConnection(); 
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
                     const answer = await peerConnection.createAnswer();
                     await peerConnection.setLocalDescription(answer);
@@ -1202,7 +1148,7 @@ async function startCall() {
                     break;
                 case 'user-left':
                     videoStatus.textContent = "相手が退出しました。";
-                    hangUp(); // 相手が退出したら通話を終了
+                    hangUp(); 
                     break;
                 case 'room-full':
                     videoStatus.textContent = "エラー: ルームは満室です。";
@@ -1219,7 +1165,7 @@ async function startCall() {
     };
 
     socket.onclose = () => {
-        if (videoStatus.textContent !== "通話を終了しました。") { // 自分で切った場合以外
+        if (videoStatus.textContent !== "通話を終了しました。") { 
              videoStatus.textContent = "サーバーから切断されました。";
         }
         hangUp();
@@ -1232,7 +1178,7 @@ async function startCall() {
 }
 
 function createPeerConnection() {
-    if (peerConnection) return; // 既に作成済みなら何もしない
+    if (peerConnection) return; 
 
     try {
         peerConnection = new RTCPeerConnection(stunServers);
@@ -1245,8 +1191,6 @@ function createPeerConnection() {
             event.streams[0].getTracks().forEach(track => {
                 remoteStream.addTrack(track);
             });
-            // 音声のみの場合、remoteVideoは再生しない（またはaudio要素を別途用意する）
-            // このデモではremoteVideo要素を流用するが、映像は表示されない
             remoteVideo.srcObject = remoteStream; 
         };
 
@@ -1257,13 +1201,12 @@ function createPeerConnection() {
             }
         };
         
-        // 接続状態の監視
         peerConnection.oniceconnectionstatechange = () => {
             console.log('ICE connection state:', peerConnection.iceConnectionState);
             if (peerConnection.iceConnectionState === 'failed' || 
                 peerConnection.iceConnectionState === 'disconnected' || 
                 peerConnection.iceConnectionState === 'closed') {
-                if (videoStatus.textContent === "接続が確立されました。") { // 接続後の切断のみ
+                if (videoStatus.textContent === "接続が確立されました。") { 
                     videoStatus.textContent = "接続が切れました。";
                 }
             }
@@ -1282,17 +1225,15 @@ function createPeerConnection() {
 }
 
 function hangUp() {
-    if (videoStatus.textContent !== "通話を終了しました。") { // 二重呼び出し防止
+    if (videoStatus.textContent !== "通話を終了しました。") { 
          videoStatus.textContent = "通話を終了しました。";
     }
     
-    // 11. 接続を切断
     if (peerConnection) {
         peerConnection.close();
         peerConnection = null;
     }
     
-    // 12. 映像・音声を停止
     if (localStream) {
         localStream.getTracks().forEach(track => track.stop());
         localStream = null;
@@ -1324,7 +1265,7 @@ function displayIdiomOfTheDay() {
     const idiomDescriptionEl = document.getElementById('idiom-description');
 
     if (!idiomDateEl || !idiomPhraseEl || !idiomMeaningEl || !idiomDescriptionEl) {
-        return; // ホーム画面以外のページなら何もしない
+        return; 
     }
      if (idiomsData.length === 0) {
         console.error("Idioms data is empty.");
@@ -1346,33 +1287,22 @@ function displayIdiomOfTheDay() {
     idiomDescriptionEl.textContent = dailyIdiom.description;
 }
 
-// ページの読み込み完了時にオープニング画面を表示
 document.addEventListener('DOMContentLoaded', () => {
-     // まずすべての画面を非表示にする
     document.querySelectorAll('.screen').forEach(s => {
         s.style.display = 'none';
         s.classList.remove('active');
     });
-    // splashScreenだけ表示する
-    splashScreen.style.display = 'flex'; // flexで中央揃え
+    splashScreen.style.display = 'flex'; 
     splashScreen.classList.add('active');
 
-    // 3秒後に自動的にホーム画面に遷移
     setTimeout(() => {
-        // もしユーザーがまだボタンを押していなければ（＝スプラッシュがまだ表示されていれば）
         if (splashScreen.classList.contains('active')) {
             showScreen(homeScreen);
         }
-    }, 3000); // 3秒
+    }, 3000); 
 });
 
-
-// =============================================
-//  カスタムアラート (プレースホルダー)
-// =============================================
 function showCustomAlert(message) {
-    // 実際のアプリでは、ここにモーダルダイアログを表示するロジックを実装します
     console.warn("Using placeholder alert:", message);
-    alert(message); // とりあえず標準のアラートを使用
+    alert(message); 
 }
-
