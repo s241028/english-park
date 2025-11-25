@@ -1091,7 +1091,7 @@ async function startCall() {
 
     // 2. シグナリングサーバー (server.js) に接続
     // ※デプロイ時はここを書き換える (例: wss://your-app.replit.co)
-    let wsUrl = 'https://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev/'; // デフォルトのローカル設定
+    let wsUrl = 'wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev/'; // デフォルトのローカル設定
     try {
         socket = new WebSocket(wsUrl); 
     } catch (err) {
