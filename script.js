@@ -1,3 +1,4 @@
+// ... (データ部分は変更なし。省略せずにそのまま使ってください) ...
 // =============================================
 //  全体で使用するデータ
 // =============================================
@@ -387,40 +388,62 @@ document.body.addEventListener('click', () => {
 let usVoice = null;
 
 function populateVoiceList() {
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length === 0) {
-        console.warn("No speech synthesis voices found.");
-        return;
-    }
-    
-    usVoice = voices.find(voice => voice.lang === 'en-US');
+    try {
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length === 0) {
+            setTimeout(populateVoiceList, 100);
+            return;
+        }
+        usVoice = voices.find(voice => voice.lang === 'en-US');
 
-    if (!usVoice) {
-        usVoice = voices.find(voice => voice.lang.startsWith('en-'));
-    }
+        if (!usVoice) {
+            usVoice = voices.find(voice => voice.lang.startsWith('en-'));
+        }
 
-    if (usVoice) {
-        console.log("Selected speech synthesis voice:", usVoice.name);
-    } else {
-        console.warn("No English voice found. The browser will use its default.");
+        if (usVoice) {
+            console.log("Selected speech synthesis voice:", usVoice.name);
+        } else {
+            console.warn("No English voice found. The browser will use its default.");
+        }
+    } catch (e) {
+        console.error("Error getting speech synthesis voices:", e);
     }
 }
 
 populateVoiceList();
-if (speechSynthesis.onvoiceschanged !== undefined) {
+if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
     speechSynthesis.onvoiceschanged = populateVoiceList;
 }
 
 function speak(text, callback) {
+    if (!('speechSynthesis' in window)) {
+        console.error("Speech synthesis not supported in this browser.");
+        if (statusElement) statusElement.textContent = "エラー: 音声合成が利用できません。";
+        if (callback) callback();
+        return;
+    }
+
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
+    
+    if (!usVoice) {
+        populateVoiceList();
+    }
     if (usVoice) {
         utterance.voice = usVoice;
     } else {
-        populateVoiceList();
-        if(usVoice) utterance.voice = usVoice;
+        console.warn("Speaking with default voice as specific English voice not found.");
     }
+    
     utterance.lang = 'en-US';
+    utterance.onerror = (event) => {
+        console.error('SpeechSynthesisUtterance.onerror', event);
+        if (statusElement) {
+            statusElement.textContent = `音声再生エラー: ${event.error}`;
+        }
+        if (callback) callback();
+    };
+
     if (callback) utterance.onend = callback;
     window.speechSynthesis.speak(utterance);
 }
@@ -493,7 +516,7 @@ backButtonFromVideo.addEventListener('click', () => { if (typeof peerConnection 
 
 
 // =============================================
-//  スピーキング練習ロジック (統合版)
+//  スピーキング練習ロジック
 // =============================================
 const sentenceElement = document.getElementById('sentence');
 const meaningElement = document.getElementById('sentence-meaning');
@@ -514,62 +537,133 @@ let audioChunks = [];
 let modelAudioDuration = 0;
 let userSpeechStartTime = 0;
 let userSpeechEndTime = 0;
+let isSpeakingPracticeInitialized = false;
 
 function initializeSpeakingPractice() {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && SpeechRecognition) {
-        navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(stream => {
+    if (isSpeakingPracticeInitialized && recognition && mediaRecorder) {
+         setNewSentence(); 
+         return;
+    }
+
+    if (!('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices)) {
+        statusElement.textContent = "エラー: マイクへのアクセスがブラウザでサポートされていません。";
+        [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
+        return;
+    }
+    if (!SpeechRecognition) {
+        statusElement.textContent = "エラー: 音声認識がブラウザでサポートされていません。";
+        [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
+        return;
+    }
+    if (!('MediaRecorder' in window)) {
+         statusElement.textContent = "エラー: 音声録音がブラウザでサポートされていません。";
+        [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
+        return;
+    }
+
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            try {
                 mediaRecorder = new MediaRecorder(stream);
                 mediaRecorder.ondataavailable = event => { audioChunks.push(event.data); };
                 mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                    const audioUrl = URL.createObjectURL(audioBlob);
-                    userRecordingPlayer.src = audioUrl;
-                    audioChunks = [];
+                    if (audioChunks.length > 0) {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        userRecordingPlayer.src = audioUrl;
+                        audioChunks = [];
+                    } else {
+                        console.warn("No audio data recorded.");
+                         userRecordingPlayer.src = ''; 
+                    }
                 };
-                
+                mediaRecorder.onerror = (event) => {
+                     console.error('MediaRecorder error:', event.error);
+                     statusElement.textContent = `録音エラー: ${event.error.message}`;
+                };
+
                 recognition = new SpeechRecognition();
                 Object.assign(recognition, { lang: 'en-US', interimResults: false, continuous: false });
 
-                recognition.addEventListener('result', (event) => {
-                    userSpeechEndTime = performance.now();
-                    const transcript = event.results[0][0].transcript;
-                    generateCombinedFeedback(transcript);
-                });
-                
-                recognition.addEventListener('speechstart', () => {
-                    userSpeechStartTime = performance.now();
-                });
+                recognition.addEventListener('result', handleRecognitionResult);
+                recognition.addEventListener('speechstart', handleSpeechStart);
+                recognition.addEventListener('end', handleRecognitionEnd);
+                recognition.addEventListener('error', handleRecognitionError);
 
-                recognition.addEventListener('end', () => {
-                    if (startButton.disabled) {
-                        startButton.disabled = false;
-                        stopButton.disabled = true;
-                        statusElement.classList.remove('recording');
-                        statusElement.textContent = "結果を確認してください。";
-                    }
-                });
-
+                isSpeakingPracticeInitialized = true; 
                 setNewSentence();
-            })
-            .catch(err => {
-                statusElement.textContent = "エラー: マイクへのアクセスが許可されていません。";
-                [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
-            });
-    } else {
-        statusElement.textContent = "お使いのブラウザは音声認識または録音に対応していません。";
-        [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
+
+            } catch (err) {
+                 console.error("Error initializing MediaRecorder or Recognition:", err);
+                 statusElement.textContent = `初期化エラー: ${err.message}`;
+                 [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
+            }
+        })
+        .catch(err => {
+            console.error("getUserMedia error:", err);
+            statusElement.textContent = `エラー: マイクへのアクセス許可が必要です (${err.message})。`;
+            [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
+        });
+}
+
+function handleRecognitionResult(event) {
+    if (speakingPracticeScreen.style.display !== 'block') return;
+    userSpeechEndTime = performance.now();
+    const transcript = event.results[0][0].transcript;
+    generateCombinedFeedback(transcript);
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
     }
 }
+
+function handleSpeechStart() {
+    if (speakingPracticeScreen.style.display !== 'block') return;
+    userSpeechStartTime = performance.now();
+}
+
+function handleRecognitionEnd() {
+    if (speakingPracticeScreen.style.display !== 'block') return;
+    if (startButton.disabled) {
+        startButton.disabled = false;
+        stopButton.disabled = true;
+        statusElement.classList.remove('recording');
+        if (feedbackElement.innerHTML === '-') {
+            statusElement.textContent = "音声が認識されませんでした。もう一度試してください。";
+        } else {
+            statusElement.textContent = "結果を確認してください。";
+        }
+    }
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+    }
+}
+
+function handleRecognitionError(event) {
+    if (speakingPracticeScreen.style.display !== 'block') return;
+    console.error('SpeechRecognition error:', event.error);
+    statusElement.textContent = `音声認識エラー: ${event.error}`;
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+    }
+}
+
 
 function resetResults() {
     scoreElement.innerHTML = `0 <span class="score-unit">/ 100</span>`;
     scoreElement.className = '';
     feedbackElement.innerHTML = '-';
-    userRecordingPlayer.src = '';
+    userRecordingPlayer.src = ''; 
+    modelAudioDuration = 0; 
+    userSpeechStartTime = 0;
+    userSpeechEndTime = 0;
 }
 
 function setNewSentence() {
+    if (!isSpeakingPracticeInitialized) {
+        initializeSpeakingPractice(); 
+        return;
+    }
     let newIndex;
     do { newIndex = Math.floor(Math.random() * pronunciationSentences.length); } while (pronunciationSentences.length > 1 && newIndex === currentSentenceIndex);
     currentSentenceIndex = newIndex;
@@ -578,62 +672,105 @@ function setNewSentence() {
     sentenceElement.textContent = en;
     meaningElement.textContent = ja;
     statusElement.textContent = "準備完了です。「お手本を聞く」か「録音開始」を押してください。";
+    listenButton.disabled = false;
+    startButton.disabled = false;
+    stopButton.disabled = true;
 }
 
 listenButton.addEventListener('click', () => {
+    if (currentSentenceIndex < 0) return; 
     const text = pronunciationSentences[currentSentenceIndex].en;
-    let startTime;
+    let startTime = performance.now(); 
     speak(text, () => {
         modelAudioDuration = performance.now() - startTime;
-        listenButton.disabled = false;
+        console.log(`Model audio duration: ${modelAudioDuration}ms`);
+        listenButton.disabled = false; 
     });
-    startTime = performance.now();
-    listenButton.disabled = true;
+    listenButton.disabled = true; 
 });
 
+
 startButton.addEventListener('click', () => { 
-    mediaRecorder.start();
-    recognition.start();
-    statusElement.textContent = "話してください...";
-    statusElement.classList.add('recording'); 
-    startButton.disabled = true; 
-    stopButton.disabled = false; 
-    resetResults(); 
+    if (!mediaRecorder || !recognition) {
+        console.error("MediaRecorder or Recognition not initialized.");
+        statusElement.textContent = "エラー: 録音/認識機能が準備できていません。";
+        return;
+    }
+    try {
+        resetResults(); 
+        mediaRecorder.start();
+        recognition.start();
+        statusElement.textContent = "話してください...";
+        statusElement.classList.add('recording'); 
+        startButton.disabled = true; 
+        stopButton.disabled = false; 
+    } catch (err) {
+        console.error("Error starting recording/recognition:", err);
+        statusElement.textContent = `開始エラー: ${err.message}`;
+        startButton.disabled = false; 
+        stopButton.disabled = true;
+    }
 });
 
 stopButton.addEventListener('click', () => {
-    if (mediaRecorder.state === 'recording') mediaRecorder.stop();
-    if (recognition) recognition.stop();
+     try {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+        }
+        if (recognition) {
+            recognition.stop(); 
+        }
+    } catch (err) {
+        console.error("Error stopping recording/recognition:", err);
+        statusElement.textContent = `停止エラー: ${err.message}`;
+        startButton.disabled = false;
+        stopButton.disabled = true;
+        statusElement.classList.remove('recording');
+    }
 });
 
+
 function generateCombinedFeedback(transcript) {
+    if (currentSentenceIndex < 0) return; 
+
     const originalText = pronunciationSentences[currentSentenceIndex].en;
-    const cleanOriginal = originalText.toLowerCase().replace(/[.,!?]/g, '').split(' ');
-    const cleanUser = transcript.toLowerCase().replace(/[.,!?]/g, '').split(' ');
+    const cleanOriginal = originalText.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/); 
+    const cleanUser = transcript.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/); 
+
     let correctWords = 0;
     const feedbackHtml = cleanOriginal.map((word, index) => {
-        if (cleanUser[index] === word) { correctWords++; return `<span class="correct">${word}</span>`; }
-        else { return `<span class="incorrect" data-word="${word}">${word}</span> (<span class="your-speech">${cleanUser[index] || '×'}</span>)`; }
+        if (cleanUser[index] === word) { 
+            correctWords++; 
+            return `<span class="correct">${word}</span>`; 
+        } else { 
+            const userWord = cleanUser[index] ? `<span class="your-speech">${cleanUser[index]}</span>` : '<span class="your-speech">×</span>';
+            return `<span class="incorrect" data-word="${word}">${word}</span> (${userWord})`; 
+        }
     }).join(' ');
-
-    const score = Math.round((correctWords / cleanOriginal.length) * 100);
+    
+    const score = cleanOriginal.length > 0 ? Math.round((correctWords / cleanOriginal.length) * 100) : 0; 
     scoreElement.innerHTML = `${score} <span class="score-unit">/ 100</span>`;
     scoreElement.className = score >= 80 ? 'score-high' : score >= 50 ? 'score-mid' : 'score-low';
     
     let fullFeedback = `<strong>お手本との比較:</strong> ${feedbackHtml}`;
 
-    const userSpeechDuration = userSpeechEndTime - userSpeechStartTime;
+    const userSpeechDuration = userSpeechEndTime > userSpeechStartTime ? userSpeechEndTime - userSpeechStartTime : 0;
     let paceFeedback = '';
-    if (modelAudioDuration > 0 && userSpeechDuration > 0) {
+    
+    console.log(`User speech duration: ${userSpeechDuration}ms`, `Model duration: ${modelAudioDuration}ms`);
+
+    if (modelAudioDuration > 50 && userSpeechDuration > 50) { 
         const paceRatio = userSpeechDuration / modelAudioDuration;
-        if (paceRatio > 1.4) {
-            paceFeedback = "🐢 <strong>ペース:</strong> もう少しテンポを上げると、より自然なリズムになります。";
-        } else if (paceRatio < 0.8) {
-            paceFeedback = "🐇 <strong>ペース:</strong> 少し早口かもしれません。焦らずゆっくり話すことを意識しましょう。";
+        if (paceRatio > 1.5) { 
+            paceFeedback = "🐢 <strong>ペース:</strong> 少しゆっくりでした。もう少しテンポを上げてみましょう。";
+        } else if (paceRatio < 0.7) { 
+            paceFeedback = "🐇 <strong>ペース:</strong> 少し早口でした。焦らず話してみましょう。";
         } else {
-            paceFeedback = "👍 <strong>ペース:</strong> 素晴らしい！お手本に近い自然なスピードで話せています。";
+            paceFeedback = "👍 <strong>ペース:</strong> 素晴らしい！お手本に近い自然なスピードです。";
         }
         fullFeedback += `<div class="feedback-pace-section">${paceFeedback}</div>`;
+    } else {
+         fullFeedback += `<div class="feedback-pace-section">ⓘ ペースの評価に必要な音声が録音されませんでした。</div>`;
     }
 
     feedbackElement.innerHTML = fullFeedback;
@@ -677,7 +814,7 @@ function startNewQuizSet() {
         alert(`レベル「${currentQuizLevel}」の単語データが見つかりません。`);
         return;
     }
-    questionsForCurrentQuiz = shuffleArray(fullQuizData).slice(0, 10); // Select 10 random questions
+    questionsForCurrentQuiz = shuffleArray(fullQuizData).slice(0, 10); 
     showScreen(wordQuizScreen);
     startQuiz();
 }
@@ -710,11 +847,9 @@ function showNextQuestion() {
 }
 function handleOptionClick(event) {
     const selectedButton = event.target;
-    // Ensure currentQuizIndex is valid
     if (currentQuizIndex >= questionsForCurrentQuiz.length) return; 
     
     const correctAnswer = questionsForCurrentQuiz[currentQuizIndex].correct;
-    // Disable all buttons and show correct answer
     document.querySelectorAll('#quiz-options .quiz-option-btn').forEach(btn => {
         btn.disabled = true;
         if (btn.textContent === correctAnswer) btn.classList.add('correct-answer');
@@ -730,7 +865,6 @@ function handleOptionClick(event) {
         quizFeedback.className = 'quiz-feedback incorrect-feedback';
     }
     currentQuizIndex++;
-    // Add a slight delay before showing the next question
     setTimeout(showNextQuestion, 1500); 
 }
 function endQuiz() {
@@ -778,7 +912,6 @@ playAudioButton.addEventListener('click', () => {
 submitListeningButton.addEventListener('click', () => {
     const userAnswer = listeningInput.value.trim();
     if (userAnswer === '') { 
-        // Use a custom message box instead of alert
         showCustomAlert('何か入力してください。'); 
         return; 
     }
@@ -863,7 +996,6 @@ function showNextReadingQuestion() {
 
 function handleReadingOptionClick(event) {
     const selectedButton = event.target;
-    // Ensure currentReadingQuestionIndex is valid
     if (currentReadingQuestionIndex >= currentReadingData.questions.length) return; 
 
     const correctAnswer = currentReadingData.questions[currentReadingQuestionIndex].correct;
@@ -895,7 +1027,7 @@ function endReadingQuiz() {
      if (currentReadingData && currentReadingData.questions) {
         readingFinalScore.textContent = `${currentReadingData.questions.length}問中 ${readingScore}問 正解！`;
     } else {
-        readingFinalScore.textContent = "スコアの計算に問題がありました。"; // Fallback message
+        readingFinalScore.textContent = "スコアの計算に問題がありました。";
     }
 }
 
@@ -903,38 +1035,171 @@ readingRestartButton.addEventListener('click', startNewReadingQuiz);
 
 
 // =============================================
-//  ビデオチャットロジック (ダミー)
+//  ビデオチャットロジック (WebRTC実装 - 映像あり版)
 // =============================================
 const startCallBtn = document.getElementById('start-call-btn');
 const endCallBtn = document.getElementById('end-call-btn');
 const localVideo = document.getElementById('local-video');
 const remoteVideo = document.getElementById('remote-video');
 const videoStatus = document.getElementById('video-status');
+
 let peerConnection;
 let localStream;
+let remoteStream;
+let socket;
+const roomId = 'default-room';
 
-startCallBtn.addEventListener('click', () => {
-    videoStatus.textContent = "接続を開始します...";
-    console.log("Start Call clicked");
-    // WebRTC connection logic would go here
-});
+const stunServers = {
+    iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' }
+    ]
+};
 
-endCallBtn.addEventListener('click', () => {
-    videoStatus.textContent = "通話を終了しました。";
-    console.log("End Call clicked");
-    hangUp();
-});
+startCallBtn.addEventListener('click', startCall);
+endCallBtn.addEventListener('click', hangUp);
+
+async function startCall() {
+    startCallBtn.disabled = true;
+    endCallBtn.disabled = false;
+    videoStatus.textContent = "カメラとマイクを起動中..."; 
+
+    try {
+        // ▼▼▼ 【修正点】 映像も取得するように変更 (video: true) ▼▼▼
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true }); 
+        // ▼▼▼ 【修正点】 自分の映像をセット ▼▼▼
+        localVideo.srcObject = localStream;
+    } catch (err) {
+        console.error("getUserMedia error:", err);
+        videoStatus.textContent = "エラー: カメラまたはマイクを起動できません。"; 
+        startCallBtn.disabled = false;
+        endCallBtn.disabled = true;
+        return;
+    }
+
+    videoStatus.textContent = "シグナリングサーバーに接続中...";
+
+    // ★ここをReplitのURL (wss://...) に書き換えてください
+    let wsUrl = 'ws://localhost:8080'; 
+    try {
+        socket = new WebSocket(wsUrl); 
+    } catch (err) {
+        videoStatus.textContent = "サーバー接続エラー。";
+        startCallBtn.disabled = false;
+        endCallBtn.disabled = true;
+        return;
+    }
+
+    socket.onopen = () => {
+        videoStatus.textContent = "サーバーに接続しました。ルームに参加します...";
+        socket.send(JSON.stringify({ type: 'join', room: roomId }));
+    };
+
+    socket.onmessage = async (message) => {
+        const data = JSON.parse(message.data);
+        try {
+            switch (data.type) {
+                case 'joined':
+                    videoStatus.textContent = "ルームに参加しました。相手を待っています...";
+                    createPeerConnection();
+                    break;
+                case 'user-joined':
+                    videoStatus.textContent = "相手が参加しました。接続を開始します...";
+                    createPeerConnection(); 
+                    const offer = await peerConnection.createOffer();
+                    await peerConnection.setLocalDescription(offer);
+                    socket.send(JSON.stringify({ type: 'offer', sdp: peerConnection.localDescription }));
+                    break;
+                case 'offer':
+                    videoStatus.textContent = "接続リクエストを受信しました...";
+                    createPeerConnection(); 
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
+                    const answer = await peerConnection.createAnswer();
+                    await peerConnection.setLocalDescription(answer);
+                    socket.send(JSON.stringify({ type: 'answer', sdp: peerConnection.localDescription }));
+                    break;
+                case 'answer':
+                    videoStatus.textContent = "接続が確立されました。";
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
+                    break;
+                case 'candidate':
+                    if (peerConnection && data.candidate) {
+                        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+                    }
+                    break;
+                case 'user-left':
+                    videoStatus.textContent = "相手が退出しました。";
+                    hangUp(); 
+                    break;
+                case 'room-full':
+                    videoStatus.textContent = "エラー: ルームは満室です。";
+                    hangUp();
+                    break;
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+}
+
+function createPeerConnection() {
+    if (peerConnection) return; 
+
+    try {
+        peerConnection = new RTCPeerConnection(stunServers);
+
+        peerConnection.ontrack = (event) => {
+            if (!remoteStream) {
+                remoteStream = new MediaStream();
+            }
+            event.streams[0].getTracks().forEach(track => {
+                remoteStream.addTrack(track);
+            });
+            // ▼▼▼ 【修正点】 相手の映像をセット ▼▼▼
+            remoteVideo.srcObject = remoteStream; 
+        };
+
+        peerConnection.onicecandidate = (event) => {
+            if (event.candidate && socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
+            }
+        };
+        
+        peerConnection.oniceconnectionstatechange = () => {
+            console.log('ICE connection state:', peerConnection.iceConnectionState);
+            if (peerConnection.iceConnectionState === 'failed' || 
+                peerConnection.iceConnectionState === 'disconnected' || 
+                peerConnection.iceConnectionState === 'closed') {
+                if (videoStatus.textContent === "接続が確立されました。") { 
+                    videoStatus.textContent = "接続が切れました。";
+                }
+            }
+        };
+
+        // ローカルストリームのトラックを追加
+        if (localStream) {
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
+        }
+    } catch (err) {
+        console.error("Error creating PeerConnection:", err);
+    }
+}
 
 function hangUp() {
-    console.log("Hanging up.");
-    // WebRTC cleanup logic would go here
+    videoStatus.textContent = "通話を終了しました。";
+    
     if (peerConnection) {
         peerConnection.close();
         peerConnection = null;
     }
-    if(localStream) {
+    if (localStream) {
         localStream.getTracks().forEach(track => track.stop());
         localStream = null;
+    }
+    if (socket) {
+        socket.close();
+        socket = null;
     }
     localVideo.srcObject = null;
     remoteVideo.srcObject = null;
@@ -953,16 +1218,13 @@ function displayIdiomOfTheDay() {
     const idiomDescriptionEl = document.getElementById('idiom-description');
 
     if (!idiomDateEl || !idiomPhraseEl || !idiomMeaningEl || !idiomDescriptionEl) {
-        // Elements might not exist if the home screen isn't the current view on load
-        // console.warn("Could not find all idiom elements, possibly not on home screen.");
-        return;
+        return; 
     }
      if (idiomsData.length === 0) {
         console.error("Idioms data is empty.");
         idiomPhraseEl.textContent = "イディオムデータが見つかりません。";
         return;
     }
-
 
     const today = new Date();
     
@@ -979,49 +1241,22 @@ function displayIdiomOfTheDay() {
     idiomDescriptionEl.textContent = dailyIdiom.description;
 }
 
-// Execute idiom display when the DOM is fully loaded AND when returning to home screen
 document.addEventListener('DOMContentLoaded', () => {
-     // Show splash screen initially
-    const splashScreen = document.getElementById('splash-screen');
-    if (splashScreen) {
-        splashScreen.style.display = 'flex';
-        
-        // Hide splash screen after 3 seconds
-        setTimeout(() => {
-            splashScreen.style.display = 'none';
-            // Ensure home screen is visible
-            showScreen(homeScreen);
-        }, 3000);
-    } else {
-         if(homeScreen.style.display !== 'none') { // Display only if home screen is initially visible
-            displayIdiomOfTheDay();
-         }
-    }
-});
-
-// Also display when explicitly navigating back to home
-document.querySelectorAll('.back-button').forEach(button => {
-    button.addEventListener('click', () => {
-        // Check if the button click leads back to the home screen
-        const targetScreenId = button.id.toLowerCase().includes('speaking') || 
-                               button.id.toLowerCase().includes('levels') || 
-                               button.id.toLowerCase().includes('listening') || 
-                               button.id.toLowerCase().includes('reading') || 
-                               button.id.toLowerCase().includes('video');
-        if(targetScreenId) { // Simplified check, assumes all back buttons go home except quiz level back
-             // Use setTimeout to allow screen transition to potentially finish
-             setTimeout(displayIdiomOfTheDay, 0);
-        } else if (button.id === 'backButtonFromQuiz') {
-            // No need to update idiom when going back to quiz levels
-        } else {
-             setTimeout(displayIdiomOfTheDay, 0); // Default to update if logic is complex
-        }
+    document.querySelectorAll('.screen').forEach(s => {
+        s.style.display = 'none';
+        s.classList.remove('active');
     });
+    splashScreen.style.display = 'flex'; 
+    splashScreen.classList.add('active');
+
+    setTimeout(() => {
+        if (splashScreen.classList.contains('active')) {
+            showScreen(homeScreen);
+        }
+    }, 3000); 
 });
 
-// Custom Alert function (placeholder)
 function showCustomAlert(message) {
-    // In a real app, you'd replace this with a styled modal dialog
     console.warn("Using placeholder alert:", message);
-    alert(message); // Replace this with your custom modal logic
+    alert(message); 
 }

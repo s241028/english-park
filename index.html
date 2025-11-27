@@ -13,8 +13,7 @@
 
     <!-- オープニング画面 -->
     <div id="splash-screen" class="screen active">
-        <!-- 画像を変更したい場合はsrcを書き換えてください -->
-        <img src="https://assets.stickpng.com/thumbs/580b57fcd9996e24bc43c1ee.png" alt="English Park Logo" class="splash-logo">
+        <div class="splash-logo">🌳</div>
         <h1>English Park</h1>
         <p>Welcome to your English learning journey!</p>
         <button id="enter-app-button" class="action-button">スタート</button>
@@ -58,8 +57,8 @@
                     <p>短い英文を読み、内容に関するクイズに挑戦しよう。</p>
                 </div>
                 <div class="game-card" id="start-video-chat">
-                    <div class="game-icon">📞</div>
-                    <h3>音声通話チャット</h3>
+                    <div class="game-icon">📹</div>
+                    <h3>ビデオチャット</h3>
                     <p>お題について英語でフリートークしよう。</p>
                 </div>
             </div>
@@ -197,21 +196,20 @@
         </div>
     </main>
 
-    <!-- ビデオチャット画面 (音声通話モード) -->
+    <!-- ビデオチャット画面 (映像あり) -->
     <main id="video-chat-screen" class="screen">
         <div class="container">
             <button id="backButtonFromVideo" class="back-button">🏠 ホームに戻る</button>
-            <h1>音声通話チャット 📞</h1>
+            <h1>ビデオチャット 💬</h1>
             <div id="video-topic-card" class="card">
                 <h2>Conversation Topic</h2>
                 <p id="video-topic">What is the most interesting place you have ever visited?</p>
             </div>
             
-            <!-- 音声プレーヤーを表示（カメラなし対応） -->
-            <div class="card" style="text-align: center;">
-                <h3>相手の声</h3>
-                <audio id="remote-audio" controls autoplay style="width: 100%; margin-top: 10px;"></audio>
-                <p style="font-size: 0.9em; color: #888; margin-top: 5px;">※再生バーが動かない場合は接続を確認してください</p>
+            <!-- 映像表示エリア -->
+            <div class="video-container">
+                <video id="remote-video" autoplay playsinline></video>
+                <video id="local-video" autoplay muted playsinline></video>
             </div>
 
             <div id="video-controls">
