@@ -180,4 +180,3 @@ process.on('SIGINT', () => {
     clearInterval(pingInterval);
     wss.close(() => process.exit(0));
 });
-
