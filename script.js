@@ -1044,7 +1044,7 @@ async function startCall() {
     videoStatus.textContent = "シグナリングサーバーに接続中...";
 
     // ★ここをReplitのURL (wss://...) に書き換えてください
-    let wsUrl = 'ws://localhost:8080'; 
+    let wsUrl = 'https://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev:8080/'; 
     try {
         socket = new WebSocket(wsUrl); 
     } catch (err) {
