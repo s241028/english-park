@@ -13,10 +13,19 @@
 
     <!-- オープニング画面 -->
     <div id="splash-screen" class="screen active">
-        <div class="splash-logo">🌳</div>
+        <img src="https://assets.stickpng.com/thumbs/580b57fcd9996e24bc43c1ee.png" alt="English Park Logo" class="splash-logo">
         <h1>English Park</h1>
         <p>Welcome to your English learning journey!</p>
         <button id="enter-app-button" class="action-button">スタート</button>
+    </div>
+
+    <!-- 説明用モーダルウィンドウ (共通) -->
+    <div id="info-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modal-title">機能タイトル</h2>
+            <p id="modal-description">ここに機能の詳細説明が表示されます。</p>
+        </div>
     </div>
 
     <!-- ホーム画面 -->
@@ -37,26 +46,31 @@
 
             <div class="game-selection">
                 <div class="game-card" id="start-speaking-practice">
+                    <button class="info-btn" data-feature="speaking">i</button>
                     <div class="game-icon">🗣️</div>
                     <h3>スピーキング練習</h3>
                     <p>発音、リズム、ペースを総合的に練習します。</p>
                 </div>
                 <div class="game-card" id="go-to-quiz-levels">
+                    <button class="info-btn" data-feature="wordquiz">i</button>
                     <div class="game-icon">✍️</div>
                     <h3>単語クイズ</h3>
                     <p>4つのレベルで語彙力をテストしよう。</p>
                 </div>
                 <div class="game-card" id="start-listening-challenge">
+                    <button class="info-btn" data-feature="listening">i</button>
                     <div class="game-icon">🎧</div>
                     <h3>リスニングチャレンジ</h3>
                     <p>英語の音声を聞き取って書き起こしてみよう。</p>
                 </div>
                  <div class="game-card" id="start-reading-quiz">
+                    <button class="info-btn" data-feature="reading">i</button>
                     <div class="game-icon">📚</div>
                     <h3>読解練習</h3>
                     <p>短い英文を読み、内容に関するクイズに挑戦しよう。</p>
                 </div>
                 <div class="game-card" id="start-video-chat">
+                    <button class="info-btn" data-feature="videochat">i</button>
                     <div class="game-icon">📹</div>
                     <h3>ビデオチャット</h3>
                     <p>お題について英語でフリートークしよう。</p>
@@ -191,12 +205,27 @@
                 <h2>読解クイズ終了！</h2>
                 <p class="final-score-text">あなたの最終スコアは...</p>
                 <p id="reading-final-score"></p>
+                
+                <div class="reading-review-area card">
+                    <h3>本文と日本語訳</h3>
+                    <div class="review-content">
+                        <div class="review-section">
+                            <h4>English</h4>
+                            <p id="review-passage-en"></p>
+                        </div>
+                        <div class="review-section">
+                            <h4>日本語</h4>
+                            <p id="review-passage-ja"></p>
+                        </div>
+                    </div>
+                </div>
+
                 <button id="reading-restart-button" class="restart-button">別の文章に挑戦する</button>
             </div>
         </div>
     </main>
 
-    <!-- ビデオチャット画面 (映像あり) -->
+    <!-- ビデオチャット画面 -->
     <main id="video-chat-screen" class="screen">
         <div class="container">
             <button id="backButtonFromVideo" class="back-button">🏠 ホームに戻る</button>
@@ -206,7 +235,6 @@
                 <p id="video-topic">What is the most interesting place you have ever visited?</p>
             </div>
             
-            <!-- 映像表示エリア -->
             <div class="video-container">
                 <video id="remote-video" autoplay playsinline></video>
                 <video id="local-video" autoplay muted playsinline></video>
