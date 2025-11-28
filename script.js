@@ -1,8 +1,7 @@
 // =============================================
-//  全体で使用するデータ (完全版)
+//  全体で使用するデータ
 // =============================================
 const pronunciationSentences = [
-    // 日常会話
     { en: "How are you doing?", ja: "調子はどうですか？" },
     { en: "It's nice to meet you.", ja: "はじめまして。" },
     { en: "How have you been?", ja: "いかがお過ごでしたか？" },
@@ -18,7 +17,6 @@ const pronunciationSentences = [
     { en: "Take care and see you soon.", ja: "気をつけて、また近いうちに会いましょう。" },
     { en: "It was nice talking to you.", ja: "お話できてよかったです。" },
     { en: "Let's keep in touch.", ja: "これからも連絡を取り合いましょう。" },
-    // 質問
     { en: "What time is it now?", ja: "今、何時ですか？" },
     { en: "Could you help me with this?", ja: "これを手伝っていただけますか？" },
     { en: "Excuse me, where is the restroom?", ja: "すみません、お手洗いはどこですか？" },
@@ -29,7 +27,6 @@ const pronunciationSentences = [
     { en: "What does this word mean?", ja: "この単語はどういう意味ですか？" },
     { en: "Can you give me an example?", ja: "例を挙げてもらえますか？" },
     { en: "How do I get to the station from here?", ja: "ここから駅までどう行けばいいですか？" },
-    // レストラン・買い物
     { en: "I'd like a cup of coffee, please.", ja: "コーヒーを一杯いただけますか。" },
     { en: "Can I have the bill, please?", ja: "お会計をお願いします。" },
     { en: "I'm just looking, thank you.", ja: "見ているだけです、ありがとう。" },
@@ -40,7 +37,6 @@ const pronunciationSentences = [
     { en: "Is this seat taken?", ja: "この席は空いていますか？" },
     { en: "Could I have a glass of water?", ja: "お水を一杯いただけますか？" },
     { en: "Keep the change.", ja: "おつりは取っておいてください。" },
-    // 感情・意見
     { en: "That's very kind of you.", ja: "ご親切にどうもありがとうございます。" },
     { en: "I'm so excited about the trip.", ja: "その旅行にとてもワクワクしています。" },
     { en: "To be honest, I don't really like it.", ja: "正直に言うと、あまり好きではありません。" },
@@ -51,7 +47,6 @@ const pronunciationSentences = [
     { en: "I'm feeling a bit under the weather today.", ja: "今日は少し体調が悪いです。" },
     { en: "No problem at all.", ja: "全然問題ないですよ。" },
     { en: "It's not a big deal.", ja: "たいしたことではありません。" },
-    // ビジネス・仕事
     { en: "I'll get back to you as soon as possible.", ja: "できるだけ早く折り返し連絡します。" },
     { en: "Could you send me the details by email?", ja: "詳細をメールで送っていただけますか？" },
     { en: "I have a meeting at 3 p.m.", ja: "午後3時に会議があります。" },
@@ -62,25 +57,21 @@ const pronunciationSentences = [
     { en: "Thank you for your hard work.", ja: "お仕事お疲れ様です。" },
     { en: "Let's wrap up this meeting.", ja: "この会議を終わりにしましょう。" },
     { en: "I'm looking forward to working with you.", ja: "あなたと一緒にお仕事できるのを楽しみにしています。" },
-    // 天気・季節
     { en: "The weather is lovely today, isn't it?", ja: "今日は素敵な天気ですね。" },
     { en: "It looks like it's going to rain.", ja: "雨が降りそうですね。" },
     { en: "I can't stand this heat.", ja: "この暑さには耐えられません。" },
     { en: "Make sure to bundle up, it's freezing outside.", ja: "しっかり着込んでね、外は凍える寒さだから。" },
     { en: "My favorite season is autumn.", ja: "私の一番好きな季節は秋です。" },
-    // 旅行・交通
     { en: "I'd like to check in, please.", ja: "チェックインをお願いします。" },
     { en: "Which platform does the train for Osaka leave from?", ja: "大阪行きの電車は何番線から出発しますか？" },
     { en: "How long does it take to get there by taxi?", ja: "そこまでタクシーでどのくらい時間がかかりますか？" },
     { en: "Could you recommend a good local restaurant?", ja: "おすすめの地元のレストランを教えていただけますか？" },
     { en: "I have a reservation under the name of Sato.", ja: "佐藤の名前で予約しています。" },
-    // ことわざ・格言
     { en: "Actions speak louder than words.", ja: "行動は言葉よりも雄弁である。" },
     { en: "The early bird catches the worm.", ja: "早起きは三文の徳。" },
     { en: "Better late than never.", ja: "遅れてもやらないよりはまし。" },
     { en: "Practice makes perfect.", ja: "習うより慣れよ。（練習は完璧を作る）" },
     { en: "Where there's a will, there's a way.", ja: "意志あるところに道は開ける。" },
-    // 追加の日常フレーズ
     { en: "What are you up to this evening?", ja: "今晩は何をしますか？" },
     { en: "I'm just hanging out at home.", ja: "家でぶらぶらしているだけです。" },
     { en: "It's on the tip of my tongue.", ja: "喉まで出かかっているんだけど思い出せない。" },
@@ -102,7 +93,6 @@ const pronunciationSentences = [
     { en: "It's up to you.", ja: "あなた次第です。" },
     { en: "I'll keep that in mind.", ja: "心に留めておきます。" }
 ];
-
 const quizDataSets = {
     beginner: [
         { ja: "未来", correct: "future", incorrect: ["past", "letter", "dream"] }, { ja: "訪れる", correct: "visit", incorrect: ["return", "watch", "break"] },
@@ -381,6 +371,28 @@ const conversationTopics = [
     "What is the best meal you have ever had?", "Talk about your favorite season and why you like it."
 ];
 const listeningChallengeSentences = pronunciationSentences;
+const featureDescriptions = {
+    speaking: {
+        title: "スピーキング練習",
+        description: "お手本の音声を聞いてから発音することで、英語特有のリズムやイントネーションを練習します。\n\nAIがあなたの音声を解析し、発音の正確さと話すペース（速さ）を評価してフィードバックを表示します。\n\n録音された自分の声を聞き直すことで、客観的に改善点を見つけることができます。"
+    },
+    wordquiz: {
+        title: "単語クイズ",
+        description: "初級から専門家レベルまで、4つの難易度から選べる4択クイズです。\n\n・初級: 英検3級レベル\n・中級: 英検準2級・2級レベル\n・上級: 英検準1級レベル\n・専門家: 英検1級・TOEIC 800+レベル\n\n繰り返し挑戦して、語彙力を強化しましょう。"
+    },
+    listening: {
+        title: "リスニングチャレンジ",
+        description: "ネイティブスピーカーによる英語の音声を聞き取り、正確に書き起こす「ディクテーション」の練習です。\n\n聞き取れない部分は何度でも再生できます。細かい冠詞や前置詞まで正確に聞き取る力を養います。"
+    },
+    reading: {
+        title: "読解練習",
+        description: "短い英語の文章を読み、その内容に関する質問に答えることで、リーディング力を鍛えます。\n\nクイズ終了後には、英文と日本語訳を並べて確認できるので、文脈や表現の復習に最適です。"
+    },
+    videochat: {
+        title: "ビデオチャット",
+        description: "WebRTC技術を使用して、離れた場所にいる相手とリアルタイムで映像と音声をつないで会話ができます。\n\n表示されるトピックについて話したり、フリートークを楽しんだりして、実践的な英会話力を身につけましょう。\n(カメラとマイクの許可が必要です)"
+    }
+};
 
 // =============================================
 //  Audio Context & Speech Synthesis Setup
@@ -396,53 +408,70 @@ document.body.addEventListener('click', () => {
     }
 }, { once: true });
 
-
 let usVoice = null;
-
 function populateVoiceList() {
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length === 0) {
-        console.warn("No speech synthesis voices found.");
-        return;
-    }
-    
-    usVoice = voices.find(voice => voice.lang === 'en-US');
-
-    if (!usVoice) {
-        usVoice = voices.find(voice => voice.lang.startsWith('en-'));
-    }
-
-    if (usVoice) {
-        console.log("Selected speech synthesis voice:", usVoice.name);
-    } else {
-        console.warn("No English voice found. The browser will use its default.");
-    }
+    try {
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length === 0) {
+            setTimeout(populateVoiceList, 100);
+            return;
+        }
+        usVoice = voices.find(voice => voice.lang === 'en-US') || voices.find(voice => voice.lang.startsWith('en-'));
+    } catch (e) {}
 }
-
 populateVoiceList();
 if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
     speechSynthesis.onvoiceschanged = populateVoiceList;
 }
 
 function speak(text, callback) {
+    if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    if (usVoice) {
-        utterance.voice = usVoice;
-    } else {
-        populateVoiceList();
-        if(usVoice) utterance.voice = usVoice;
-    }
+    if (!usVoice) populateVoiceList();
+    if (usVoice) utterance.voice = usVoice;
     utterance.lang = 'en-US';
     if (callback) utterance.onend = callback;
     window.speechSynthesis.speak(utterance);
 }
 
 // =============================================
-//  画面管理
+//  画面管理 & モーダル制御
 // =============================================
 const splashScreen = document.getElementById('splash-screen');
 const enterAppButton = document.getElementById('enter-app-button');
+
+// モーダル要素
+const infoModal = document.getElementById('info-modal');
+const modalTitle = document.getElementById('modal-title');
+const modalDescription = document.getElementById('modal-description');
+const closeModalBtn = document.querySelector('.close-modal');
+
+// 情報ボタンのイベント設定
+document.querySelectorAll('.info-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation(); // 親要素(カード)のクリックイベントを防止
+        const featureKey = btn.dataset.feature;
+        const data = featureDescriptions[featureKey];
+        if (data) {
+            modalTitle.textContent = data.title;
+            modalDescription.textContent = data.description;
+            infoModal.classList.remove('hidden');
+        }
+    });
+});
+
+// モーダルを閉じる処理
+closeModalBtn.addEventListener('click', () => {
+    infoModal.classList.add('hidden');
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === infoModal) {
+        infoModal.classList.add('hidden');
+    }
+});
+
 
 const homeScreen = document.getElementById('home-screen');
 const speakingPracticeScreen = document.getElementById('speaking-practice-screen');
@@ -480,17 +509,24 @@ function showScreen(screenToShow) {
 
 enterAppButton.addEventListener('click', () => showScreen(homeScreen));
 
-startSpeakingPracticeButton.addEventListener('click', () => { showScreen(speakingPracticeScreen); initializeSpeakingPractice(); });
-goToQuizLevelsButton.addEventListener('click', () => showScreen(quizLevelScreen));
-startListeningChallengeButton.addEventListener('click', () => {
-    showScreen(listeningChallengeScreen);
-    startNewListeningChallenge();
+startSpeakingPracticeButton.addEventListener('click', (e) => { 
+    if(e.target.classList.contains('info-btn')) return; 
+    showScreen(speakingPracticeScreen); initializeSpeakingPractice(); 
 });
-startReadingQuizButton.addEventListener('click', () => {
-    showScreen(readingQuizScreen);
-    startNewReadingQuiz();
+goToQuizLevelsButton.addEventListener('click', (e) => { 
+    if(e.target.classList.contains('info-btn')) return;
+    showScreen(quizLevelScreen); 
 });
-startVideoChatButton.addEventListener('click', () => {
+startListeningChallengeButton.addEventListener('click', (e) => { 
+    if(e.target.classList.contains('info-btn')) return;
+    showScreen(listeningChallengeScreen); startNewListeningChallenge(); 
+});
+startReadingQuizButton.addEventListener('click', (e) => { 
+    if(e.target.classList.contains('info-btn')) return;
+    showScreen(readingQuizScreen); startNewReadingQuiz(); 
+});
+startVideoChatButton.addEventListener('click', (e) => { 
+    if(e.target.classList.contains('info-btn')) return;
     const randomIndex = Math.floor(Math.random() * conversationTopics.length);
     document.getElementById('video-topic').textContent = conversationTopics[randomIndex];
     document.getElementById('video-status').textContent = "「Start Call」を押して、カメラとマイクを許可してください。";
@@ -506,7 +542,7 @@ backButtonFromVideo.addEventListener('click', () => { if (typeof peerConnection 
 
 
 // =============================================
-//  スピーキング練習ロジック (統合版)
+//  スピーキング練習ロジック
 // =============================================
 const sentenceElement = document.getElementById('sentence');
 const meaningElement = document.getElementById('sentence-meaning');
@@ -564,12 +600,10 @@ function initializeSpeakingPractice() {
                         userRecordingPlayer.src = audioUrl;
                         audioChunks = [];
                     } else {
-                        console.warn("No audio data recorded.");
                          userRecordingPlayer.src = ''; 
                     }
                 };
                 mediaRecorder.onerror = (event) => {
-                     console.error('MediaRecorder error:', event.error);
                      statusElement.textContent = `録音エラー: ${event.error.message}`;
                 };
 
@@ -585,13 +619,11 @@ function initializeSpeakingPractice() {
                 setNewSentence();
 
             } catch (err) {
-                 console.error("Error initializing MediaRecorder or Recognition:", err);
                  statusElement.textContent = `初期化エラー: ${err.message}`;
                  [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
             }
         })
         .catch(err => {
-            console.error("getUserMedia error:", err);
             statusElement.textContent = `エラー: マイクへのアクセス許可が必要です (${err.message})。`;
             [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
         });
@@ -631,22 +663,17 @@ function handleRecognitionEnd() {
 
 function handleRecognitionError(event) {
     if (speakingPracticeScreen.style.display !== 'block') return;
-    console.error('SpeechRecognition error:', event.error);
     statusElement.textContent = `音声認識エラー: ${event.error}`;
     if (mediaRecorder && mediaRecorder.state === 'recording') {
         mediaRecorder.stop();
     }
 }
 
-
 function resetResults() {
     scoreElement.innerHTML = `0 <span class="score-unit">/ 100</span>`;
     scoreElement.className = '';
     feedbackElement.innerHTML = '-';
-    userRecordingPlayer.src = ''; 
-    modelAudioDuration = 0; 
-    userSpeechStartTime = 0;
-    userSpeechEndTime = 0;
+    userRecordingPlayer.src = '';
 }
 
 function setNewSentence() {
@@ -679,37 +706,52 @@ listenButton.addEventListener('click', () => {
 });
 
 startButton.addEventListener('click', () => { 
-    mediaRecorder.start();
-    recognition.start();
-    statusElement.textContent = "話してください...";
-    statusElement.classList.add('recording'); 
-    startButton.disabled = true; 
-    stopButton.disabled = false; 
-    resetResults(); 
+    if (!mediaRecorder || !recognition) {
+        statusElement.textContent = "エラー: 録音/認識機能が準備できていません。";
+        return;
+    }
+    try {
+        resetResults(); 
+        mediaRecorder.start();
+        recognition.start();
+        statusElement.textContent = "話してください...";
+        statusElement.classList.add('recording'); 
+        startButton.disabled = true; 
+        stopButton.disabled = false; 
+    } catch (err) {
+        statusElement.textContent = `開始エラー: ${err.message}`;
+        startButton.disabled = false; 
+        stopButton.disabled = true;
+    }
 });
 
 stopButton.addEventListener('click', () => {
-    if (mediaRecorder.state === 'recording') mediaRecorder.stop();
-    if (recognition) recognition.stop();
+     try {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+        }
+        if (recognition) {
+            recognition.stop(); 
+        }
+    } catch (err) {
+        statusElement.textContent = `停止エラー: ${err.message}`;
+        startButton.disabled = false;
+        stopButton.disabled = true;
+        statusElement.classList.remove('recording');
+    }
 });
 
 function generateCombinedFeedback(transcript) {
     const originalText = pronunciationSentences[currentSentenceIndex].en;
-    const cleanOriginal = originalText.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/); 
-    const cleanUser = transcript.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/); 
-
+    const cleanOriginal = originalText.toLowerCase().replace(/[.,!?]/g, '').split(' ');
+    const cleanUser = transcript.toLowerCase().replace(/[.,!?]/g, '').split(' ');
     let correctWords = 0;
     const feedbackHtml = cleanOriginal.map((word, index) => {
-        if (cleanUser[index] === word) { 
-            correctWords++; 
-            return `<span class="correct">${word}</span>`; 
-        } else { 
-            const userWord = cleanUser[index] ? `<span class="your-speech">${cleanUser[index]}</span>` : '<span class="your-speech">×</span>';
-            return `<span class="incorrect" data-word="${word}">${word}</span> (${userWord})`; 
-        }
+        if (cleanUser[index] === word) { correctWords++; return `<span class="correct">${word}</span>`; }
+        else { return `<span class="incorrect" data-word="${word}">${word}</span> (<span class="your-speech">${cleanUser[index] || '×'}</span>)`; }
     }).join(' ');
-    
-    const score = cleanOriginal.length > 0 ? Math.round((correctWords / cleanOriginal.length) * 100) : 0; 
+
+    const score = Math.round((correctWords / cleanOriginal.length) * 100);
     scoreElement.innerHTML = `${score} <span class="score-unit">/ 100</span>`;
     scoreElement.className = score >= 80 ? 'score-high' : score >= 50 ? 'score-mid' : 'score-low';
     
@@ -717,21 +759,16 @@ function generateCombinedFeedback(transcript) {
 
     const userSpeechDuration = userSpeechEndTime - userSpeechStartTime;
     let paceFeedback = '';
-    
-    console.log(`User speech duration: ${userSpeechDuration}ms`, `Model duration: ${modelAudioDuration}ms`);
-
-    if (modelAudioDuration > 50 && userSpeechDuration > 50) { 
+    if (modelAudioDuration > 0 && userSpeechDuration > 0) {
         const paceRatio = userSpeechDuration / modelAudioDuration;
-        if (paceRatio > 1.5) { 
-            paceFeedback = "🐢 <strong>ペース:</strong> 少しゆっくりでした。もう少しテンポを上げてみましょう。";
-        } else if (paceRatio < 0.7) { 
-            paceFeedback = "🐇 <strong>ペース:</strong> 少し早口でした。焦らず話してみましょう。";
+        if (paceRatio > 1.4) {
+            paceFeedback = "🐢 <strong>ペース:</strong> もう少しテンポを上げると、より自然なリズムになります。";
+        } else if (paceRatio < 0.8) {
+            paceFeedback = "🐇 <strong>ペース:</strong> 少し早口かもしれません。焦らずゆっくり話すことを意識しましょう。";
         } else {
-            paceFeedback = "👍 <strong>ペース:</strong> 素晴らしい！お手本に近い自然なスピードです。";
+            paceFeedback = "👍 <strong>ペース:</strong> 素晴らしい！お手本に近い自然なスピードで話せています。";
         }
         fullFeedback += `<div class="feedback-pace-section">${paceFeedback}</div>`;
-    } else {
-         fullFeedback += `<div class="feedback-pace-section">ⓘ ペースの評価に必要な音声が録音されませんでした。</div>`;
     }
 
     feedbackElement.innerHTML = fullFeedback;
@@ -771,7 +808,6 @@ function shuffleArray(array) { return [...array].sort(() => Math.random() - 0.5)
 function startNewQuizSet() {
     const fullQuizData = quizDataSets[currentQuizLevel];
     if (!fullQuizData || fullQuizData.length === 0) {
-        console.error(`No quiz data found for level: ${currentQuizLevel}`);
         alert(`レベル「${currentQuizLevel}」の単語データが見つかりません。`);
         return;
     }
@@ -987,11 +1023,10 @@ function endReadingQuiz() {
     readingEndScreen.style.display = 'block';
      if (currentReadingData && currentReadingData.questions) {
         readingFinalScore.textContent = `${currentReadingData.questions.length}問中 ${readingScore}問 正解！`;
-        // リザルト画面に本文と訳を表示
         document.getElementById('review-passage-en').textContent = currentReadingData.passage;
         document.getElementById('review-passage-ja').textContent = currentReadingData.translation;
     } else {
-        readingFinalScore.textContent = "スコアの計算に問題がありました。"; // Fallback message
+        readingFinalScore.textContent = "スコアの計算に問題がありました。";
     }
 }
 
@@ -1011,9 +1046,8 @@ let peerConnection;
 let localStream;
 let remoteStream;
 let socket;
-const roomId = 'default-room'; // 簡略化のためルームIDを固定
+const roomId = 'default-room'; 
 
-// Googleが提供するパブリックSTUNサーバー
 const stunServers = {
     iceServers: [
         { urls: 'stun:stun.l.google.com:19302' }
@@ -1029,9 +1063,8 @@ async function startCall() {
     videoStatus.textContent = "カメラとマイクを起動中..."; 
 
     try {
-        // ▼▼▼ 【修正】 映像ありに変更 ▼▼▼
+        // 映像も取得するように変更 (video: true)
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true }); 
-        // ▼▼▼ 【修正】 自分の映像をセット ▼▼▼
         localVideo.srcObject = localStream;
     } catch (err) {
         console.error("getUserMedia error:", err);
@@ -1044,7 +1077,7 @@ async function startCall() {
     videoStatus.textContent = "シグナリングサーバーに接続中...";
 
     // ★ここをReplitのURL (wss://...) に書き換えてください
-    let wsUrl = 'wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev:8080/'; 
+    let wsUrl = 'wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev:8080'; 
     try {
         socket = new WebSocket(wsUrl); 
     } catch (err) {
@@ -1061,8 +1094,6 @@ async function startCall() {
 
     socket.onmessage = async (message) => {
         const data = JSON.parse(message.data);
-        console.log('シグナリングメッセージ受信:', data);
-
         try {
             switch (data.type) {
                 case 'joined':
@@ -1121,7 +1152,7 @@ function createPeerConnection() {
             event.streams[0].getTracks().forEach(track => {
                 remoteStream.addTrack(track);
             });
-            // ▼▼▼ 【修正】 映像を表示 ▼▼▼
+            // 相手の映像をセット
             remoteVideo.srcObject = remoteStream; 
         };
 
@@ -1141,7 +1172,6 @@ function createPeerConnection() {
             }
         };
 
-        // ローカルストリームのトラックを追加
         if (localStream) {
             localStream.getTracks().forEach(track => {
                 peerConnection.addTrack(track, localStream);
@@ -1163,10 +1193,6 @@ function hangUp() {
     if (localStream) {
         localStream.getTracks().forEach(track => track.stop());
         localStream = null;
-    }
-    if (remoteStream) {
-        remoteStream.getTracks().forEach(track => track.stop());
-        remoteStream = null;
     }
     if (socket) {
         socket.close();

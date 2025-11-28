@@ -13,13 +13,13 @@
 
     <!-- オープニング画面 -->
     <div id="splash-screen" class="screen active">
-        <img src="https://assets.stickpng.com/thumbs/580b57fcd9996e24bc43c1ee.png" alt="English Park Logo" class="splash-logo">
+        <div class="splash-logo">🌳</div>
         <h1>English Park</h1>
         <p>Welcome to your English learning journey!</p>
         <button id="enter-app-button" class="action-button">スタート</button>
     </div>
 
-    <!-- 説明用モーダルウィンドウ (共通) -->
+    <!-- 説明用モーダルウィンドウ -->
     <div id="info-modal" class="modal hidden">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -219,13 +219,12 @@
                         </div>
                     </div>
                 </div>
-
                 <button id="reading-restart-button" class="restart-button">別の文章に挑戦する</button>
             </div>
         </div>
     </main>
 
-    <!-- ビデオチャット画面 -->
+    <!-- ビデオチャット画面 (映像あり) -->
     <main id="video-chat-screen" class="screen">
         <div class="container">
             <button id="backButtonFromVideo" class="back-button">🏠 ホームに戻る</button>
@@ -235,9 +234,12 @@
                 <p id="video-topic">What is the most interesting place you have ever visited?</p>
             </div>
             
+            <!-- 映像表示エリア -->
             <div class="video-container">
                 <video id="remote-video" autoplay playsinline></video>
-                <video id="local-video" autoplay muted playsinline></video>
+                <div class="local-video-wrapper">
+                    <video id="local-video" autoplay muted playsinline></video>
+                </div>
             </div>
 
             <div id="video-controls">
