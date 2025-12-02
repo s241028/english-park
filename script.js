@@ -1233,7 +1233,7 @@ async function startCall() {
     videoStatus.textContent = "シグナリングサーバーに接続中...";
 
     // ★ここをReplitのURL (wss://...) に書き換えてください
-    let wsUrl = 'wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev:8080/'; 
+    let wsUrl = 'ws://localhost:8080'; 
     try {
         socket = new WebSocket(wsUrl); 
     } catch (err) {
@@ -1302,11 +1302,6 @@ async function startCall() {
         }
         hangUp();
     };
-
-    socket.onerror = (err) => {
-        console.error("WebSocket error:", err);
-        videoStatus.textContent = "サーバー接続エラー。server.jsが起動しているか確認してください。";
-    };
 }
 
 function createPeerConnection() {
@@ -1353,7 +1348,9 @@ function createPeerConnection() {
 }
 
 function hangUp() {
-    videoStatus.textContent = "通話を終了しました。";
+    if (videoStatus.textContent !== "通話を終了しました。") { 
+         videoStatus.textContent = "通話を終了しました。";
+    }
     
     if (peerConnection) {
         peerConnection.close();
@@ -1362,10 +1359,6 @@ function hangUp() {
     if (localStream) {
         localStream.getTracks().forEach(track => track.stop());
         localStream = null;
-    }
-    if (remoteStream) {
-        remoteStream.getTracks().forEach(track => track.stop());
-        remoteStream = null;
     }
     if (socket) {
         socket.close();
