@@ -1,5 +1,5 @@
 // =============================================
-//  全体で使用するデータ
+//  全体で使用するデータ (完全版)
 // =============================================
 const pronunciationSentences = [
     { en: "How are you doing?", ja: "調子はどうですか？" },
@@ -391,6 +391,10 @@ const featureDescriptions = {
     videochat: {
         title: "ビデオチャット",
         description: "WebRTC技術を使用して、離れた場所にいる相手とリアルタイムで映像と音声をつないで会話ができます。\n\n表示されるトピックについて話したり、フリートークを楽しんだりして、実践的な英会話力を身につけましょう。\n(カメラとマイクの許可が必要です)"
+    },
+    industry: {
+        title: "専門分野別 (Industry Focus)",
+        description: "特定の業界（IT, ビジネス, 医療, 金融）に特化した専門用語やフレーズを学習できます。\n\n・フラッシュカード: 重要単語の暗記\n・キーフレーズ: 実践的な例文\n・ミニ記事: 業界ニュースの読解\n\n自分のキャリアや興味に合わせた英語力を身につけましょう。"
     }
 };
 
@@ -480,12 +484,19 @@ const quizLevelScreen = document.getElementById('quiz-level-screen');
 const listeningChallengeScreen = document.getElementById('listening-challenge-screen');
 const readingQuizScreen = document.getElementById('reading-quiz-screen');
 const videoChatScreen = document.getElementById('video-chat-screen');
+// Industry Focus Screens
+const industrySelectionScreen = document.getElementById('industry-selection-screen');
+const industryModuleScreen = document.getElementById('industry-module-screen');
+const industryFlashcardScreen = document.getElementById('industry-flashcard-screen');
+const industryPhraseScreen = document.getElementById('industry-phrase-screen');
+const industryArticleScreen = document.getElementById('industry-article-screen');
 
 const startSpeakingPracticeButton = document.getElementById('start-speaking-practice');
 const goToQuizLevelsButton = document.getElementById('go-to-quiz-levels');
 const startListeningChallengeButton = document.getElementById('start-listening-challenge');
 const startReadingQuizButton = document.getElementById('start-reading-quiz');
 const startVideoChatButton = document.getElementById('start-video-chat');
+const startIndustryFocusButton = document.getElementById('start-industry-focus'); // New
 
 const backButtonSpeaking = document.getElementById('backButtonSpeaking');
 const backButtonFromLevels = document.getElementById('backButtonFromLevels');
@@ -493,6 +504,13 @@ const backButtonFromQuiz = document.getElementById('backButtonFromQuiz');
 const backButtonFromListening = document.getElementById('backButtonFromListening');
 const backButtonFromReading = document.getElementById('backButtonFromReading');
 const backButtonFromVideo = document.getElementById('backButtonFromVideo');
+// Industry Focus Back Buttons
+const backButtonFromIndustry = document.getElementById('backButtonFromIndustry');
+const backButtonFromModule = document.getElementById('backButtonFromModule');
+const backButtonFromIndFlashcard = document.getElementById('backButtonFromIndFlashcard');
+const backButtonFromIndPhrase = document.getElementById('backButtonFromIndPhrase');
+const backButtonFromIndArticle = document.getElementById('backButtonFromIndArticle');
+
 
 function showScreen(screenToShow) {
     document.querySelectorAll('.screen').forEach(s => {
@@ -532,6 +550,10 @@ startVideoChatButton.addEventListener('click', (e) => {
     document.getElementById('video-status').textContent = "「Start Call」を押して、カメラとマイクを許可してください。";
     showScreen(videoChatScreen);
 });
+startIndustryFocusButton.addEventListener('click', (e) => {
+    if(e.target.classList.contains('info-btn')) return;
+    showScreen(industrySelectionScreen);
+});
 
 backButtonSpeaking.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromLevels.addEventListener('click', () => showScreen(homeScreen));
@@ -539,6 +561,12 @@ backButtonFromQuiz.addEventListener('click', () => showScreen(quizLevelScreen));
 backButtonFromListening.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromReading.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromVideo.addEventListener('click', () => { if (typeof peerConnection !== 'undefined' && peerConnection) { hangUp(); } showScreen(homeScreen); });
+// Industry Focus Back Actions
+backButtonFromIndustry.addEventListener('click', () => showScreen(homeScreen));
+backButtonFromModule.addEventListener('click', () => showScreen(industrySelectionScreen));
+backButtonFromIndFlashcard.addEventListener('click', () => showScreen(industryModuleScreen));
+backButtonFromIndPhrase.addEventListener('click', () => showScreen(industryModuleScreen));
+backButtonFromIndArticle.addEventListener('click', () => showScreen(industryModuleScreen));
 
 
 // =============================================
@@ -798,12 +826,16 @@ const quizEndScreen = document.getElementById('quiz-end-screen');
 const quizFinalScore = document.getElementById('quiz-final-score');
 const quizRestartButton = document.getElementById('quiz-restart-button');
 let currentQuizIndex = 0, quizScore = 0, questionsForCurrentQuiz = [], currentQuizLevel = '';
-levelCards.forEach(card => {
+
+// クイズレベル選択 (Industry Focus用も兼ねるため、IDで識別するか汎用化が必要だが、今回はHomeからの遷移のみ)
+// Note: Industry Focus uses selectIndustry()
+document.querySelectorAll('#quiz-level-screen .level-card').forEach(card => {
     card.addEventListener('click', () => {
         currentQuizLevel = card.dataset.level;
         startNewQuizSet();
     });
 });
+
 function shuffleArray(array) { return [...array].sort(() => Math.random() - 0.5); }
 function startNewQuizSet() {
     const fullQuizData = quizDataSets[currentQuizLevel];
@@ -1034,6 +1066,272 @@ readingRestartButton.addEventListener('click', startNewReadingQuiz);
 
 
 // =============================================
+//  Industry Focus Logic (New)
+// =============================================
+const industryData = {
+    it: {
+        title: "IT & Tech",
+        flashcards: [
+            { term: "Latency", meaning: "遅延（時間）", sentence: "We need to reduce the network latency for better performance." },
+            { term: "Scalability", meaning: "拡張性", sentence: "Cloud services offer high scalability for growing businesses." },
+            { term: "Encryption", meaning: "暗号化", sentence: "End-to-end encryption protects user privacy." },
+            { term: "Deployment", meaning: "展開・実装", sentence: "The deployment to the production server was successful." },
+            { term: "Algorithm", meaning: 'アルゴリズム', sentence: 'We developed a new search algorithm.' },
+            { term: "Backend", meaning: "バックエンド", sentence: "He specializes in backend development using Node.js." },
+            { term: "Debugging", meaning: "デバッグ", sentence: "Debugging is an essential part of software development." },
+            { term: "Authentication", meaning: "認証", sentence: "Two-factor authentication improves security." }
+        ],
+        phrases: [
+            { 
+                scenario: "Daily Stand-up",
+                keyphrase: "I'm currently working on...",
+                translation: "現在は〜に取り組んでいます",
+                scenarioTrans: "毎日のスタンドアップミーティングにて"
+            },
+            { 
+                scenario: "Reporting an Issue",
+                keyphrase: "I've encountered a blocker.",
+                translation: "進行を妨げる問題（ブロッカー）に遭遇しました",
+                scenarioTrans: "進捗報告にて"
+            },
+            { 
+                scenario: "Code Review",
+                keyphrase: "Could you walk me through this logic?",
+                translation: "このロジックについて説明してもらえますか？",
+                scenarioTrans: "コードレビューにて"
+            }
+        ],
+        articles: [
+            {
+                title: "The Rise of AI Agents",
+                content: "Autonomous AI agents are becoming increasingly capable of performing complex tasks without human intervention. Unlike traditional chatbots, these agents can plan, execute, and refine their actions to achieve specific goals, transforming how we interact with software.",
+                source: "TechDaily 2024",
+                translation: "自律型AIエージェントは、人間の介入なしに複雑なタスクを実行する能力をますます高めています。従来のチャットボットとは異なり、これらのエージェントは特定の目標を達成するために行動を計画、実行、修正することができ、私たちがソフトウェアと対話する方法を変革しています。"
+            },
+            {
+                title: "Zero Trust Security",
+                content: "Zero Trust architecture is rapidly becoming the standard for cloud security. Organizations are moving away from perimeter-based defenses to a model where every access request is verified, regardless of where it originates.",
+                source: "CyberSec Weekly",
+                translation: "ゼロトラストアーキテクチャは、急速にクラウドセキュリティの標準になりつつあります。組織は境界ベースの防御から、アクセス要求がどこから来たかにかかわらず、すべての要求を検証するモデルへと移行しています。"
+            }
+        ]
+    },
+    business: {
+        title: "Business",
+        flashcards: [
+            { term: "ROI", meaning: "投資対効果", sentence: "We need to calculate the ROI before approving the budget." },
+            { term: "Stakeholder", meaning: "利害関係者", sentence: "It is important to keep all stakeholders informed." },
+            { term: "Quarterly", meaning: "四半期ごとの", sentence: "Our quarterly earnings exceeded expectations." },
+            { term: "Agenda", meaning: "議題", sentence: "Let's stick to the agenda to save time." },
+            { term: "Strategy", meaning: "戦略", sentence: "We are developing a new marketing strategy." }
+        ],
+        phrases: [
+            { 
+                scenario: "Negotiation",
+                keyphrase: "Is there any room for movement on the price?",
+                translation: "価格について交渉の余地はありますか？",
+                scenarioTrans: "価格交渉にて"
+            },
+            { 
+                scenario: "Meeting",
+                keyphrase: "Let's get the ball rolling.",
+                translation: "さあ、始めましょう。",
+                scenarioTrans: "会議の開始時"
+            },
+            { 
+                scenario: "Agreement",
+                keyphrase: "I think we're on the same page.",
+                translation: "私たちの認識は一致していると思います。",
+                scenarioTrans: "合意形成時"
+            }
+        ],
+        articles: [
+            {
+                title: "Remote Work Trends",
+                content: "Many companies are settling into a permanent hybrid work model. This approach balances the flexibility of working from home with the collaborative benefits of in-person interaction, though it presents new challenges for company culture.",
+                source: "BizWorld",
+                translation: "多くの企業が恒久的なハイブリッドワークモデルに落ち着きつつあります。このアプローチは、在宅勤務の柔軟性と対面での交流による協力的なメリットのバランスをとっていますが、企業文化にとって新たな課題も提示しています。"
+            }
+        ]
+    },
+    medical: {
+        title: "Medical",
+        flashcards: [
+            { term: "Diagnosis", meaning: "診断", sentence: "Early diagnosis is key to effective treatment." },
+            { term: "Prescription", meaning: "処方箋", sentence: "The doctor wrote a prescription for antibiotics." },
+            { term: "Symptom", meaning: "症状", sentence: "Common symptoms include fever and cough." },
+            { term: "Chronic", meaning: "慢性の", sentence: "He suffers from chronic back pain." },
+            { term: "Vaccine", meaning: "ワクチン", sentence: "The new vaccine proved to be highly effective." }
+        ],
+        phrases: [
+            { 
+                scenario: "Consultation",
+                keyphrase: "On a scale of 1 to 10, how would you rate your pain?",
+                translation: "1から10の段階で言うと、痛みはどれくらいですか？",
+                scenarioTrans: "患者の診察にて"
+            },
+            { 
+                scenario: "Treatment",
+                keyphrase: "This medication may cause some side effects.",
+                translation: "この薬はいくつかの副作用を引き起こす可能性があります。",
+                scenarioTrans: "治療説明にて"
+            }
+        ],
+        articles: [
+            {
+                title: "Gene Therapy Breakthroughs",
+                content: "Recent breakthroughs in CRISPR technology have opened new possibilities for treating genetic disorders. Clinical trials are showing promising results for conditions previously thought untreatable, offering hope to millions.",
+                source: "MedJournal",
+                translation: "CRISPR技術における最近の進歩は、遺伝性疾患の治療に新たな可能性を切り開きました。臨床試験では、以前は治療不可能と考えられていた病状に対して有望な結果が示されており、何百万人もの人々に希望を与えています。"
+            }
+        ]
+    },
+    finance: {
+        title: "Finance",
+        flashcards: [
+            { term: "Asset", meaning: "資産", sentence: "The company has significant assets in real estate." },
+            { term: "Liability", meaning: "負債", sentence: "Reducing liabilities is our primary goal this year." },
+            { term: "Dividend", meaning: "配当", sentence: "Shareholders received a dividend of $2 per share." },
+            { term: "Compliance", meaning: "法令遵守", sentence: "We must ensure strict compliance with new regulations." },
+            { term: "Audit", meaning: "監査", sentence: "The annual audit will begin next week." }
+        ],
+        phrases: [
+            { 
+                scenario: "Investment",
+                keyphrase: "It's crucial to diversify your portfolio.",
+                translation: "ポートフォリオを分散させることが極めて重要です。",
+                scenarioTrans: "投資アドバイスにて"
+            },
+            { 
+                scenario: "Contract",
+                keyphrase: "Please review the terms and conditions carefully.",
+                translation: "利用規約を注意深く確認してください。",
+                scenarioTrans: "契約確認にて"
+            }
+        ],
+        articles: [
+            {
+                title: "Cryptocurrency Regulation",
+                content: "Governments worldwide are intensifying efforts to regulate cryptocurrency markets. The focus is on preventing money laundering and ensuring consumer protection without stifling innovation in the fintech sector.",
+                source: "FinanceDaily",
+                translation: "世界各国の政府は、暗号資産市場の規制強化に力を入れています。焦点は、フィンテック分野のイノベーションを阻害することなく、マネーロンダリングを防止し、消費者保護を確保することにあります。"
+            }
+        ]
+    }
+};
+
+// Industry State
+let currentCategoryKey = null;
+let indCurrentIndex = 0;
+
+function selectIndustry(key) {
+    currentCategoryKey = key;
+    const data = industryData[key];
+    document.getElementById('industry-title-display').textContent = data.title;
+    showScreen(document.getElementById('industry-module-screen'));
+}
+
+function startIndustryModule(moduleType) {
+    indCurrentIndex = 0;
+    const data = industryData[currentCategoryKey];
+    
+    if (moduleType === 'flashcards') {
+        document.getElementById('ind-flashcard-header').textContent = `${data.title} - Flashcards`;
+        updateIndFlashcardUI();
+        showScreen(document.getElementById('industry-flashcard-screen'));
+    } else if (moduleType === 'phrases') {
+        document.getElementById('ind-phrase-header').textContent = `${data.title} - Key Phrases`;
+        updateIndPhraseUI();
+        showScreen(document.getElementById('industry-phrase-screen'));
+    } else if (moduleType === 'articles') {
+        document.getElementById('ind-article-header').textContent = `${data.title} - Mini Articles`;
+        updateIndArticleUI();
+        showScreen(document.getElementById('industry-article-screen'));
+    }
+}
+
+// -- Flashcards --
+function updateIndFlashcardUI() {
+    const list = industryData[currentCategoryKey].flashcards;
+    const item = list[indCurrentIndex];
+    const inner = document.getElementById('ind-flashcard-inner');
+    inner.classList.remove('flipped'); // reset flip
+
+    setTimeout(() => { // delay content update slightly for smoother transition if flipping back
+        document.getElementById('ind-card-front').textContent = item.term;
+        document.getElementById('ind-card-back-meaning').textContent = item.meaning;
+        document.getElementById('ind-card-back-sentence').textContent = `"${item.sentence}"`;
+        document.getElementById('ind-card-progress').textContent = `${indCurrentIndex + 1} / ${list.length}`;
+    }, 200);
+}
+function flipIndCard() {
+    document.getElementById('ind-flashcard-inner').classList.toggle('flipped');
+}
+function nextIndCard() {
+    const list = industryData[currentCategoryKey].flashcards;
+    if (indCurrentIndex < list.length - 1) indCurrentIndex++;
+    else indCurrentIndex = 0;
+    updateIndFlashcardUI();
+}
+function prevIndCard() {
+    const list = industryData[currentCategoryKey].flashcards;
+    if (indCurrentIndex > 0) indCurrentIndex--;
+    else indCurrentIndex = list.length - 1;
+    updateIndFlashcardUI();
+}
+
+// -- Phrases --
+function updateIndPhraseUI() {
+    const list = industryData[currentCategoryKey].phrases;
+    const item = list[indCurrentIndex];
+    
+    document.getElementById('ind-phrase-scenario').textContent = item.scenario;
+    document.getElementById('ind-scenario-trans').textContent = item.scenarioTrans;
+    document.getElementById('ind-phrase-text').textContent = item.keyphrase;
+    
+    document.getElementById('ind-phrase-trans-container').classList.add('hidden');
+    document.getElementById('ind-scenario-trans').classList.add('hidden');
+    
+    document.getElementById('ind-phrase-trans').textContent = item.translation;
+    document.getElementById('ind-phrase-progress').textContent = `${indCurrentIndex + 1} / ${list.length}`;
+}
+function toggleIndPhraseTrans() {
+    document.getElementById('ind-phrase-trans-container').classList.toggle('hidden');
+    document.getElementById('ind-scenario-trans').classList.toggle('hidden');
+}
+function nextIndPhrase() {
+    const list = industryData[currentCategoryKey].phrases;
+    if (indCurrentIndex < list.length - 1) indCurrentIndex++;
+    else indCurrentIndex = 0;
+    updateIndPhraseUI();
+}
+
+// -- Articles --
+function updateIndArticleUI() {
+    const list = industryData[currentCategoryKey].articles;
+    const item = list[indCurrentIndex];
+    
+    document.getElementById('ind-article-title').textContent = item.title;
+    document.getElementById('ind-article-content').textContent = item.content;
+    document.getElementById('ind-article-source').textContent = item.source;
+    
+    document.getElementById('ind-article-trans-container').classList.add('hidden');
+    document.getElementById('ind-article-trans').textContent = item.translation;
+    
+    document.getElementById('ind-article-progress').textContent = `${indCurrentIndex + 1} / ${list.length}`;
+}
+function toggleIndArticleTrans() {
+    document.getElementById('ind-article-trans-container').classList.toggle('hidden');
+}
+function nextIndArticle() {
+    const list = industryData[currentCategoryKey].articles;
+    if (indCurrentIndex < list.length - 1) indCurrentIndex++;
+    else indCurrentIndex = 0;
+    updateIndArticleUI();
+}
+
+
+// =============================================
 //  ビデオチャットロジック (WebRTC実装 - 映像あり版)
 // =============================================
 const startCallBtn = document.getElementById('start-call-btn');
@@ -1063,7 +1361,7 @@ async function startCall() {
     videoStatus.textContent = "カメラとマイクを起動中..."; 
 
     try {
-        // 映像も取得するように変更 (video: true)
+        // ▼▼▼ 映像あり ▼▼▼
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true }); 
         localVideo.srcObject = localStream;
     } catch (err) {
@@ -1077,7 +1375,7 @@ async function startCall() {
     videoStatus.textContent = "シグナリングサーバーに接続中...";
 
     // ★ここをReplitのURL (wss://...) に書き換えてください
-    let wsUrl = 'wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev:8080/'; 
+    let wsUrl = 'ws://localhost:8080'; 
     try {
         socket = new WebSocket(wsUrl); 
     } catch (err) {
@@ -1094,6 +1392,8 @@ async function startCall() {
 
     socket.onmessage = async (message) => {
         const data = JSON.parse(message.data);
+        console.log('シグナリングメッセージ受信:', data);
+
         try {
             switch (data.type) {
                 case 'joined':
@@ -1137,6 +1437,13 @@ async function startCall() {
             console.error(err);
         }
     };
+
+    socket.onclose = () => {
+        if (videoStatus.textContent !== "通話を終了しました。") { 
+             videoStatus.textContent = "サーバーから切断されました。";
+        }
+        hangUp();
+    };
 }
 
 function createPeerConnection() {
@@ -1152,7 +1459,6 @@ function createPeerConnection() {
             event.streams[0].getTracks().forEach(track => {
                 remoteStream.addTrack(track);
             });
-            // 相手の映像をセット
             remoteVideo.srcObject = remoteStream; 
         };
 
@@ -1184,7 +1490,9 @@ function createPeerConnection() {
 }
 
 function hangUp() {
-    videoStatus.textContent = "通話を終了しました。";
+    if (videoStatus.textContent !== "通話を終了しました。") { 
+         videoStatus.textContent = "通話を終了しました。";
+    }
     
     if (peerConnection) {
         peerConnection.close();

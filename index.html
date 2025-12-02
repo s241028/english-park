@@ -69,18 +69,178 @@
                     <h3>読解練習</h3>
                     <p>短い英文を読み、内容に関するクイズに挑戦しよう。</p>
                 </div>
+                <!-- ▼▼▼ 追加: Industry Focus ▼▼▼ -->
+                <div class="game-card" id="start-industry-focus">
+                    <button class="info-btn" data-feature="industry">i</button>
+                    <div class="game-icon">🚀</div>
+                    <h3>専門分野別 (Industry Focus)</h3>
+                    <p>IT、ビジネス、医療などの専門用語や記事を学びます。</p>
+                </div>
+                <!-- ▲▲▲ 追加ここまで ▲▲▲ -->
                 <div class="game-card" id="start-video-chat">
                     <button class="info-btn" data-feature="videochat">i</button>
-                    <div class="game-icon">📹</div>
-                    <h3>ビデオチャット</h3>
+                    <div class="game-icon">📞</div>
+                    <h3>音声通話チャット</h3>
                     <p>お題について英語でフリートークしよう。</p>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- スピーキング練習画面 -->
-    <main id="speaking-practice-screen" class="screen">
+    <!-- Industry Focus: 業界選択画面 -->
+    <main id="industry-selection-screen" class="screen">
+        <div class="container">
+            <button id="backButtonFromIndustry" class="back-button">🏠 ホームに戻る</button>
+            <h1>専門分野を選択 🚀</h1>
+            <p class="description">学習したい業界を選んでください。</p>
+            <div class="level-selection-grid">
+                <div class="level-card" onclick="selectIndustry('it')">
+                    <div class="game-icon">💻</div>
+                    <h3>IT & Tech</h3>
+                    <p>テクノロジー・開発</p>
+                </div>
+                <div class="level-card" onclick="selectIndustry('business')">
+                    <div class="game-icon">💼</div>
+                    <h3>Business</h3>
+                    <p>経営・マネジメント</p>
+                </div>
+                <div class="level-card" onclick="selectIndustry('medical')">
+                    <div class="game-icon">🩺</div>
+                    <h3>Medical</h3>
+                    <p>医療・科学</p>
+                </div>
+                <div class="level-card" onclick="selectIndustry('finance')">
+                    <div class="game-icon">⚖️</div>
+                    <h3>Finance</h3>
+                    <p>金融・法律</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Industry Focus: モード選択画面 -->
+    <main id="industry-module-screen" class="screen">
+        <div class="container">
+            <button id="backButtonFromModule" class="back-button">📜 分野選択に戻る</button>
+            <h1 id="industry-title-display">Industry Title</h1>
+            <p class="description">学習モードを選んでください。</p>
+            <div class="game-selection">
+                <div class="game-card" onclick="startIndustryModule('flashcards')">
+                    <div class="game-icon">🃏</div>
+                    <h3>フラッシュカード</h3>
+                    <p>重要単語を効率よく暗記します。</p>
+                </div>
+                <div class="game-card" onclick="startIndustryModule('phrases')">
+                    <div class="game-icon">💬</div>
+                    <h3>キーフレーズ</h3>
+                    <p>実践的なフレーズを文脈で学びます。</p>
+                </div>
+                <div class="game-card" onclick="startIndustryModule('articles')">
+                    <div class="game-icon">📰</div>
+                    <h3>ミニ記事読解</h3>
+                    <p>短い業界ニュースで読解力を鍛えます。</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Industry Focus: フラッシュカード画面 -->
+    <main id="industry-flashcard-screen" class="screen">
+        <div class="container">
+            <button id="backButtonFromIndFlashcard" class="back-button">↩ モード選択に戻る</button>
+            <h1 id="ind-flashcard-header">Flashcards</h1>
+            
+            <div class="card-container perspective-1000 h-80 w-full mb-8 cursor-pointer" onclick="flipIndCard()">
+                <div id="ind-flashcard-inner" class="card-inner relative w-full h-full shadow-xl rounded-2xl transition-transform duration-500">
+                    <!-- 表面 -->
+                    <div class="card-front absolute w-full h-full bg-white rounded-2xl border-2 border-indigo-50 flex flex-col items-center justify-center p-8 backface-hidden">
+                        <span class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Term</span>
+                        <p id="ind-card-front" class="text-4xl font-bold text-primary-text text-center"></p>
+                        <p class="text-xs text-gray-400 mt-8 absolute bottom-6">Tap to flip ↻</p>
+                    </div>
+                    <!-- 裏面 -->
+                    <div class="card-back absolute w-full h-full bg-indigo-50 rounded-2xl border-2 border-indigo-100 flex flex-col items-center justify-center p-8 backface-hidden rotate-y-180">
+                        <span class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Meaning</span>
+                        <p id="ind-card-back-meaning" class="text-2xl font-bold text-neon-cyan mb-4 text-center"></p>
+                        <div class="w-full border-t border-gray-200 pt-4 mt-2">
+                            <p id="ind-card-back-sentence" class="text-light-text italic text-center text-sm leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="prevIndCard()" class="action-button">&larr; Prev</button>
+                <span id="ind-card-progress" class="text-lg font-bold mx-4">1 / 10</span>
+                <button onclick="nextIndCard()" class="action-button primary">Next &rarr;</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Industry Focus: キーフレーズ画面 -->
+    <main id="industry-phrase-screen" class="screen">
+        <div class="container">
+            <button id="backButtonFromIndPhrase" class="back-button">↩ モード選択に戻る</button>
+            <h1 id="ind-phrase-header">Key Phrases</h1>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-sm text-gray-400">SCENARIO</h2>
+                </div>
+                <p id="ind-phrase-scenario" class="text-lg mb-2"></p>
+                <p id="ind-scenario-trans" class="text-sm text-gray-500 hidden"></p>
+                
+                <div class="mt-6">
+                    <p class="text-sm text-neon-cyan font-bold mb-2">KEY PHRASE</p>
+                    <p id="ind-phrase-text" class="text-2xl font-bold text-primary-text"></p>
+                </div>
+
+                <div id="ind-phrase-trans-container" class="hidden mt-4 pt-4 border-t border-gray-200">
+                    <p class="text-sm text-gray-400">MEANING</p>
+                    <p id="ind-phrase-trans" class="text-xl font-bold text-neon-green"></p>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="toggleIndPhraseTrans()" class="action-button">訳を表示/非表示</button>
+                <button onclick="nextIndPhrase()" class="action-button primary">次のフレーズ &rarr;</button>
+            </div>
+             <div class="text-center mt-4 text-gray-400">
+                <span id="ind-phrase-progress">1 / 5</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Industry Focus: ミニ記事画面 -->
+    <main id="industry-article-screen" class="screen">
+        <div class="container">
+            <button id="backButtonFromIndArticle" class="back-button">↩ モード選択に戻る</button>
+            <h1 id="ind-article-header">Mini Articles</h1>
+
+            <div class="card reading-passage-card">
+                <h2 id="ind-article-title"></h2>
+                <p id="ind-article-content"></p>
+                <div class="mt-4 text-right text-xs text-gray-400 italic">Source: <span id="ind-article-source"></span></div>
+                
+                <div id="ind-article-trans-container" class="hidden mt-6 pt-6 border-t border-gray-200 bg-gray-50 p-4 rounded">
+                    <h3 class="text-sm font-bold text-gray-500 mb-2">日本語訳</h3>
+                    <p id="ind-article-trans" class="text-sm text-gray-700"></p>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="toggleIndArticleTrans()" class="action-button">翻訳を確認</button>
+                <button onclick="nextIndArticle()" class="action-button primary">次の記事 &rarr;</button>
+            </div>
+            <div class="text-center mt-4 text-gray-400">
+                <span id="ind-article-progress">1 / 3</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- スピーキング練習、クイズ、リスニング、ビデオチャットの画面は既存のまま -->
+    <main id="speaking-practice-screen" style="display: none;">
+        <!-- ...省略 (元のコードと同じ) ... -->
         <div class="container">
             <button id="backButtonSpeaking" class="back-button">🏠 ホームに戻る</button>
             <h1>スピーキング練習 🗣️</h1>
@@ -110,8 +270,8 @@
         </div>
     </main>
 
-    <!-- クイズレベル選択画面 -->
-    <main id="quiz-level-screen" class="screen">
+    <main id="quiz-level-screen" style="display: none;">
+        <!-- ...省略 (元のコードと同じ) ... -->
         <div class="container">
             <button id="backButtonFromLevels" class="back-button">🏠 ホームに戻る</button>
             <h1>単語クイズ ✍️</h1>
@@ -137,8 +297,8 @@
         </div>
     </main>
 
-    <!-- 単語クイズ画面 -->
-    <main id="word-quiz-screen" class="screen">
+    <main id="word-quiz-screen" style="display: none;">
+        <!-- ...省略 (元のコードと同じ) ... -->
         <div class="container">
             <button id="backButtonFromQuiz" class="back-button">📜 レベル選択に戻る</button>
             <h1>単語クイズ ✍️</h1>
@@ -159,8 +319,8 @@
         </div>
     </main>
 
-    <!-- リスニングチャレンジ画面 -->
-    <main id="listening-challenge-screen" class="screen">
+    <main id="listening-challenge-screen" style="display: none;">
+        <!-- ...省略 (元のコードと同じ) ... -->
         <div class="container">
             <button id="backButtonFromListening" class="back-button">🏠 ホームに戻る</button>
             <h1>リスニングチャレンジ 🎧</h1>
@@ -184,8 +344,8 @@
         </div>
     </main>
 
-    <!-- 読解練習画面 -->
-    <main id="reading-quiz-screen" class="screen">
+    <main id="reading-quiz-screen" style="display: none;">
+        <!-- ...省略 (元のコードと同じ) ... -->
         <div class="container">
             <button id="backButtonFromReading" class="back-button">🏠 ホームに戻る</button>
             <h1>読解練習 📚</h1>
@@ -224,22 +384,20 @@
         </div>
     </main>
 
-    <!-- ビデオチャット画面 (映像あり) -->
-    <main id="video-chat-screen" class="screen">
+    <main id="video-chat-screen" style="display: none;">
+        <!-- ...省略 (元のコードと同じ) ... -->
         <div class="container">
             <button id="backButtonFromVideo" class="back-button">🏠 ホームに戻る</button>
-            <h1>ビデオチャット 💬</h1>
+            <h1>音声通話チャット 📞</h1>
             <div id="video-topic-card" class="card">
                 <h2>Conversation Topic</h2>
                 <p id="video-topic">What is the most interesting place you have ever visited?</p>
             </div>
             
-            <!-- 映像表示エリア -->
-            <div class="video-container">
-                <video id="remote-video" autoplay playsinline></video>
-                <div class="local-video-wrapper">
-                    <video id="local-video" autoplay muted playsinline></video>
-                </div>
+            <div class="card" style="text-align: center;">
+                <h3>相手の声</h3>
+                <audio id="remote-audio" controls autoplay style="width: 100%; margin-top: 10px;"></audio>
+                <p style="font-size: 0.9em; color: #888; margin-top: 5px;">※再生バーが動かない場合は接続を確認してください</p>
             </div>
 
             <div id="video-controls">
