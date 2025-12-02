@@ -93,7 +93,6 @@ const pronunciationSentences = [
     { en: "It's up to you.", ja: "あなた次第です。" },
     { en: "I'll keep that in mind.", ja: "心に留めておきます。" }
 ];
-
 const quizDataSets = {
     beginner: [
         { ja: "未来", correct: "future", incorrect: ["past", "letter", "dream"] }, { ja: "訪れる", correct: "visit", incorrect: ["return", "watch", "break"] },
@@ -200,6 +199,104 @@ const quizDataSets = {
         { ja: "好戦的な", correct: "pugnacious", incorrect: ["peaceful", "passive", "friendly"] }, { ja: "おしゃべりな", correct: "garrulous", incorrect: ["taciturn", "quiet", "silent"] }
     ]
 };
+const idiomsData = [
+    { idiom: "Break a leg!", meaning: "幸運を祈るよ！/ 頑張って！", description: "舞台に出る役者にかける激励の言葉が由来です。直接「Good luck」と言うと逆に不運を招くと信じられていたため、反対の言葉をかけるようになりました。" },
+    { idiom: "Bite the bullet.", meaning: "歯を食いしばって耐える / 困難に立ち向かう", description: "昔、麻酔なしで手術を受ける兵士が、痛みをこらえるために弾丸を噛んだという話から来ています。" },
+    { idiom: "Once in a blue moon.", meaning: "ごくまれに / めったにない", description: "「青い月」は非常に珍しい天文現象であることから、「めったに起こらないこと」のたとえとして使われます。" },
+    { idiom: "The ball is in your court.", meaning: "次の一手は君次第だ / あとは君の番だ", description: "テニスなどで、ボールが相手のコートにある状況をイメージしてください。ボールを打ち返すかどうかは相手次第ですよね。" },
+    { idiom: "Spill the beans.", meaning: "秘密を漏らす / ばらす", description: "古代ギリシャの投票で、豆が入った瓶をうっかりこぼしてしまい、結果がバレてしまったことから来ています。" },
+    { idiom: "Piece of cake.", meaning: "朝飯前 / とても簡単なこと", description: "楽に勝てたコンテストの賞品としてケーキが与えられたことから、「楽なこと」を意味するようになったと言われています。" },
+    { idiom: "Hit the road.", meaning: "出発する / 帰る", description: "文字通り「道（road）を打つ（hit）」、つまり旅や帰り道のために出発することを意味します。" },
+    { idiom: "Under the weather.", meaning: "気分が悪い / 体調がすぐれない", description: "船乗りが悪天候の時に船酔いを避けるため、甲板の下にいたことが由来とされています。" },
+    { idiom: "Cost an arm and a leg.", meaning: "非常に高価である", description: "自分の腕や脚を犠牲にするほどの価値がある、という意味から、とてつもなく高い値段を表す表現になりました。" },
+    { idiom: "Let the cat out of the bag.", meaning: "秘密をうっかり漏らす", description: "昔、市場で豚と偽って猫を袋に入れて売る詐欺があり、その袋から猫が飛び出して秘密がバレたことが由来です。" },
+    { idiom: "When pigs fly.", meaning: "ありえないこと", description: "「豚が空を飛ぶ」なんてことは絶対にありえない、という状況を表す皮肉な表現です。" },
+    { idiom: "Kill two birds with one stone.", meaning: "一石二鳥", description: "一つの石で二羽の鳥を仕留める、という意味で、一つの行動で二つの目的を達成することを表します。" },
+    { idiom: "A blessing in disguise.", meaning: "不幸中の幸い", description: "最初は悪いことだと思ったものが、後になって良い結果をもたらす状況を指します。" },
+    { idiom: "Call it a day.", meaning: "（その日の仕事を）切り上げる", description: "今日の仕事や活動はこれで終わり、と宣言する時に使います。" },
+    { idiom: "Get out of hand.", meaning: "手に負えなくなる", description: "状況がコントロールできないほど悪化したり、混沌としたりすることを指します。" },
+    { idiom: "Go the extra mile.", meaning: "一層の努力をする", description: "期待されている以上のこと、または求められている以上の努力をすることを意味します。" },
+    { idiom: "Hang in there.", meaning: "頑張って / あきらめないで", description: "困難な状況にいる人に対して、励ましの言葉として使われます。" },
+    { idiom: "It's not rocket science.", meaning: "そんなに難しいことじゃない", description: "ロケット科学ほど複雑ではない、つまり「非常に簡単だ」ということを強調する表現です。" },
+    { idiom: "Make a long story short.", meaning: "手短に言うと / 要するに", description: "長い話を省略して、結論や要点だけを話すときに使われる前置きです。" },
+    { idiom: "On the same page.", meaning: "意見が一致している / 認識が同じである", description: "会議などで、参加者全員が同じ情報や理解を共有している状態を指します。" },
+    { idiom: "The best of both worlds.", meaning: "両方の世界の良いとこ取り / 一挙両得", description: "二つの異なるものの利点を同時に享受できる、理想的な状況を指します。" },
+    { idiom: "Jump on the bandwagon.", meaning: "時流に乗る / 勝ち馬に乗る", description: "人気のあるものや流行しているものに、深く考えずに便乗する様子を表します。" },
+    { idiom: "Beat around the bush.", meaning: "遠回しな言い方をする", description: "本題に直接触れるのを避けて、回りくどい話し方をすることを指します。" },
+    { idiom: "Better late than never.", meaning: "遅れてもやらないよりはまし", description: "何かを始めるのが遅すぎたとしても、全くやらないよりはずっと良い、という意味です。" },
+    { idiom: "Bite off more than you can chew.", meaning: "自分の能力以上のことをしようとする", description: "一口で噛み切れないほど大きく食べ物を口に入れることから、自分の処理能力を超える仕事や課題を引き受けることを指します。" },
+    { idiom: "By the skin of one's teeth.", meaning: "かろうじて / 間一髪で", description: "「歯の皮」という存在しないほどのわずかな差で、何かを成し遂げたり、危険を回避したりした状況で使います。" },
+    { idiom: "Don't count your chickens before they hatch.", meaning: "捕らぬ狸の皮算用", description: "卵がまだ孵化していないうちから鶏の数を数えるな、つまり、事が確定する前に期待しすぎるなという戒めです。" },
+    { idiom: "Every cloud has a silver lining.", meaning: "どんな悪い状況にも良い面はある", description: "厚い雲の向こう側は太陽で銀色に輝いていることから、希望を失わないように励ます言葉です。" },
+    { idiom: "Fit as a fiddle.", meaning: "とても健康で元気だ", description: "「フィドル（バイオリン）」が良い音を出すためには完璧な状態である必要があることから来ています。" },
+    { idiom: "Give someone the benefit of the doubt.", meaning: "大目に見る / 疑わしきは罰せず", description: "確証がない限りは、誰かの言うことや行動を信じてあげる、という意味です。" },
+    { idiom: "Go down in flames.", meaning: "さんざんな失敗に終わる", description: "炎上しながら墜落する飛行機のように、劇的かつ完全に失敗することを指します。" },
+    { idiom: "Hit the nail on the head.", meaning: "的を射る / 図星を指す", description: "釘の頭を的確に打つように、物事の核心を正確に言い当てたときに使います。" },
+    { idiom: "In the heat of the moment.", meaning: "カッとなって / 夢中になって", description: "怒りや興奮で冷静な判断ができない一瞬の状況を指します。" },
+    { idiom: "It takes two to tango.", meaning: "喧嘩両成敗", description: "タンゴは二人で踊るもの。つまり、争いや問題は一方だけが悪いのではなく、両者に責任があるという意味です。" },
+    { idiom: "Keep something at bay.", meaning: "〜を寄せ付けない / 食い止める", description: "敵や問題などが近づいてこないように、一定の距離を保つことを意味します。" },
+    { idiom: "Leave no stone unturned.", meaning: "あらゆる手を尽くす / 徹底的に調査する", description: "宝物を探すために、全ての石をひっくり返してでも見つけようとする様子から来ています。" },
+    { idiom: "Let sleeping dogs lie.", meaning: "触らぬ神に祟りなし", description: "眠っている犬を起こすと面倒なことになるように、余計な問題を引き起こさないように、そっとしておくべきだという意味です。" },
+    { idiom: "Look before you leap.", meaning: "転ばぬ先の杖", description: "跳ぶ前に（危険がないか）よく見ろ、という意味で、行動を起こす前によく考えるべきだという戒めです。" },
+    { idiom: "Miss the boat.", meaning: "好機を逃す", description: "乗るべき船に乗り遅れてしまった状況から、チャンスを逃してしまったことを指します。" },
+    { idiom: "Off the hook.", meaning: "責任・窮地から解放される", description: "釣り針（hook）から外れた魚のように、困難な状況や責任から解放されることを意味します。" },
+    { idiom: "Pull someone's leg.", meaning: "からかう / 冗談を言う", description: "相手を騙したり、冗談を言ってからかったりする軽い行為を指します。" },
+    { idiom: "Rain on someone's parade.", meaning: "水を差す / 人の楽しみにケチをつける", description: "楽しみにしていたパレードの日に雨が降るように、誰かの計画や喜びに水を差す行為を指します。" },
+    { idiom: "Read between the lines.", meaning: "行間を読む / 言外の意味を読み取る", description: "書かれている言葉の裏にある、隠された本当の意味や意図を理解することを指します。" },
+    { idiom: "See eye to eye.", meaning: "意見が完全に一致する", description: "物事を全く同じ視点（目）で見ている、という意味から来ています。" },
+    { idiom: "Sit on the fence.", meaning: "日和見をする / 中立の立場をとる", description: "どちらの側にもつかず、フェンスの上に座って状況を傍観している様子を表します。" },
+    { idiom: "Speak of the devil.", meaning: "噂をすれば影", description: "悪魔（devil）の話をしていたら、まさにその本人が現れた、という状況で使います。" },
+    { idiom: "Steal someone's thunder.", meaning: "人の手柄を横取りする / 人のお株を奪う", description: "劇で雷の音を出す装置を発明した人が、自分の劇が失敗した後に、他の劇でその装置が使われているのを見て言った言葉が由来です。" },
+    { idiom: "Take something with a grain of salt.", meaning: "話半分に聞く", description: "一粒の塩（a grain of salt）を加えて（味付けして）聞く、つまり、全てを鵜呑みにせず、少し疑ってかかるべきだという意味です。" },
+    { idiom: "The last straw.", meaning: "我慢の限界", description: "ラクダの背中に藁を一本ずつ乗せていき、ついに耐えきれなくなった最後の一本の藁、という意味です。" },
+    { idiom: "Throw caution to the wind.", meaning: "危険を顧みない / 向こう見ずな行動をとる", description: "注意や警告（caution）を風に投げ捨ててしまうように、リスクを全く考えずに行動することを指します。" },
+    { idiom: "To make matters worse.", meaning: "さらに悪いことには", description: "すでに悪い状況に、さらに別の問題が加わって事態が悪化する時に使います。" },
+    { idiom: "Your guess is as good as mine.", meaning: "私にも分からない", description: "あなたの推測も私の推測も同じくらい当てにならない、つまり、全く見当がつかないという意味です。" },
+    { idiom: "A dime a dozen.", meaning: "ありふれた / どこにでもある", description: "1ダース（12個）がたったの10セント（dime）で買えるほど、価値が低く、ありふれていることを指します。" },
+    { idiom: "Chip on one's shoulder.", meaning: "喧嘩腰の態度", description: "昔、肩に乗せた木片（chip）を打ち落とされたら喧嘩を売る、という少年たちの遊びから来ています。" },
+    { idiom: "Cut corners.", meaning: "手を抜く / 節約のために近道をする", description: "品質や安全性を犠牲にして、時間やお金を節約するために最も簡単な方法をとることを指します。" },
+    { idiom: "Don't put all your eggs in one basket.", meaning: "一つのことに全てを賭けるな", description: "全ての卵を一つのかごに入れると、そのかごを落とした時に全て割れてしまうことから来ています。" },
+    { idiom: "Elephant in the room.", meaning: "誰もが気づいているが、あえて触れない問題", description: "部屋に象がいるのに誰もそのことに触れない、という不自然な状況を表します。" },
+    { idiom: "Get a taste of your own medicine.", meaning: "自分のしたことの報いを受ける", description: "自分が他人に与えた不快な薬（medicine）を、自分自身が味わうことになる、という意味です。" },
+    { idiom: "Give someone the cold shoulder.", meaning: "冷たくあしらう / よそよそしい態度をとる", description: "昔、歓迎しない客には冷たい羊の肩肉（cold shoulder）を出したという習慣が由来とされています。" },
+    { idiom: "Go on a wild goose chase.", meaning: "無駄な追いかけっこをする / 見込みのないことを探す", description: "捕まえるのがほぼ不可能な野生のガチョウを追いかけることから、達成不可能な目標を追い求めることを指します。" },
+    { idiom: "Good things come to those who wait.", meaning: "待てば海路の日和あり", description: "辛抱強く待つことができる人には、良い結果が訪れる、という意味です。" },
+    { idiom: "Heard it through the grapevine.", meaning: "噂で聞いた", description: "「ブドウのつる（grapevine）」のように、人から人へと伝わっていく非公式な情報源、つまり噂話を指します。" },
+    { idiom: "Hit the books.", meaning: "猛勉強する", description: "文字通り「本を叩く」ように、集中的に、そして熱心に勉強することを意味します。" },
+    { idiom: "Ignorance is bliss.", meaning: "知らぬが仏", description: "知らない方が、心配やストレスがなく幸せでいられる、という意味です。" },
+    { idiom: "It's a small world.", meaning: "世間は狭いですね", description: "予期せぬ場所で知人に出会ったり、意外な共通点が見つかったりしたときに使います。" },
+    { idiom: "Let someone off the hook.", meaning: "（人を）許す / 大目に見る", description: "釣り針にかかった魚を逃がしてあげるように、誰かの責任や罰を免除してあげることを意味します。" },
+    { idiom: "Method to my madness.", meaning: "一見無茶苦茶に見えるが、実は考えがある", description: "シェイクスピアの『ハムレット』からの引用で、狂気（madness）に見える行動にも、実は論理的な方法（method）があることを示します。" },
+    { idiom: "Not my cup of tea.", meaning: "私の好みではない", description: "英国の紅茶文化から来ており、自分にとって興味がない、または好きではないことを丁寧に表現する方法です。" },
+    { idiom: "Put a sock in it.", meaning: "静かにしろ / 黙れ", description: "非常に口語的で、少し失礼な表現です。相手にうるさいから黙ってほしいと伝える時に使います。" },
+    { idiom: "Rule of thumb.", meaning: "経験則 / 目安", description: "厳密な科学的根拠はないが、経験上だいたい正しいとされる、おおよその基準や方法を指します。" },
+    { idiom: "Saving for a rainy day.", meaning: "万一に備えて貯金する", description: "雨の日（rainy day）、つまり、予期せぬ困難や出費が必要になった時のために、お金を蓄えておくことを意味します。" },
+    { idiom: "The whole nine yards.", meaning: "全部 / 何から何まで", description: "語源は諸説ありますが、必要なもの全て、あるいは考えられる全てのものを提供・実行することを意味します。" },
+    { idiom: "Third time's a charm.", meaning: "三度目の正直", description: "二度失敗しても、三度目にはうまくいく、という楽観的な信念を表します。" },
+    { idiom: "Tie the knot.", meaning: "結婚する", description: "昔の結婚式で、夫婦の手を結び合わせる（tie a knot）儀式があったことから来ています。" },
+    { idiom: "Water under the bridge.", meaning: "過ぎたこと / もう済んだこと", description: "橋の下を流れていった水はもう戻ってこないように、過去の問題はもう気にする必要がない、という意味です。" },
+    { idiom: "Wear one's heart on one's sleeve.", meaning: "感情をあからさまにする", description: "中世の騎士が、思いを寄せる女性の印を袖（sleeve）につけていたことから、自分の感情を隠さずに見せることを指します。" },
+    { idiom: "You can't judge a book by its cover.", meaning: "人は見かけによらない", description: "本の表紙だけでその内容を判断できないように、外見だけで物事や人の本質を判断してはいけない、という戒めです。" },
+    { idiom: "A penny for your thoughts.", meaning: "何を考えているの？", description: "相手が物思いにふけっている時に、その考えを優しく尋ねる表現です。" },
+    { idiom: "Add insult to injury.", meaning: "傷口に塩を塗る", description: "すでに悪い状況（injury）に、さらに侮辱（insult）を加えて、事態を悪化させることを指します。" },
+    { idiom: "All bark and no bite.", meaning: "口先ばかりで実行が伴わない", description: "よく吠える（bark）犬ほど、実際には噛まない（bite）ことから来ています。" },
+    { idiom: "Back to the drawing board.", meaning: "振り出しに戻る / 計画を練り直す", description: "計画が失敗したため、設計図（drawing board）の段階からもう一度やり直す必要があることを意味します。" },
+    { idiom: "Between a rock and a hard place.", meaning: "板挟みになる / 進退窮まる", description: "岩と硬い場所の間に挟まれて、どちらに動いても困難な状況に陥ることを指します。" },
+    { idiom: "Cross that bridge when you come to it.", meaning: "その時になったら考える", description: "まだ起きていない問題を心配するのではなく、実際にその問題に直面した時に考えれば良い、という意味です。" },
+    { idiom: "Cry over spilt milk.", meaning: "覆水盆に返らず", description: "こぼれた（spilt）牛乳を嘆いても元には戻らないように、起きてしまったことを後悔しても仕方がない、という意味です。" },
+    { idiom: "Curiosity killed the cat.", meaning: "好奇心は身を滅ぼす", description: "余計な詮索は危険を招くことがある、という警告として使われます。" },
+    { idiom: "Cut to the chase.", meaning: "要点を言う / 本題に入る", description: "映画で、退屈な会話シーンを飛ばして、追いかけっこ（chase）のシーンに移ることから来ています。" },
+    { idiom: "Devil's advocate.", meaning: "あえて反対意見を言う人", description: "議論を深めるために、意図的に反対の立場をとって意見を述べる人のことを指します。" },
+    { idiom: "Elvis has left the building.", meaning: "お開きです / 終了です", description: "エルヴィス・プレスリーのコンサート終了後、アンコールを求める観客に対して、彼がもう会場にいないことを伝えるアナウンスが由来です。" },
+    { idiom: "Face the music.", meaning: "現実を受け入れる / 自分の行いの結果に直面する", description: "自分の行動が招いた好ましくない結果や批判を、逃げずに受け入れなければならない状況を指します。" },
+    { idiom: "Feeling blue.", meaning: "落ち込んでいる / 憂鬱だ", description: "青色（blue）が、英語圏ではしばしば悲しみや憂鬱な気分の象徴として使われることから来ています。" },
+    { idiom: "Get wind of something.", meaning: "〜を嗅ぎつける / 噂を耳にする", description: "風（wind）が噂や情報を運んでくるイメージから、何かを間接的に知ることを意味します。" },
+    { idiom: "Go out on a limb.", meaning: "危険を冒す / 大胆な推測をする", description: "木の幹から伸びた細い枝（limb）の先に行くように、支持を得られないかもしれない危険な立場をとることを指します。" },
+    { idiom: "Let the chips fall where they may.", meaning: "結果は天に任せる", description: "木を切った時に木片（chips）がどこに落ちようと気にしないように、結果をコントロールしようとせず、自然の成り行きに任せる態度を示します。" },
+    { idiom: "Lick one's wounds.", meaning: "傷を癒す / 敗北から立ち直る", description: "動物が傷（wounds）を舐めて治すように、失敗や敗北の後に、プライベートな時間を持って心身を回復させることを指します。" },
+    { idiom: "Once bitten, twice shy.", meaning: "羹に懲りて膾を吹く", description: "一度噛まれる（bitten）と、次からは臆病（shy）になる、という意味で、一度の失敗に懲りて過度に用心深くなる様子を表します。" },
+    { idiom: "Play it by ear.", meaning: "臨機応変に行う", description: "楽譜を見ずに、聞いた音（ear）を頼りに演奏するように、事前の計画なしにその場の状況に合わせて行動することを指します。" }
+];
 const readingQuizData = [
     {
         title: "A Day at the Beach",
@@ -274,162 +371,6 @@ const conversationTopics = [
     "What is the best meal you have ever had?", "Talk about your favorite season and why you like it."
 ];
 const listeningChallengeSentences = pronunciationSentences;
-
-// =============================================
-//  Industry Focus Data (NEW)
-// =============================================
-const industryData = {
-    it: {
-        title: "IT & Tech",
-        flashcards: [
-            { term: "Latency", meaning: "遅延（時間）", sentence: "We need to reduce the network latency for better performance." },
-            { term: "Scalability", meaning: "拡張性", sentence: "Cloud services offer high scalability for growing businesses." },
-            { term: "Encryption", meaning: "暗号化", sentence: "End-to-end encryption protects user privacy." },
-            { term: "Deployment", meaning: "展開・実装", sentence: "The deployment to the production server was successful." },
-            { term: "Algorithm", meaning: 'アルゴリズム', sentence: 'We developed a new search algorithm.' },
-            { term: "Backend", meaning: "バックエンド", sentence: "He specializes in backend development using Node.js." },
-            { term: "Debugging", meaning: "デバッグ", sentence: "Debugging is an essential part of software development." },
-            { term: "Authentication", meaning: "認証", sentence: "Two-factor authentication improves security." }
-        ],
-        phrases: [
-            { 
-                scenario: "Daily Stand-up",
-                keyphrase: "I'm currently working on...",
-                translation: "現在は〜に取り組んでいます",
-                scenarioTrans: "毎日のスタンドアップミーティングにて"
-            },
-            { 
-                scenario: "Reporting an Issue",
-                keyphrase: "I've encountered a blocker.",
-                translation: "進行を妨げる問題（ブロッカー）に遭遇しました",
-                scenarioTrans: "進捗報告にて"
-            },
-            { 
-                scenario: "Code Review",
-                keyphrase: "Could you walk me through this logic?",
-                translation: "このロジックについて説明してもらえますか？",
-                scenarioTrans: "コードレビューにて"
-            }
-        ],
-        articles: [
-            {
-                title: "The Rise of AI Agents",
-                content: "Autonomous AI agents are becoming increasingly capable of performing complex tasks without human intervention. Unlike traditional chatbots, these agents can plan, execute, and refine their actions to achieve specific goals, transforming how we interact with software.",
-                source: "TechDaily 2024",
-                translation: "自律型AIエージェントは、人間の介入なしに複雑なタスクを実行する能力をますます高めています。従来のチャットボットとは異なり、これらのエージェントは特定の目標を達成するために行動を計画、実行、修正することができ、私たちがソフトウェアと対話する方法を変革しています。"
-            },
-            {
-                title: "Zero Trust Security",
-                content: "Zero Trust architecture is rapidly becoming the standard for cloud security. Organizations are moving away from perimeter-based defenses to a model where every access request is verified, regardless of where it originates.",
-                source: "CyberSec Weekly",
-                translation: "ゼロトラストアーキテクチャは、急速にクラウドセキュリティの標準になりつつあります。組織は境界ベースの防御から、アクセス要求がどこから来たかにかかわらず、すべての要求を検証するモデルへと移行しています。"
-            }
-        ]
-    },
-    business: {
-        title: "Business",
-        flashcards: [
-            { term: "ROI", meaning: "投資対効果", sentence: "We need to calculate the ROI before approving the budget." },
-            { term: "Stakeholder", meaning: "利害関係者", sentence: "It is important to keep all stakeholders informed." },
-            { term: "Quarterly", meaning: "四半期ごとの", sentence: "Our quarterly earnings exceeded expectations." },
-            { term: "Agenda", meaning: "議題", sentence: "Let's stick to the agenda to save time." },
-            { term: "Strategy", meaning: "戦略", sentence: "We are developing a new marketing strategy." }
-        ],
-        phrases: [
-            { 
-                scenario: "Negotiation",
-                keyphrase: "Is there any room for movement on the price?",
-                translation: "価格について交渉の余地はありますか？",
-                scenarioTrans: "価格交渉にて"
-            },
-            { 
-                scenario: "Meeting",
-                keyphrase: "Let's get the ball rolling.",
-                translation: "さあ、始めましょう。",
-                scenarioTrans: "会議の開始時"
-            },
-            { 
-                scenario: "Agreement",
-                keyphrase: "I think we're on the same page.",
-                translation: "私たちの認識は一致していると思います。",
-                scenarioTrans: "合意形成時"
-            }
-        ],
-        articles: [
-            {
-                title: "Remote Work Trends",
-                content: "Many companies are settling into a permanent hybrid work model. This approach balances the flexibility of working from home with the collaborative benefits of in-person interaction, though it presents new challenges for company culture.",
-                source: "BizWorld",
-                translation: "多くの企業が恒久的なハイブリッドワークモデルに落ち着きつつあります。このアプローチは、在宅勤務の柔軟性と対面での交流による協力的なメリットのバランスをとっていますが、企業文化にとって新たな課題も提示しています。"
-            }
-        ]
-    },
-    medical: {
-        title: "Medical",
-        flashcards: [
-            { term: "Diagnosis", meaning: "診断", sentence: "Early diagnosis is key to effective treatment." },
-            { term: "Prescription", meaning: "処方箋", sentence: "The doctor wrote a prescription for antibiotics." },
-            { term: "Symptom", meaning: "症状", sentence: "Common symptoms include fever and cough." },
-            { term: "Chronic", meaning: "慢性の", sentence: "He suffers from chronic back pain." },
-            { term: "Vaccine", meaning: "ワクチン", sentence: "The new vaccine proved to be highly effective." }
-        ],
-        phrases: [
-            { 
-                scenario: "Consultation",
-                keyphrase: "On a scale of 1 to 10, how would you rate your pain?",
-                translation: "1から10の段階で言うと、痛みはどれくらいですか？",
-                scenarioTrans: "患者の診察にて"
-            },
-            { 
-                scenario: "Treatment",
-                keyphrase: "This medication may cause some side effects.",
-                translation: "この薬はいくつかの副作用を引き起こす可能性があります。",
-                scenarioTrans: "治療説明にて"
-            }
-        ],
-        articles: [
-            {
-                title: "Gene Therapy Breakthroughs",
-                content: "Recent breakthroughs in CRISPR technology have opened new possibilities for treating genetic disorders. Clinical trials are showing promising results for conditions previously thought untreatable, offering hope to millions.",
-                source: "MedJournal",
-                translation: "CRISPR技術における最近の進歩は、遺伝性疾患の治療に新たな可能性を切り開きました。臨床試験では、以前は治療不可能と考えられていた病状に対して有望な結果が示されており、何百万人もの人々に希望を与えています。"
-            }
-        ]
-    },
-    finance: {
-        title: "Finance",
-        flashcards: [
-            { term: "Asset", meaning: "資産", sentence: "The company has significant assets in real estate." },
-            { term: "Liability", meaning: "負債", sentence: "Reducing liabilities is our primary goal this year." },
-            { term: "Dividend", meaning: "配当", sentence: "Shareholders received a dividend of $2 per share." },
-            { term: "Compliance", meaning: "法令遵守", sentence: "We must ensure strict compliance with new regulations." },
-            { term: "Audit", meaning: "監査", sentence: "The annual audit will begin next week." }
-        ],
-        phrases: [
-            { 
-                scenario: "Investment",
-                keyphrase: "It's crucial to diversify your portfolio.",
-                translation: "ポートフォリオを分散させることが極めて重要です。",
-                scenarioTrans: "投資アドバイスにて"
-            },
-            { 
-                scenario: "Contract",
-                keyphrase: "Please review the terms and conditions carefully.",
-                translation: "利用規約を注意深く確認してください。",
-                scenarioTrans: "契約確認にて"
-            }
-        ],
-        articles: [
-            {
-                title: "Cryptocurrency Regulation",
-                content: "Governments worldwide are intensifying efforts to regulate cryptocurrency markets. The focus is on preventing money laundering and ensuring consumer protection without stifling innovation in the fintech sector.",
-                source: "FinanceDaily",
-                translation: "世界各国の政府は、暗号資産市場の規制強化に力を入れています。焦点は、フィンテック分野のイノベーションを阻害することなく、マネーロンダリングを防止し、消費者保護を確保することにあります。"
-            }
-        ]
-    }
-};
-
 const featureDescriptions = {
     speaking: {
         title: "スピーキング練習",
@@ -456,7 +397,6 @@ const featureDescriptions = {
         description: "特定の業界（IT, ビジネス, 医療, 金融）に特化した専門用語やフレーズを学習できます。\n\n・フラッシュカード: 重要単語の暗記\n・キーフレーズ: 実践的な例文\n・ミニ記事: 業界ニュースの読解\n\n自分のキャリアや興味に合わせた英語力を身につけましょう。"
     }
 };
-
 
 // =============================================
 //  Audio Context & Speech Synthesis Setup
@@ -832,15 +772,21 @@ stopButton.addEventListener('click', () => {
 
 function generateCombinedFeedback(transcript) {
     const originalText = pronunciationSentences[currentSentenceIndex].en;
-    const cleanOriginal = originalText.toLowerCase().replace(/[.,!?]/g, '').split(' ');
-    const cleanUser = transcript.toLowerCase().replace(/[.,!?]/g, '').split(' ');
+    const cleanOriginal = originalText.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/); 
+    const cleanUser = transcript.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/); 
+
     let correctWords = 0;
     const feedbackHtml = cleanOriginal.map((word, index) => {
-        if (cleanUser[index] === word) { correctWords++; return `<span class="correct">${word}</span>`; }
-        else { return `<span class="incorrect" data-word="${word}">${word}</span> (<span class="your-speech">${cleanUser[index] || '×'}</span>)`; }
+        if (cleanUser[index] === word) { 
+            correctWords++; 
+            return `<span class="correct">${word}</span>`; 
+        } else { 
+            const userWord = cleanUser[index] ? `<span class="your-speech">${cleanUser[index]}</span>` : '<span class="your-speech">×</span>';
+            return `<span class="incorrect" data-word="${word}">${word}</span> (${userWord})`; 
+        }
     }).join(' ');
-
-    const score = Math.round((correctWords / cleanOriginal.length) * 100);
+    
+    const score = cleanOriginal.length > 0 ? Math.round((correctWords / cleanOriginal.length) * 100) : 0; 
     scoreElement.innerHTML = `${score} <span class="score-unit">/ 100</span>`;
     scoreElement.className = score >= 80 ? 'score-high' : score >= 50 ? 'score-mid' : 'score-low';
     
@@ -848,16 +794,21 @@ function generateCombinedFeedback(transcript) {
 
     const userSpeechDuration = userSpeechEndTime - userSpeechStartTime;
     let paceFeedback = '';
-    if (modelAudioDuration > 0 && userSpeechDuration > 0) {
+    
+    console.log(`User speech duration: ${userSpeechDuration}ms`, `Model duration: ${modelAudioDuration}ms`);
+
+    if (modelAudioDuration > 50 && userSpeechDuration > 50) { 
         const paceRatio = userSpeechDuration / modelAudioDuration;
-        if (paceRatio > 1.4) {
-            paceFeedback = "🐢 <strong>ペース:</strong> もう少しテンポを上げると、より自然なリズムになります。";
-        } else if (paceRatio < 0.8) {
-            paceFeedback = "🐇 <strong>ペース:</strong> 少し早口かもしれません。焦らずゆっくり話すことを意識しましょう。";
+        if (paceRatio > 1.5) { 
+            paceFeedback = "🐢 <strong>ペース:</strong> 少しゆっくりでした。もう少しテンポを上げてみましょう。";
+        } else if (paceRatio < 0.7) { 
+            paceFeedback = "🐇 <strong>ペース:</strong> 少し早口でした。焦らず話してみましょう。";
         } else {
-            paceFeedback = "👍 <strong>ペース:</strong> 素晴らしい！お手本に近い自然なスピードで話せています。";
+            paceFeedback = "👍 <strong>ペース:</strong> 素晴らしい！お手本に近い自然なスピードです。";
         }
         fullFeedback += `<div class="feedback-pace-section">${paceFeedback}</div>`;
+    } else {
+         fullFeedback += `<div class="feedback-pace-section">ⓘ ペースの評価に必要な音声が録音されませんでした。</div>`;
     }
 
     feedbackElement.innerHTML = fullFeedback;
@@ -1118,7 +1069,7 @@ function endReadingQuiz() {
         document.getElementById('review-passage-en').textContent = currentReadingData.passage;
         document.getElementById('review-passage-ja').textContent = currentReadingData.translation;
     } else {
-        readingFinalScore.textContent = "スコアの計算に問題がありました。";
+        readingFinalScore.textContent = "スコアの計算に問題がありました。"; // Fallback message
     }
 }
 
@@ -1135,7 +1086,7 @@ function selectIndustry(key) {
     indCurrentCategoryKey = key;
     const data = industryData[key];
     document.getElementById('industry-title-display').textContent = data.title;
-    showScreen(industryModuleScreen);
+    showScreen(document.getElementById('industry-module-screen'));
 }
 
 function startIndustryModule(moduleType) {
@@ -1145,15 +1096,15 @@ function startIndustryModule(moduleType) {
     if (moduleType === 'flashcards') {
         document.getElementById('ind-flashcard-header').textContent = `${data.title} - Flashcards`;
         updateIndFlashcardUI();
-        showScreen(industryFlashcardScreen);
+        showScreen(document.getElementById('industry-flashcard-screen'));
     } else if (moduleType === 'phrases') {
         document.getElementById('ind-phrase-header').textContent = `${data.title} - Key Phrases`;
         updateIndPhraseUI();
-        showScreen(industryPhraseScreen);
+        showScreen(document.getElementById('industry-phrase-screen'));
     } else if (moduleType === 'articles') {
         document.getElementById('ind-article-header').textContent = `${data.title} - Mini Articles`;
         updateIndArticleUI();
-        showScreen(industryArticleScreen);
+        showScreen(document.getElementById('industry-article-screen'));
     }
 }
 
@@ -1268,6 +1219,7 @@ async function startCall() {
     videoStatus.textContent = "カメラとマイクを起動中..."; 
 
     try {
+        // ▼▼▼ 映像あり ▼▼▼
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true }); 
         localVideo.srcObject = localStream;
     } catch (err) {
@@ -1350,6 +1302,11 @@ async function startCall() {
         }
         hangUp();
     };
+
+    socket.onerror = (err) => {
+        console.error("WebSocket error:", err);
+        videoStatus.textContent = "サーバー接続エラー。server.jsが起動しているか確認してください。";
+    };
 }
 
 function createPeerConnection() {
@@ -1406,6 +1363,10 @@ function hangUp() {
         localStream.getTracks().forEach(track => track.stop());
         localStream = null;
     }
+    if (remoteStream) {
+        remoteStream.getTracks().forEach(track => track.stop());
+        remoteStream = null;
+    }
     if (socket) {
         socket.close();
         socket = null;
@@ -1452,8 +1413,8 @@ function displayIdiomOfTheDay() {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.screen').forEach(s => {
-        s.classList.remove('active');
         s.style.display = 'none';
+        s.classList.remove('active');
     });
     splashScreen.style.display = 'flex'; 
     splashScreen.classList.add('active');
@@ -1469,7 +1430,6 @@ function showCustomAlert(message) {
     console.warn("Using placeholder alert:", message);
     alert(message); 
 }
-
 
 
 
