@@ -69,18 +69,18 @@
                     <h3>読解練習</h3>
                     <p>短い英文を読み、内容に関するクイズに挑戦しよう。</p>
                 </div>
-                <!-- ▼▼▼ 追加: Industry Focus ▼▼▼ -->
+                <!-- ▼▼▼ 復活: Industry Focus ▼▼▼ -->
                 <div class="game-card" id="start-industry-focus">
                     <button class="info-btn" data-feature="industry">i</button>
                     <div class="game-icon">🚀</div>
-                    <h3>専門分野別 (Industry Focus)</h3>
-                    <p>IT、ビジネス、医療などの専門用語や記事を学びます。</p>
+                    <h3>専門分野別英語</h3>
+                    <p>IT、ビジネス、医療などの専門用語を学びます。</p>
                 </div>
-                <!-- ▲▲▲ 追加ここまで ▲▲▲ -->
+                <!-- ▲▲▲ 復活ここまで ▲▲▲ -->
                 <div class="game-card" id="start-video-chat">
                     <button class="info-btn" data-feature="videochat">i</button>
-                    <div class="game-icon">📞</div>
-                    <h3>音声通話チャット</h3>
+                    <div class="game-icon">📹</div>
+                    <h3>ビデオチャット</h3>
                     <p>お題について英語でフリートークしよう。</p>
                 </div>
             </div>
@@ -153,13 +153,13 @@
             <div class="card-container perspective-1000 h-80 w-full mb-8 cursor-pointer" onclick="flipIndCard()">
                 <div id="ind-flashcard-inner" class="card-inner relative w-full h-full shadow-xl rounded-2xl transition-transform duration-500">
                     <!-- 表面 -->
-                    <div class="card-front absolute w-full h-full bg-white rounded-2xl border-2 border-indigo-50 flex flex-col items-center justify-center p-8 backface-hidden">
+                    <div class="card-front absolute w-full h-full bg-white rounded-2xl border-2 border-neon-cyan flex flex-col items-center justify-center p-8 backface-hidden">
                         <span class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Term</span>
                         <p id="ind-card-front" class="text-4xl font-bold text-primary-text text-center"></p>
                         <p class="text-xs text-gray-400 mt-8 absolute bottom-6">Tap to flip ↻</p>
                     </div>
                     <!-- 裏面 -->
-                    <div class="card-back absolute w-full h-full bg-indigo-50 rounded-2xl border-2 border-indigo-100 flex flex-col items-center justify-center p-8 backface-hidden rotate-y-180">
+                    <div class="card-back absolute w-full h-full bg-f0f9ff rounded-2xl border-2 border-neon-magenta flex flex-col items-center justify-center p-8 backface-hidden rotate-y-180">
                         <span class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Meaning</span>
                         <p id="ind-card-back-meaning" class="text-2xl font-bold text-neon-cyan mb-4 text-center"></p>
                         <div class="w-full border-t border-gray-200 pt-4 mt-2">
@@ -238,9 +238,8 @@
         </div>
     </main>
 
-    <!-- スピーキング練習、クイズ、リスニング、ビデオチャットの画面は既存のまま -->
-    <main id="speaking-practice-screen" style="display: none;">
-        <!-- ...省略 (元のコードと同じ) ... -->
+    <!-- スピーキング練習画面 -->
+    <main id="speaking-practice-screen" class="screen">
         <div class="container">
             <button id="backButtonSpeaking" class="back-button">🏠 ホームに戻る</button>
             <h1>スピーキング練習 🗣️</h1>
@@ -270,8 +269,8 @@
         </div>
     </main>
 
-    <main id="quiz-level-screen" style="display: none;">
-        <!-- ...省略 (元のコードと同じ) ... -->
+    <!-- クイズレベル選択画面 -->
+    <main id="quiz-level-screen" class="screen">
         <div class="container">
             <button id="backButtonFromLevels" class="back-button">🏠 ホームに戻る</button>
             <h1>単語クイズ ✍️</h1>
@@ -297,8 +296,8 @@
         </div>
     </main>
 
-    <main id="word-quiz-screen" style="display: none;">
-        <!-- ...省略 (元のコードと同じ) ... -->
+    <!-- 単語クイズ画面 -->
+    <main id="word-quiz-screen" class="screen">
         <div class="container">
             <button id="backButtonFromQuiz" class="back-button">📜 レベル選択に戻る</button>
             <h1>単語クイズ ✍️</h1>
@@ -319,8 +318,8 @@
         </div>
     </main>
 
-    <main id="listening-challenge-screen" style="display: none;">
-        <!-- ...省略 (元のコードと同じ) ... -->
+    <!-- リスニングチャレンジ画面 -->
+    <main id="listening-challenge-screen" class="screen">
         <div class="container">
             <button id="backButtonFromListening" class="back-button">🏠 ホームに戻る</button>
             <h1>リスニングチャレンジ 🎧</h1>
@@ -344,8 +343,8 @@
         </div>
     </main>
 
-    <main id="reading-quiz-screen" style="display: none;">
-        <!-- ...省略 (元のコードと同じ) ... -->
+    <!-- 読解練習画面 -->
+    <main id="reading-quiz-screen" class="screen">
         <div class="container">
             <button id="backButtonFromReading" class="back-button">🏠 ホームに戻る</button>
             <h1>読解練習 📚</h1>
@@ -384,20 +383,22 @@
         </div>
     </main>
 
-    <main id="video-chat-screen" style="display: none;">
-        <!-- ...省略 (元のコードと同じ) ... -->
+    <!-- ビデオチャット画面 (映像あり) -->
+    <main id="video-chat-screen" class="screen">
         <div class="container">
             <button id="backButtonFromVideo" class="back-button">🏠 ホームに戻る</button>
-            <h1>音声通話チャット 📞</h1>
+            <h1>ビデオチャット 💬</h1>
             <div id="video-topic-card" class="card">
                 <h2>Conversation Topic</h2>
                 <p id="video-topic">What is the most interesting place you have ever visited?</p>
             </div>
             
-            <div class="card" style="text-align: center;">
-                <h3>相手の声</h3>
-                <audio id="remote-audio" controls autoplay style="width: 100%; margin-top: 10px;"></audio>
-                <p style="font-size: 0.9em; color: #888; margin-top: 5px;">※再生バーが動かない場合は接続を確認してください</p>
+            <!-- 映像表示エリア -->
+            <div class="video-container">
+                <video id="remote-video" autoplay playsinline></video>
+                <div class="local-video-wrapper">
+                    <video id="local-video" autoplay muted playsinline></video>
+                </div>
             </div>
 
             <div id="video-controls">

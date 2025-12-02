@@ -318,6 +318,70 @@ header h1 { margin: 0; }
 .next-btn { margin-top: 20px; background-color: transparent; color: var(--neon-cyan); border: 2px solid var(--neon-cyan); }
 .next-btn:hover { background-color: var(--neon-cyan); color: white; }
 
+/* --- 読解練習 --- */
+.reading-passage-card {
+    background-color: var(--dark-card);
+    border-left: 4px solid var(--neon-cyan);
+    border-right: 1px solid var(--outline-color);
+    border-top: 1px solid var(--outline-color);
+    border-bottom: 1px solid var(--outline-color);
+}
+.reading-passage-card p {
+    font-size: 1.1em;
+    line-height: 1.8;
+    white-space: pre-wrap; 
+    color: var(--light-text);
+}
+.reading-review-area {
+    margin: 20px 0;
+    text-align: left;
+    border-top: 1px solid var(--outline-color);
+    padding-top: 20px;
+}
+.review-content {
+    max-height: 300px;
+    overflow-y: auto;
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid var(--outline-color);
+}
+.review-section {
+    margin-bottom: 20px;
+}
+.review-section h4 {
+    color: var(--neon-cyan);
+    margin-bottom: 5px;
+    font-size: 1em;
+}
+.review-section p {
+    font-size: 1em;
+    line-height: 1.6;
+    color: var(--light-text);
+    white-space: pre-wrap;
+}
+
+/* --- ビデオチャット --- */
+#video-topic-card { 
+    background-color: var(--dark-card); 
+    border-left: 5px solid var(--neon-magenta); 
+    border-right: 1px solid var(--outline-color);
+    border-top: 1px solid var(--outline-color);
+    border-bottom: 1px solid var(--outline-color);
+    text-align: center; 
+}
+#video-topic-card h2 { color: var(--neon-magenta); border-bottom: none; padding-bottom: 5px; font-size: 1.1em; }
+#video-topic { font-size: 1.3em; font-weight: 600; color: var(--primary-text); }
+.video-container { 
+    position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: #f0f0f0; border-radius: 10px; overflow: hidden; margin: 20px 0; 
+    border: 1px solid var(--outline-color); 
+}
+#remote-video { width: 100%; height: 100%; object-fit: cover; }
+#local-video { position: absolute; bottom: 15px; right: 15px; width: 25%; max-width: 180px; border-radius: 8px; border: 2px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+.video-controls { display: flex; justify-content: center; gap: 15px; }
+#start-call-btn { background: var(--neon-green); box-shadow: 0 4px 10px rgba(46, 255, 126, 0.3); padding: 14px 30px; font-size: 1.2em; }
+#end-call-btn { background: var(--neon-red); box-shadow: 0 4px 10px rgba(255, 82, 82, 0.3); padding: 14px 30px; font-size: 1.2em; }
+
 /* --- Industry Focus: カード回転 & その他 --- */
 .perspective-1000 { perspective: 1000px; }
 .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
@@ -329,29 +393,3 @@ header h1 { margin: 0; }
 .text-neon-cyan { color: var(--neon-cyan); }
 .text-neon-green { color: var(--neon-green); }
 .text-light-text { color: var(--light-text); }
-
-/* --- 読解練習 --- */
-.reading-passage-card {
-    background-color: var(--dark-card);
-    border-left: 4px solid var(--neon-cyan);
-    border-right: 1px solid var(--outline-color);
-    border-top: 1px solid var(--outline-color);
-    border-bottom: 1px solid var(--outline-color);
-}
-.reading-passage-card p { font-size: 1.1em; line-height: 1.8; white-space: pre-wrap; color: var(--light-text); }
-.reading-review-area { margin: 20px 0; text-align: left; border-top: 1px solid var(--outline-color); padding-top: 20px; }
-.review-content { max-height: 300px; overflow-y: auto; background: #f9f9f9; padding: 15px; border-radius: 10px; border: 1px solid var(--outline-color); }
-.review-section { margin-bottom: 20px; }
-.review-section h4 { color: var(--neon-cyan); margin-bottom: 5px; font-size: 1em; }
-.review-section p { font-size: 1em; line-height: 1.6; color: var(--light-text); white-space: pre-wrap; }
-
-/* --- ビデオチャット --- */
-#video-topic-card { background-color: var(--dark-card); border-left: 5px solid var(--neon-magenta); border-right: 1px solid var(--outline-color); border-top: 1px solid var(--outline-color); border-bottom: 1px solid var(--outline-color); text-align: center; }
-#video-topic-card h2 { color: var(--neon-magenta); border-bottom: none; padding-bottom: 5px; font-size: 1.1em; }
-#video-topic { font-size: 1.3em; font-weight: 600; color: var(--primary-text); }
-.video-container { position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: #f0f0f0; border-radius: 10px; overflow: hidden; margin: 20px 0; border: 1px solid var(--outline-color); }
-#remote-video { width: 100%; height: 100%; object-fit: cover; }
-#local-video { position: absolute; bottom: 15px; right: 15px; width: 25%; max-width: 180px; border-radius: 8px; border: 2px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-.video-controls { display: flex; justify-content: center; gap: 15px; }
-#start-call-btn { background: var(--neon-green); box-shadow: 0 4px 10px rgba(46, 255, 126, 0.3); padding: 14px 30px; font-size: 1.2em; }
-#end-call-btn { background: var(--neon-red); box-shadow: 0 4px 10px rgba(255, 82, 82, 0.3); padding: 14px 30px; font-size: 1.2em; }
