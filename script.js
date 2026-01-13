@@ -1,11 +1,13 @@
 // =============================================
-//  ★重要設定★
+//  ★重要設定: ビデオチャット用サーバーURL★
 // =============================================
-// ここに取得したGemini APIキーを貼り付けてください
-const GEMINI_API_KEY = "AIzaSyDsBNCQUuU_Lp8VfAwq5qLpdv5VVOqpI54"; 
+// Replitで取得したURLをここに貼り付けてください（https:// ではなく wss:// に書き換える）
+// 例: "wss://english-park-server.username.replit.co"
+const SIGNALING_SERVER_URL = "wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev:8080";
+
 
 // =============================================
-//  全体で使用するデータ
+//  全体で使用するデータ (大幅拡充版)
 // =============================================
 const pronunciationSentences = [
     { en: "How are you doing?", ja: "調子はどうですか？" },
@@ -99,38 +101,112 @@ const pronunciationSentences = [
     { en: "It's up to you.", ja: "あなた次第です。" },
     { en: "I'll keep that in mind.", ja: "心に留めておきます。" }
 ];
-
 const quizDataSets = {
     beginner: [
-        { ja: "未来", correct: "future", incorrect: ["past", "letter", "dream"] }, 
-        { ja: "訪れる", correct: "visit", incorrect: ["return", "watch", "break"] },
-        { ja: "高価な", correct: "expensive", incorrect: ["heavy", "beautiful", "cold"] },
-        { ja: "図書館", correct: "library", incorrect: ["museum", "theater", "gym"] },
-        { ja: "朝食", correct: "breakfast", incorrect: ["snack", "dessert", "vegetable"] }
+        { ja: "未来", correct: "future", incorrect: ["past", "letter", "dream"] }, { ja: "訪れる", correct: "visit", incorrect: ["return", "watch", "break"] },
+        { ja: "高価な", correct: "expensive", incorrect: ["heavy", "beautiful", "cold"] }, { ja: "図書館", correct: "library", incorrect: ["museum", "theater", "gym"] },
+        { ja: "朝食", correct: "breakfast", incorrect: ["snack", "dessert", "vegetable"] }, { ja: "言語", correct: "language", incorrect: ["song", "story", "sound"] },
+        { ja: "質問する", correct: "ask", incorrect: ["answer", "shout", "forget"] }, { ja: "いつも", correct: "always", incorrect: ["soon", "once", "later"] },
+        { ja: "国", correct: "country", incorrect: ["capital", "continent", "flag"] }, { ja: "幸せな", correct: "happy", incorrect: ["tired", "hungry", "busy"] },
+        { ja: "家族", correct: "family", incorrect: ["neighbor", "teacher", "stranger"] }, { ja: "仕事", correct: "work", incorrect: ["hobby", "vacation", "sleep"] },
+        { ja: "都市", correct: "city", incorrect: ["island", "forest", "desert"] }, { ja: "音楽", correct: "music", incorrect: ["movie", "picture", "dance"] },
+        { ja: "川", correct: "river", incorrect: ["mountain", "sky", "cloud"] }, { ja: "有名な", correct: "famous", incorrect: ["rich", "tall", "kind"] },
+        { ja: "聞く", correct: "listen", incorrect: ["touch", "smell", "taste"] }, { ja: "書く", correct: "write", incorrect: ["sing", "dance", "sleep"] },
+        { ja: "走る", correct: "run", incorrect: ["fly", "swim", "sit"] }, { ja: "簡単", correct: "easy", incorrect: ["wrong", "dark", "loud"] },
+        { ja: "重い", correct: "heavy", incorrect: ["thin", "soft", "sweet"] }, { ja: "若い", correct: "young", incorrect: ["tall", "short", "fast"] },
+        { ja: "店", correct: "store", incorrect: ["bank", "hospital", "church"] }, { ja: "助ける", correct: "help", incorrect: ["break", "lose", "wait"] },
+        { ja: "今日", correct: "today", incorrect: ["weekend", "holiday", "morning"] }, { ja: "天気", correct: "weather", incorrect: ["season", "temperature", "wind"] },
+        { ja: "駅", correct: "station", incorrect: ["bridge", "corner", "street"] }, { ja: "医者", correct: "doctor", incorrect: ["pilot", "artist", "farmer"] },
+        { ja: "使う", correct: "use", incorrect: ["buy", "sell", "find"] }, { ja: "同じ", correct: "same", incorrect: ["new", "old", "good"] },
+        { ja: "話す", correct: "speak", incorrect: ["cry", "laugh", "think"] }, { ja: "木", correct: "tree", incorrect: ["flower", "grass", "stone"] },
+        { ja: "料理する", correct: "cook", incorrect: ["wash", "clean", "drive"] }, { ja: "教える", correct: "teach", incorrect: ["borrow", "lend", "forget"] },
+        { ja: "ドア", correct: "door", incorrect: ["floor", "roof", "wall"] }, { ja: "水", correct: "water", incorrect: ["fire", "earth", "air"] }, 
+        { ja: "学校", correct: "school", incorrect: ["office", "park", "home"] }, { ja: "友達", correct: "friend", incorrect: ["enemy", "parent", "child"] }, 
+        { ja: "食べる", correct: "eat", incorrect: ["drink", "sleep", "play"] }, { ja: "大きい", correct: "big", incorrect: ["small", "long", "short"] }, 
+        { ja: "見る", correct: "see", incorrect: ["hear", "feel", "say"] }, { ja: "時間", correct: "time", incorrect: ["place", "date", "year"] }, 
+        { ja: "人々", correct: "people", incorrect: ["animals", "things", "ideas"] }, { ja: "日", correct: "day", incorrect: ["night", "week", "month"] }, 
+        { ja: "良い", correct: "good", incorrect: ["bad", "nice", "great"] }, { ja: "車", correct: "car", incorrect: ["bus", "train", "bike"] }, 
+        { ja: "家", correct: "house", incorrect: ["room", "garden", "pool"] }
     ],
     intermediate: [
-        { ja: "機会", correct: "opportunity", incorrect: ["problem", "accident", "miracle"] },
-        { ja: "改善する", correct: "improve", incorrect: ["destroy", "accept", "repeat"] },
-        { ja: "政府", correct: "government", incorrect: ["community", "company", "university"] },
-        { ja: "影響", correct: "influence", incorrect: ["force", "luck", "secret"] },
-        { ja: "提案する", correct: "suggest", incorrect: ["command", "demand", "promise"] }
+        { ja: "機会", correct: "opportunity", incorrect: ["problem", "accident", "miracle"] }, { ja: "改善する", correct: "improve", incorrect: ["destroy", "accept", "repeat"] },
+        { ja: "政府", correct: "government", incorrect: ["community", "company", "university"] }, { ja: "影響", correct: "influence", incorrect: ["force", "luck", "secret"] },
+        { ja: "提案する", correct: "suggest", incorrect: ["command", "demand", "promise"] }, { ja: "責任", correct: "responsibility", incorrect: ["hobby", "right", "award"] },
+        { ja: "発表する", correct: "announce", incorrect: ["whisper", "hide", "guess"] }, { ja: "比較する", correct: "compare", incorrect: ["ignore", "separate", "connect"] },
+        { ja: "利用可能な", correct: "available", incorrect: ["broken", "hidden", "impossible"] }, { ja: "発展させる", correct: "develop", incorrect: ["stop", "shrink", "finish"] },
+        { ja: "顧客", correct: "customer", incorrect: ["owner", "manager", "creator"] }, { ja: "会社", correct: "company", incorrect: ["group", "family", "team"] },
+        { ja: "能力", correct: "ability", incorrect: ["weakness", "shape", "color"] }, { ja: "記事", correct: "article", incorrect: ["advertisement", "novel", "letter"] },
+        { ja: "含む", correct: "include", incorrect: ["exclude", "remove", "forget"] }, { ja: "しかしながら", correct: "however", incorrect: ["therefore", "because", "also"] },
+        { ja: "提供する", correct: "provide", incorrect: ["receive", "take", "hide"] }, { ja: "減らす", correct: "reduce", incorrect: ["increase", "add", "grow"] },
+        { ja: "従業員", correct: "employee", incorrect: ["boss", "competitor", "student"] }, { ja: "態度", correct: "attitude", incorrect: ["height", "weight", "age"] },
+        { ja: "成功", correct: "success", incorrect: ["failure", "mistake", "problem"] }, { ja: "交通", correct: "traffic", incorrect: ["nature", "weather", "space"] },
+        { ja: "議論する", correct: "discuss", incorrect: ["agree", "listen", "ignore"] }, { ja: "伝統", correct: "tradition", incorrect: ["fashion", "trend", "rumor"] },
+        { ja: "目的", correct: "purpose", incorrect: ["accident", "luck", "chaos"] }, { ja: "知識", correct: "knowledge", incorrect: ["opinion", "feeling", "dream"] },
+        { ja: "普通", correct: "normal", incorrect: ["strange", "special", "perfect"] }, { ja: "環境", correct: "environment", incorrect: ["machine", "tool", "device"] },
+        { ja: "努力", correct: "effort", incorrect: ["rest", "luck", "talent"] }, { ja: "説明する", correct: "explain", incorrect: ["confuse", "hide", "question"] },
+        { ja: "価格", correct: "price", incorrect: ["size", "quality", "speed"] }, { ja: "生産する", correct: "produce", incorrect: ["consume", "destroy", "buy"] },
+        { ja: "距離", correct: "distance", incorrect: ["time", "weight", "temperature"] }, { ja: "海外の", correct: "foreign", incorrect: ["local", "native", "domestic"] },
+        { ja: "解決する", correct: "solve", incorrect: ["create", "cause", "complicate"] }, { ja: "最近の", correct: "recent", incorrect: ["ancient", "future", "old"] }, 
+        { ja: "決定する", correct: "decide", incorrect: ["hesitate", "wonder", "consider"] }, { ja: "社会", correct: "society", incorrect: ["planet", "individual", "culture"] }, 
+        { ja: "関係", correct: "relationship", incorrect: ["connection", "contact", "meeting"] }, { ja: "経験", correct: "experience", incorrect: ["experiment", "memory", "feeling"] }, 
+        { ja: "信じる", correct: "believe", incorrect: ["doubt", "know", "see"] }, { ja: "教育", correct: "education", incorrect: ["information", "training", "study"] }, 
+        { ja: "恐らく", correct: "probably", incorrect: ["certainly", "definitely", "absolutely"] }, { ja: "情報", correct: "information", incorrect: ["news", "data", "fact"] }, 
+        { ja: "共通の", correct: "common", incorrect: ["rare", "unique", "special"] }, { ja: "含む", correct: "contain", incorrect: ["release", "empty", "spill"] }, 
+        { ja: "旅行", correct: "journey", incorrect: ["trip", "voyage", "tour"] }, { ja: "技術", correct: "technology", incorrect: ["science", "skill", "art"] }
     ],
     advanced: [
-        { ja: "重要な", correct: "significant", incorrect: ["minor", "trivial", "slight"] },
-        { ja: "結果", correct: "consequence", incorrect: ["cause", "origin", "start"] },
-        { ja: "実行する", correct: "implement", incorrect: ["cancel", "postpone", "design"] },
-        { ja: "不可欠な", correct: "essential", incorrect: ["optional", "unnecessary", "extra"] },
-        { ja: "組織", correct: "organization", incorrect: ["individual", "chaos", "mess"] }
+        { ja: "重要な", correct: "significant", incorrect: ["minor", "trivial", "slight"] }, { ja: "結果", correct: "consequence", incorrect: ["cause", "origin", "start"] },
+        { ja: "実行する", correct: "implement", incorrect: ["cancel", "postpone", "design"] }, { ja: "不可欠な", correct: "essential", incorrect: ["optional", "unnecessary", "extra"] },
+        { ja: "組織", correct: "organization", incorrect: ["individual", "chaos", "mess"] }, { ja: "多様性", correct: "diversity", incorrect: ["uniformity", "sameness", "similarity"] },
+        { ja: "説得する", correct: "persuade", incorrect: ["dissuade", "discourage", "force"] }, { ja: "認識", correct: "perception", incorrect: ["reality", "fact", "truth"] },
+        { ja: "貢献する", correct: "contribute", incorrect: ["withdraw", "take", "subtract"] }, { ja: "効率的な", correct: "efficient", incorrect: ["wasteful", "ineffective", "slow"] },
+        { ja: "交渉する", correct: "negotiate", incorrect: ["demand", "refuse", "dominate"] }, { ja: "その後の", correct: "subsequent", incorrect: ["previous", "prior", "initial"] },
+        { ja: "解釈する", correct: "interpret", incorrect: ["misunderstand", "confuse", "obscure"] }, { ja: "禁止する", correct: "prohibit", incorrect: ["permit", "allow", "encourage"] },
+        { ja: "蓄積する", correct: "accumulate", incorrect: ["disperse", "scatter", "spend"] }, { ja: "正確な", correct: "accurate", incorrect: ["inaccurate", "wrong", "flawed"] },
+        { ja: "達成する", correct: "achieve", incorrect: ["fail", "abandon", "surrender"] }, { ja: "適切な", correct: "appropriate", incorrect: ["inappropriate", "unsuitable", "improper"] },
+        { ja: "議論", correct: "controversy", incorrect: ["agreement", "harmony", "consensus"] }, { ja: "実証する", correct: "demonstrate", incorrect: ["conceal", "disprove", "hide"] },
+        { ja: "強調する", correct: "emphasize", incorrect: ["understate", "downplay", "ignore"] }, { ja: "巨大な", correct: "enormous", incorrect: ["tiny", "minuscule", "small"] },
+        { ja: "評価する", correct: "evaluate", incorrect: ["neglect", "overlook", "ignore"] }, { ja: "最終的に", correct: "eventually", incorrect: ["never", "initially", "immediately"] },
+        { ja: "仮定する", correct: "assume", incorrect: ["prove", "know", "confirm"] }, { ja: "構成する", correct: "constitute", incorrect: ["dismantle", "break", "separate"] },
+        { ja: "文脈", correct: "context", incorrect: ["isolation", "vacuum", "void"] }, { ja: "確立する", correct: "establish", incorrect: ["abolish", "demolish", "end"] },
+        { ja: "示す", correct: "indicate", incorrect: ["hide", "conceal", "deny"] }, { ja: "個々の", correct: "individual", incorrect: ["group", "collective", "public"] },
+        { ja: "法律", correct: "legislation", incorrect: ["anarchy", "chaos", "suggestion"] }, { ja: "方法", correct: "method", incorrect: ["chaos", "disorder", "guesswork"] },
+        { ja: "参加する", correct: "participate", incorrect: ["observe", "watch", "withdraw"] }, { ja: "明らかにする", correct: "reveal", incorrect: ["hide", "cover", "mask"] },
+        { ja: "移す", correct: "transfer", incorrect: ["keep", "hold", "remain"] }, { ja: "分析する", correct: "analyze", incorrect: ["synthesize", "guess", "summarize"] }, 
+        { ja: "利益", correct: "benefit", incorrect: ["disadvantage", "loss", "cost"] }, { ja: "複雑な", correct: "complex", incorrect: ["simple", "easy", "clear"] }, 
+        { ja: "減少する", correct: "decline", incorrect: ["increase", "rise", "grow"] }, { ja: "経済", correct: "economy", incorrect: ["finance", "business", "market"] }, 
+        { ja: "機能", correct: "function", incorrect: ["form", "design", "style"] }, { ja: "投資", correct: "investment", incorrect: ["expense", "debt", "loan"] }, 
+        { ja: "主要な", correct: "major", incorrect: ["minor", "secondary", "trivial"] }, { ja: "パーセント", correct: "percent", incorrect: ["fraction", "ratio", "number"] }, 
+        { ja: "期間", correct: "period", incorrect: ["moment", "point", "instant"] }, { ja: "政策", correct: "policy", incorrect: ["rule", "law", "guideline"] }, 
+        { ja: "研究", correct: "research", incorrect: ["study", "survey", "investigation"] }, { ja: "役割", correct: "role", incorrect: ["part", "job", "position"] }
     ],
     expert: [
-        { ja: "遍在する", correct: "ubiquitous", incorrect: ["rare", "scarce", "uncommon"] },
-        { ja: "悪化させる", correct: "exacerbate", incorrect: ["improve", "soothe", "calm"] },
-        { ja: "良心的な", correct: "conscientious", incorrect: ["careless", "negligent", "irresponsible"] },
-        { ja: "豊富な", correct: "plethora", incorrect: ["shortage", "lack", "scarcity"] },
-        { ja: "一時的な", correct: "ephemeral", incorrect: ["permanent", "eternal", "lasting"] }
+        { ja: "遍在する", correct: "ubiquitous", incorrect: ["rare", "scarce", "uncommon"] }, { ja: "悪化させる", correct: "exacerbate", incorrect: ["improve", "soothe", "calm"] },
+        { ja: "良心的な", correct: "conscientious", incorrect: ["careless", "negligent", "irresponsible"] }, { ja: "豊富な", correct: "plethora", incorrect: ["shortage", "lack", "scarcity"] },
+        { ja: "一時的な", correct: "ephemeral", incorrect: ["permanent", "eternal", "lasting"] }, { ja: "有利な", correct: "lucrative", incorrect: ["unprofitable", "losing", "worthless"] },
+        { ja: "無気力な", correct: "lethargic", incorrect: ["energetic", "vigorous", "active"] }, { ja: "曖昧な", correct: "ambiguous", incorrect: ["clear", "explicit", "precise"] },
+        { ja: "緩和する", correct: "alleviate", incorrect: ["aggravate", "intensify", "worsen"] }, { ja: "お世辞", correct: "adulation", incorrect: ["criticism", "condemnation", "insult"] },
+        { ja: "食い違い", correct: "discrepancy", incorrect: ["similarity", "consistency", "agreement"] }, { ja: "多作な", correct: "prolific", incorrect: ["unproductive", "barren", "sterile"] },
+        { ja: "無害な", correct: "innocuous", incorrect: ["harmful", "toxic", "dangerous"] }, { ja: "軽減する", correct: "mitigate", incorrect: ["increase", "amplify", "heighten"] },
+        { ja: "表向きは", correct: "ostensibly", incorrect: ["genuinely", "truly", "actually"] }, { ja: "深く根付いた", correct: "entrenched", incorrect: ["superficial", "temporary", "flexible"] },
+        { ja: "放棄する", correct: "abdicate", incorrect: ["seize", "usurp", "claim"] }, { ja: "口達者な", correct: "glib", incorrect: ["sincere", "thoughtful", "hesitant"] },
+        { ja: "批准する", correct: "ratify", incorrect: ["veto", "reject", "oppose"] }, { ja: "無関心", correct: "apathy", incorrect: ["passion", "enthusiasm", "interest"] },
+        { ja: "逆説的な", correct: "paradoxical", incorrect: ["logical", "consistent", "straightforward"] }, { ja: "撤回する", correct: "rescind", incorrect: ["enforce", "enact", "uphold"] },
+        { ja: "無駄に使う", correct: "squander", incorrect: ["save", "conserve", "hoard"] }, { ja: "ありふれた", correct: "mundane", incorrect: ["extraordinary", "exciting", "unique"] },
+        { ja: "有害な", correct: "detrimental", incorrect: ["beneficial", "helpful", "advantageous"] }, { ja: "先見の明", correct: "prescience", incorrect: ["hindsight", "ignorance", "unawareness"] },
+        { ja: "増殖する", correct: "proliferate", incorrect: ["dwindle", "decrease", "decline"] }, { ja: "沈静化させる", correct: "placate", incorrect: ["provoke", "anger", "antagonize"] },
+        { ja: "冗長な", correct: "redundant", incorrect: ["essential", "concise", "necessary"] }, { ja: "倹約な", correct: "frugal", incorrect: ["extravagant", "wasteful", "spendthrift"] },
+        { ja: "無口な", correct: "taciturn", incorrect: ["talkative", "garrulous", "loquacious"] }, { ja: "証明する", correct: "corroborate", incorrect: ["contradict", "refute", "deny"] },
+        { ja: "とらえどころのない", correct: "elusive", incorrect: ["obvious", "direct", "accessible"] }, { ja: "称賛する", correct: "extol", incorrect: ["denounce", "criticize", "condemn"] },
+        { ja: "ごまかし", correct: "subterfuge", incorrect: ["honesty", "candor", "openness"] }, { ja: "融和的な", correct: "conciliatory", incorrect: ["hostile", "aggressive", "confrontational"] }, 
+        { ja: "難解な", correct: "esoteric", incorrect: ["common", "simple", "well-known"] }, { ja: "うやうやしい", correct: "obsequious", incorrect: ["arrogant", "domineering", "assertive"] }, 
+        { ja: "倹約", correct: "parsimony", incorrect: ["generosity", "extravagance", "wastefulness"] }, { ja: "予言の", correct: "prophetic", incorrect: ["retrospective", "historical", "unseeing"] }, 
+        { ja: "休止", correct: "respite", incorrect: ["continuation", "work", "effort"] }, { ja: "神聖な", correct: "sacrosanct", incorrect: ["profane", "unholy", "violable"] }, 
+        { ja: "散漫な", correct: "desultory", incorrect: ["focused", "methodical", "systematic"] }, { ja: "悪意のある", correct: "malevolent", incorrect: ["benevolent", "kind", "friendly"] }, 
+        { ja: "博識な", correct: "erudite", incorrect: ["ignorant", "uneducated", "simple"] }, { ja: "偽の", correct: "spurious", incorrect: ["authentic", "genuine", "real"] }, 
+        { ja: "好戦的な", correct: "pugnacious", incorrect: ["peaceful", "passive", "friendly"] }, { ja: "おしゃべりな", correct: "garrulous", incorrect: ["taciturn", "quiet", "silent"] }
     ]
 };
-
 const readingQuizData = [
     {
         title: "A Day at the Beach",
@@ -199,27 +275,42 @@ const readingQuizData = [
         ]
     }
 ];
-
 const conversationTopics = [
-    "What is the most interesting place you have ever visited?",
-    "If you could have any superpower, what would it be and why?",
-    "What is your favorite movie or book and why?",
-    "Describe your dream vacation.",
-    "What new skill would you like to learn?",
-    "What is the best meal you have ever had?",
-    "Talk about your favorite season and why you like it."
+    "What is the most interesting place you have ever visited?", "If you could have any superpower, what would it be and why?",
+    "What is your favorite movie or book and why?", "Describe your dream vacation.", "What new skill would you like to learn?",
+    "What is the best meal you have ever had?", "Talk about your favorite season and why you like it."
 ];
-
 const listeningChallengeSentences = pronunciationSentences;
+const featureDescriptions = {
+    speaking: {
+        title: "スピーキング練習",
+        description: "お手本の音声を聞いてから発音することで、英語特有のリズムやイントネーションを練習します。\n\nAIがあなたの音声を解析し、発音の正確さと話すペース（速さ）を評価してフィードバックを表示します。\n\n録音された自分の声を聞き直すことで、客観的に改善点を見つけることができます。"
+    },
+    wordquiz: {
+        title: "単語クイズ",
+        description: "初級から専門家レベルまで、4つの難易度から選べる4択クイズです。\n\n・初級: 英検3級レベル\n・中級: 英検準2級・2級レベル\n・上級: 英検準1級レベル\n・専門家: 英検1級・TOEIC 800+レベル\n\n繰り返し挑戦して、語彙力を強化しましょう。"
+    },
+    listening: {
+        title: "リスニングチャレンジ",
+        description: "ネイティブスピーカーによる英語の音声を聞き取り、正確に書き起こす「ディクテーション」の練習です。\n\n聞き取れない部分は何度でも再生できます。細かい冠詞や前置詞まで正確に聞き取る力を養います。"
+    },
+    reading: {
+        title: "読解練習",
+        description: "短い英語の文章を読み、その内容に関する質問に答えることで、リーディング力を鍛えます。\n\nクイズ終了後には、英文と日本語訳を並べて確認できるので、文脈や表現の復習に最適です。"
+    },
+    videochat: {
+        title: "ビデオチャット",
+        description: "WebRTC技術を使用して、離れた場所にいる相手とリアルタイムで映像と音声をつないで会話ができます。\n\n表示されるトピックについて話したり、フリートークを楽しんだりして、実践的な英会話力を身につけましょう。\n(カメラとマイクの許可が必要です)"
+    },
+    industry: {
+        title: "専門分野別 (Industry Focus)",
+        description: "特定の業界（IT, ビジネス, 医療, 金融）に特化した専門用語やフレーズを学習できます。\n\n・フラッシュカード: 重要単語の暗記\n・キーフレーズ: 実践的な例文\n・ミニ記事: 業界ニュースの読解\n\n自分のキャリアや興味に合わせた英語力を身につけましょう。"
+    }
+};
 
-const idiomsData = [
-    { idiom: "Break a leg!", meaning: "幸運を祈るよ！/ 頑張って！", description: "舞台に出る役者にかける激励の言葉が由来です。" },
-    { idiom: "Bite the bullet.", meaning: "歯を食いしばって耐える", description: "困難な状況に立ち向かうこと。" },
-    { idiom: "Piece of cake.", meaning: "朝飯前", description: "とても簡単なこと。" },
-    { idiom: "Hit the road.", meaning: "出発する", description: "旅に出る、帰る。" },
-    { idiom: "Under the weather.", meaning: "体調が悪い", description: "気分が優れないこと。" }
-];
-
+// =============================================
+//  Industry Focus Data (Extended)
+// =============================================
 const industryData = {
     it: {
         title: "IT & Tech",
@@ -251,6 +342,49 @@ const industryData = {
                 keyphrase: "Could you walk me through this logic?",
                 translation: "このロジックについて説明してもらえますか？",
                 scenarioTrans: "コードレビューにて"
+            },
+            // Added
+            { 
+                scenario: "System Failure",
+                keyphrase: "The server is down due to high traffic.",
+                translation: "高トラフィックのためサーバーがダウンしています。",
+                scenarioTrans: "システム障害発生時"
+            },
+            { 
+                scenario: "Refactoring",
+                keyphrase: "We need to refactor the legacy code.",
+                translation: "レガシーコードのリファクタリングが必要です。",
+                scenarioTrans: "コード品質の議論にて"
+            },
+            { 
+                scenario: "Release Planning",
+                keyphrase: "Let's roll out the new feature next week.",
+                translation: "来週、新機能を公開しましょう。",
+                scenarioTrans: "リリース計画会議にて"
+            },
+            { 
+                scenario: "Troubleshooting",
+                keyphrase: "Have you checked the error logs?",
+                translation: "エラーログを確認しましたか？",
+                scenarioTrans: "トラブルシューティングにて"
+            },
+            { 
+                scenario: "Performance",
+                keyphrase: "We should optimize the database queries.",
+                translation: "データベースクエリを最適化すべきです。",
+                scenarioTrans: "パフォーマンス改善の議論にて"
+            },
+            { 
+                scenario: "Security",
+                keyphrase: "We need to patch this vulnerability immediately.",
+                translation: "この脆弱性には直ちにパッチを当てる必要があります。",
+                scenarioTrans: "セキュリティ会議にて"
+            },
+            { 
+                scenario: "Cloud Migration",
+                keyphrase: "We are migrating our infrastructure to the cloud.",
+                translation: "インフラをクラウドに移行しています。",
+                scenarioTrans: "インフラ移行プロジェクトにて"
             }
         ],
         articles: [
@@ -295,6 +429,49 @@ const industryData = {
                 keyphrase: "I think we're on the same page.",
                 translation: "私たちの認識は一致していると思います。",
                 scenarioTrans: "合意形成時"
+            },
+            // Added
+            { 
+                scenario: "Follow-up",
+                keyphrase: "Let's touch base next week.",
+                translation: "来週、連絡を取りましょう。",
+                scenarioTrans: "会議の終わりに"
+            },
+            { 
+                scenario: "Cost Reduction",
+                keyphrase: "We need to cut costs by 10%.",
+                translation: "コストを10%削減する必要があります。",
+                scenarioTrans: "予算会議にて"
+            },
+            { 
+                scenario: "Proposal",
+                keyphrase: "I'd like to propose a new marketing strategy.",
+                translation: "新しいマーケティング戦略を提案したいのですが。",
+                scenarioTrans: "企画会議にて"
+            },
+            { 
+                scenario: "Clarification",
+                keyphrase: "Could you elaborate on that point?",
+                translation: "その点について詳しく説明していただけますか？",
+                scenarioTrans: "プレゼン中に"
+            },
+            { 
+                scenario: "Deadline",
+                keyphrase: "We have a tight deadline to meet.",
+                translation: "厳しい締め切りに間に合わせなければなりません。",
+                scenarioTrans: "プロジェクト管理にて"
+            },
+            { 
+                scenario: "Partnership",
+                keyphrase: "We are looking to form a strategic partnership.",
+                translation: "戦略的パートナーシップの締結を検討しています。",
+                scenarioTrans: "提携交渉にて"
+            },
+            { 
+                scenario: "Performance Review",
+                keyphrase: "You've exceeded our expectations this quarter.",
+                translation: "今期、あなたは私たちの期待を上回る成果を上げました。",
+                scenarioTrans: "人事評価面談にて"
             }
         ],
         articles: [
@@ -327,6 +504,55 @@ const industryData = {
                 keyphrase: "This medication may cause some side effects.",
                 translation: "この薬はいくつかの副作用を引き起こす可能性があります。",
                 scenarioTrans: "治療説明にて"
+            },
+            // Added
+            { 
+                scenario: "Examination",
+                keyphrase: "Please take a deep breath.",
+                translation: "深呼吸してください。",
+                scenarioTrans: "聴診時に"
+            },
+            { 
+                scenario: "Testing",
+                keyphrase: "We need to run some blood tests.",
+                translation: "いくつか血液検査をする必要があります。",
+                scenarioTrans: "検査の案内にて"
+            },
+            { 
+                scenario: "History Taking",
+                keyphrase: "Do you have any allergies?",
+                translation: "アレルギーはありますか？",
+                scenarioTrans: "問診時に"
+            },
+            { 
+                scenario: "Diagnosis",
+                keyphrase: "It looks like you have a viral infection.",
+                translation: "ウイルス感染症のようです。",
+                scenarioTrans: "診断結果の説明にて"
+            },
+            { 
+                scenario: "Follow-up",
+                keyphrase: "Come back if your symptoms persist.",
+                translation: "症状が続くようならまた来てください。",
+                scenarioTrans: "診察の終わりに"
+            },
+            { 
+                scenario: "Surgery",
+                keyphrase: "The surgery was successful.",
+                translation: "手術は成功しました。",
+                scenarioTrans: "手術後の説明にて"
+            },
+            { 
+                scenario: "Lifestyle Advice",
+                keyphrase: "You need to reduce your salt intake.",
+                translation: "塩分の摂取を控える必要があります。",
+                scenarioTrans: "生活指導にて"
+            },
+            { 
+                scenario: "Appointment",
+                keyphrase: "I'd like to schedule a follow-up appointment.",
+                translation: "次回の予約を取りたいのですが。",
+                scenarioTrans: "受付にて"
             }
         ],
         articles: [
@@ -359,6 +585,55 @@ const industryData = {
                 keyphrase: "Please review the terms and conditions carefully.",
                 translation: "利用規約を注意深く確認してください。",
                 scenarioTrans: "契約確認にて"
+            },
+            // Added
+            { 
+                scenario: "Market Analysis",
+                keyphrase: "The market is volatile right now.",
+                translation: "市場は現在不安定です。",
+                scenarioTrans: "市場分析にて"
+            },
+            { 
+                scenario: "Stock Outlook",
+                keyphrase: "We are bullish on this stock.",
+                translation: "この株には強気です。",
+                scenarioTrans: "株式推奨にて"
+            },
+            { 
+                scenario: "Budgeting",
+                keyphrase: "We are over budget for this quarter.",
+                translation: "今期は予算オーバーです。",
+                scenarioTrans: "予算管理にて"
+            },
+            { 
+                scenario: "Loan Application",
+                keyphrase: "Your credit score is excellent.",
+                translation: "あなたの信用スコアは素晴らしいです。",
+                scenarioTrans: "ローン審査にて"
+            },
+            { 
+                scenario: "Tax",
+                keyphrase: "Are these expenses tax-deductible?",
+                translation: "これらの経費は控除対象ですか？",
+                scenarioTrans: "税務相談にて"
+            },
+            { 
+                scenario: "Merger",
+                keyphrase: "The merger will create significant synergies.",
+                translation: "この合併は大きな相乗効果を生むでしょう。",
+                scenarioTrans: "M&Aの議論にて"
+            },
+            { 
+                scenario: "Risk Management",
+                keyphrase: "We need to mitigate the financial risks.",
+                translation: "財務リスクを軽減する必要があります。",
+                scenarioTrans: "リスク管理会議にて"
+            },
+            { 
+                scenario: "Auditing",
+                keyphrase: "The audit revealed some discrepancies.",
+                translation: "監査でいくつかの不一致が明らかになりました。",
+                scenarioTrans: "監査報告にて"
             }
         ],
         articles: [
@@ -371,34 +646,6 @@ const industryData = {
         ]
     }
 };
-
-const featureDescriptions = {
-    speaking: {
-        title: "スピーキング練習",
-        description: "お手本の音声を聞いてから発音することで、英語特有のリズムやイントネーションを練習します。\n\nAIがあなたの音声を解析し、発音の正確さと話すペース（速さ）を評価してフィードバックを表示します。\n\n録音された自分の声を聞き直すことで、客観的に改善点を見つけることができます。"
-    },
-    wordquiz: {
-        title: "単語クイズ",
-        description: "初級から専門家レベルまで、4つの難易度から選べる4択クイズです。\n\n・初級: 英検3級レベル\n・中級: 英検準2級・2級レベル\n・上級: 英検準1級レベル\n・専門家: 英検1級・TOEIC 800+レベル\n\n繰り返し挑戦して、語彙力を強化しましょう。"
-    },
-    listening: {
-        title: "リスニングチャレンジ",
-        description: "ネイティブスピーカーによる英語の音声を聞き取り、正確に書き起こす「ディクテーション」の練習です。\n\n聞き取れない部分は何度でも再生できます。細かい冠詞や前置詞まで正確に聞き取る力を養います。"
-    },
-    reading: {
-        title: "読解練習",
-        description: "短い英語の文章を読み、その内容に関する質問に答えることで、リーディング力を鍛えます。\n\nクイズ終了後には、英文と日本語訳を並べて確認できるので、文脈や表現の復習に最適です。"
-    },
-    videochat: {
-        title: "ビデオチャット",
-        description: "WebRTC技術を使用して、離れた場所にいる相手とリアルタイムで映像と音声をつないで会話ができます。\n\n表示されるトピックについて話したり、フリートークを楽しんだりして、実践的な英会話力を身につけましょう。\n(カメラとマイクの許可が必要です)"
-    },
-    industry: {
-        title: "専門分野別 (Industry Focus)",
-        description: "特定の業界（IT, ビジネス, 医療, 金融）に特化した専門用語やフレーズを学習できます。\n\n・フラッシュカード: 重要単語の暗記\n・キーフレーズ: 実践的な例文\n・ミニ記事: 業界ニュースの読解\n\n自分のキャリアや興味に合わせた英語力を身につけましょう。"
-    }
-};
-
 
 // =============================================
 //  Audio Context & Speech Synthesis Setup
@@ -453,9 +700,10 @@ const modalTitle = document.getElementById('modal-title');
 const modalDescription = document.getElementById('modal-description');
 const closeModalBtn = document.querySelector('.close-modal');
 
+// 情報ボタンのイベント設定
 document.querySelectorAll('.info-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-        e.stopPropagation();
+        e.stopPropagation(); // 親要素(カード)のクリックイベントを防止
         const featureKey = btn.dataset.feature;
         const data = featureDescriptions[featureKey];
         if (data) {
@@ -466,14 +714,17 @@ document.querySelectorAll('.info-btn').forEach(btn => {
     });
 });
 
+// モーダルを閉じる処理
 closeModalBtn.addEventListener('click', () => {
     infoModal.classList.add('hidden');
 });
+
 window.addEventListener('click', (e) => {
     if (e.target === infoModal) {
         infoModal.classList.add('hidden');
     }
 });
+
 
 const homeScreen = document.getElementById('home-screen');
 const speakingPracticeScreen = document.getElementById('speaking-practice-screen');
@@ -482,6 +733,7 @@ const quizLevelScreen = document.getElementById('quiz-level-screen');
 const listeningChallengeScreen = document.getElementById('listening-challenge-screen');
 const readingQuizScreen = document.getElementById('reading-quiz-screen');
 const videoChatScreen = document.getElementById('video-chat-screen');
+// Industry Focus Screens
 const industrySelectionScreen = document.getElementById('industry-selection-screen');
 const industryModuleScreen = document.getElementById('industry-module-screen');
 const industryFlashcardScreen = document.getElementById('industry-flashcard-screen');
@@ -493,7 +745,7 @@ const goToQuizLevelsButton = document.getElementById('go-to-quiz-levels');
 const startListeningChallengeButton = document.getElementById('start-listening-challenge');
 const startReadingQuizButton = document.getElementById('start-reading-quiz');
 const startVideoChatButton = document.getElementById('start-video-chat');
-const startIndustryFocusButton = document.getElementById('start-industry-focus');
+const startIndustryFocusButton = document.getElementById('start-industry-focus'); // New
 
 const backButtonSpeaking = document.getElementById('backButtonSpeaking');
 const backButtonFromLevels = document.getElementById('backButtonFromLevels');
@@ -501,6 +753,7 @@ const backButtonFromQuiz = document.getElementById('backButtonFromQuiz');
 const backButtonFromListening = document.getElementById('backButtonFromListening');
 const backButtonFromReading = document.getElementById('backButtonFromReading');
 const backButtonFromVideo = document.getElementById('backButtonFromVideo');
+// Industry Focus Back Buttons
 const backButtonFromIndustry = document.getElementById('backButtonFromIndustry');
 const backButtonFromModule = document.getElementById('backButtonFromModule');
 const backButtonFromIndFlashcard = document.getElementById('backButtonFromIndFlashcard');
@@ -557,6 +810,7 @@ backButtonFromQuiz.addEventListener('click', () => showScreen(quizLevelScreen));
 backButtonFromListening.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromReading.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromVideo.addEventListener('click', () => { if (typeof peerConnection !== 'undefined' && peerConnection) { hangUp(); } showScreen(homeScreen); });
+// Industry Focus Back Actions
 backButtonFromIndustry.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromModule.addEventListener('click', () => showScreen(industrySelectionScreen));
 backButtonFromIndFlashcard.addEventListener('click', () => showScreen(industryModuleScreen));
@@ -766,9 +1020,8 @@ stopButton.addEventListener('click', () => {
 
 function generateCombinedFeedback(transcript) {
     const originalText = pronunciationSentences[currentSentenceIndex].en;
-    const cleanOriginal = originalText.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/); 
-    const cleanUser = transcript.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/); 
-
+    const cleanOriginal = originalText.toLowerCase().replace(/[.,!?]/g, '').split(' ');
+    const cleanUser = transcript.toLowerCase().replace(/[.,!?]/g, '').split(' ');
     let correctWords = 0;
     const feedbackHtml = cleanOriginal.map((word, index) => {
         if (cleanUser[index] === word) { correctWords++; return `<span class="correct">${word}</span>`; }
@@ -809,7 +1062,7 @@ feedbackElement.addEventListener('click', (e) => {
 });
 
 // =============================================
-//  単語クイズロジック (AI対応版)
+//  単語クイズロジック
 // =============================================
 const levelCards = document.querySelectorAll('.level-card');
 const quizGameArea = document.getElementById('quiz-game-area');
@@ -823,49 +1076,6 @@ const quizFinalScore = document.getElementById('quiz-final-score');
 const quizRestartButton = document.getElementById('quiz-restart-button');
 let currentQuizIndex = 0, quizScore = 0, questionsForCurrentQuiz = [], currentQuizLevel = '';
 
-// AIによるクイズ生成関数
-async function generateQuizWithAI(level) {
-    if (!GEMINI_API_KEY || GEMINI_API_KEY === "AIzaSyDsBNCQUuU_Lp8VfAwq5qLpdv5VVOqpI54") {
-        return null; // キーがなければ既存データを使う
-    }
-
-    // ユーザーへのフィードバック（簡易）
-    quizQuestion.textContent = "AIが新しい問題を生成中...";
-    
-    const prompt = `
-        You are an English teacher. Create 5 multiple-choice vocabulary questions for level "${level}".
-        Format the output as a JSON array ONLY. No markdown, no explanations.
-        JSON structure:
-        [
-          {
-            "ja": "Meaning in Japanese",
-            "correct": "Correct English word",
-            "incorrect": ["Wrong word 1", "Wrong word 2", "Wrong word 3"]
-          }
-        ]
-    `;
-
-    try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-        });
-
-        if (!response.ok) throw new Error('API Error');
-
-        const data = await response.json();
-        let text = data.candidates[0].content.parts[0].text;
-        // JSON形式を抽出
-        text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-        return JSON.parse(text);
-
-    } catch (error) {
-        console.error("AI生成エラー:", error);
-        return null; // 失敗したらnull
-    }
-}
-
 // クイズレベル選択 (Industry Focus用も兼ねるため、IDで識別)
 document.querySelectorAll('#quiz-level-screen .level-card').forEach(card => {
     card.addEventListener('click', () => {
@@ -875,29 +1085,14 @@ document.querySelectorAll('#quiz-level-screen .level-card').forEach(card => {
 });
 
 function shuffleArray(array) { return [...array].sort(() => Math.random() - 0.5); }
-
-async function startNewQuizSet() {
-    showScreen(wordQuizScreen);
-    quizGameArea.style.display = 'block';
-    quizEndScreen.style.display = 'none';
-    quizQuestion.textContent = "Loading...";
-    quizOptionsGrid.innerHTML = "";
-
-    // 1. AI生成を試みる
-    const aiQuestions = await generateQuizWithAI(currentQuizLevel);
-
-    if (aiQuestions && aiQuestions.length > 0) {
-        questionsForCurrentQuiz = aiQuestions;
-    } else {
-        // 2. 失敗またはキーなしなら既存データを使用
-        const fullQuizData = quizDataSets[currentQuizLevel];
-        if (!fullQuizData || fullQuizData.length === 0) {
-            alert(`レベル「${currentQuizLevel}」の単語データが見つかりません。`);
-            return;
-        }
-        questionsForCurrentQuiz = shuffleArray(fullQuizData).slice(0, 10); 
+function startNewQuizSet() {
+    const fullQuizData = quizDataSets[currentQuizLevel];
+    if (!fullQuizData || fullQuizData.length === 0) {
+        alert(`レベル「${currentQuizLevel}」の単語データが見つかりません。`);
+        return;
     }
-
+    questionsForCurrentQuiz = shuffleArray(fullQuizData).slice(0, 10); 
+    showScreen(wordQuizScreen);
     startQuiz();
 }
 function startQuiz() {
@@ -1260,6 +1455,12 @@ endCallBtn.addEventListener('click', hangUp);
 if(switchCameraBtn) switchCameraBtn.addEventListener('click', switchCamera); 
 
 async function startCall() {
+    // 接続先URLが設定されているかチェック
+    if (SIGNALING_SERVER_URL.includes("YOUR-REPLIT-URL-HERE")) {
+        showCustomAlert("サーバーのURLが設定されていません。script.jsの先頭を確認してください。");
+        return;
+    }
+
     startCallBtn.disabled = true;
     endCallBtn.disabled = false;
     if(switchCameraBtn) switchCameraBtn.disabled = false; // 通話開始時に有効化
@@ -1283,10 +1484,8 @@ async function startCall() {
 
     videoStatus.textContent = "シグナリングサーバーに接続中...";
 
-    // ★ここをReplitのURL (wss://...) に書き換えてください
-    let wsUrl = 'wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev:8080'; 
     try {
-        socket = new WebSocket(wsUrl); 
+        socket = new WebSocket(SIGNALING_SERVER_URL); 
     } catch (err) {
         videoStatus.textContent = "サーバー接続エラー。";
         startCallBtn.disabled = false;
@@ -1341,6 +1540,9 @@ async function startCall() {
                 case 'room-full':
                     videoStatus.textContent = "エラー: ルームは満室です。";
                     hangUp();
+                    break;
+                case 'error':
+                    videoStatus.textContent = `サーバーエラー: ${data.message}`;
                     break;
             }
         } catch (err) {
