@@ -1077,13 +1077,29 @@ document.querySelectorAll('#quiz-level-screen .level-card').forEach(card => {
 });
 
 function shuffleArray(array) { return [...array].sort(() => Math.random() - 0.5); }
-function startNewQuizSet() {
-    const fullQuizData = quizDataSets[currentQuizLevel];
-    if (!fullQuizData || fullQuizData.length === 0) {
-        alert(`レベル「${currentQuizLevel}」の単語データが見つかりません。`);
-        return;
+// 既存の startNewQuizSet 関数をこれに置き換える
+async function startNewQuizSet() { // async をつけるのを忘れずに
+    
+    // 1. まずローディング表示などをする（簡易的にアラートやログで代用してもOK）
+    console.log(`${currentQuizLevel}レベルの問題を生成中...`);
+
+    // 2. AIに問題を生成させる
+    let aiQuestions = await generateQuizWithAI(currentQuizLevel);
+
+    if (aiQuestions && aiQuestions.length > 0) {
+        // AI生成成功！そのデータを使う
+        questionsForCurrentQuiz = aiQuestions;
+    } else {
+        // 生成失敗... 既存の手動データを使う（バックアップ）
+        const fullQuizData = quizDataSets[currentQuizLevel];
+        if (!fullQuizData || fullQuizData.length === 0) {
+            alert(`レベル「${currentQuizLevel}」のデータが見つかりません。`);
+            return;
+        }
+        questionsForCurrentQuiz = shuffleArray(fullQuizData).slice(0, 10);
     }
-    questionsForCurrentQuiz = shuffleArray(fullQuizData).slice(0, 10); 
+
+    // 画面を表示してクイズ開始
     showScreen(wordQuizScreen);
     startQuiz();
 }
@@ -1705,6 +1721,61 @@ document.addEventListener('DOMContentLoaded', () => {
 function showCustomAlert(message) {
     console.warn("Using placeholder alert:", message);
     alert(message); 
+}
+// =============================================
+//  🤖 AIクイズ生成機能 (ここから追加)
+// =============================================
+
+// ★取得したAPIキーをここに貼り付けてください
+const GEMINI_API_KEY = "AIzaSyDsBNCQUuU_Lp8VfAwq5qLpdv5VVoqpI54"; 
+
+// AIにクイズを作ってもらう関数
+async function generateQuizWithAI(level) {
+    // ユーザーへの通知（ローディング表示の代わり）
+    const statusEl = document.getElementById('status'); // もしくは適切な表示場所
+    if(statusEl) statusEl.textContent = "AIが新しい問題を作成中...";
+    
+    // AIへの命令文（プロンプト）
+    const prompt = `
+        あなたは英語教師です。英語学習者向けに、レベル「${level}」の英単語4択クイズを5問作成してください。
+        以下のJSON形式のみを出力してください。余計な会話は不要です。
+
+        [
+            {
+                "ja": "単語の意味（日本語）",
+                "correct": "正解の英単語",
+                "incorrect": ["不正解1", "不正解2", "不正解3"]
+            }
+        ]
+    `;
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }]
+            })
+        });
+
+        const data = await response.json();
+        // AIの返答からテキスト部分を抽出
+        let text = data.candidates[0].content.parts[0].text;
+        
+        // JSON形式の部分だけを取り出す（念のため整形）
+        text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        
+        // 文字列をプログラムで使えるデータ(配列)に変換
+        const newQuizData = JSON.parse(text);
+        
+        console.log("AIが生成したクイズ:", newQuizData);
+        return newQuizData;
+
+    } catch (error) {
+        console.error("AI生成エラー:", error);
+        alert("問題の生成に失敗しました。既存のデータを使用します。");
+        return null; // 失敗した場合はnullを返す
+    }
 }
 
 
