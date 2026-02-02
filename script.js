@@ -1351,21 +1351,21 @@ function nextIndArticle() {
 
 
 // =============================================
-//  ビデオチャットロジック (WebRTC実装 - 映像あり版)
+//  ビデオチャットロジック (WebRTC実装)
 // =============================================
 const startCallBtn = document.getElementById('start-call-btn');
 const endCallBtn = document.getElementById('end-call-btn');
-const switchCameraBtn = document.getElementById('switch-camera-btn'); // 追加
+const switchCameraBtn = document.getElementById('switch-camera-btn');
 const localVideo = document.getElementById('local-video');
 const remoteVideo = document.getElementById('remote-video');
 const videoStatus = document.getElementById('video-status');
+const roomIdInput = document.getElementById('room-id-input'); // ルームID入力
 
 let peerConnection;
 let localStream;
 let remoteStream;
 let socket;
-const roomId = 'default-room'; 
-let currentFacingMode = 'user'; // デフォルトは内カメ
+let currentFacingMode = 'user'; 
 
 // Googleが提供するパブリックSTUNサーバー
 const stunServers = {
@@ -1387,12 +1387,11 @@ async function startCall() {
 
     startCallBtn.disabled = true;
     endCallBtn.disabled = false;
-    if(switchCameraBtn) switchCameraBtn.disabled = false; // 通話開始時に有効化
+    if(switchCameraBtn) switchCameraBtn.disabled = false; 
     videoStatus.textContent = "カメラとマイクを起動中..."; 
 
     try {
         // ▼▼▼ 映像あり ▼▼▼
-        // カメラなしデバイス用にフォールバックを追加
         try {
             localStream = await navigator.mediaDevices.getUserMedia({ 
                 video: { facingMode: currentFacingMode }, 
@@ -1441,7 +1440,9 @@ async function startCall() {
 
     socket.onopen = () => {
         videoStatus.textContent = "サーバーに接続しました。ルームに参加します...";
-        socket.send(JSON.stringify({ type: 'join', room: roomId }));
+        // ▼ ルームID入力欄の値を使用（空ならdefault-room）
+        const roomName = roomIdInput && roomIdInput.value ? roomIdInput.value : 'default-room';
+        socket.send(JSON.stringify({ type: 'join', room: roomName }));
     };
 
     socket.onmessage = async (message) => {
@@ -1537,13 +1538,6 @@ async function switchCamera() {
             if (sender) {
                 sender.replaceTrack(videoTrack);
             }
-            
-            // 音声トラックも更新（必要であれば）
-            const audioTrack = newStream.getAudioTracks()[0];
-            const audioSender = peerConnection.getSenders().find(s => s.track.kind === 'audio');
-            if (audioSender) {
-                audioSender.replaceTrack(audioTrack);
-            }
         }
         
         // グローバル変数を更新
@@ -1617,7 +1611,6 @@ function hangUp(message) {
         remoteStream = null;
     }
     if (socket) {
-        // oncloseイベントが再発火しないようにハンドラを削除してから閉じる
         socket.onclose = null;
         socket.close();
         socket = null;
@@ -1628,7 +1621,6 @@ function hangUp(message) {
     endCallBtn.disabled = true;
     if(switchCameraBtn) switchCameraBtn.disabled = true; 
 }
-
 
 // =============================================
 //  今日のイディオムロジック
