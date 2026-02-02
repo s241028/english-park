@@ -55,7 +55,7 @@ body {
 
 /* ビデオチャット画面だけコンテナを広くする */
 #video-chat-screen .container {
-    max-width: 1000px; /* 650px -> 1000px */
+    max-width: 1000px; 
 }
 
 h1 { 
@@ -282,7 +282,7 @@ header h1 {
 #sentence { font-weight: 600; color: var(--neon-magenta); font-size: 1.5em; }
 .sentence-meaning { font-size: 1.1em; color: var(--light-text); opacity: 0.9; font-style: italic; margin-top: 10px; border-top: 1px solid var(--outline-color); padding-top: 10px; }
 .controls { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 15px; margin: 20px 0; }
-.controls button { font-size: 1.1em; font-weight: 600; padding: 14px 28px; border: none; border-radius: 25px; cursor: pointer; transition: all 0.3s ease; color: white; }
+.controls button { font-size: 1.1em; font-weight: 600; padding: 14px 28px; border: none; border-radius: 25px; /* 丸く */ cursor: pointer; transition: all 0.3s ease; color: white; }
 .listen-btn { background: var(--neon-magenta); box-shadow: 0 4px 10px rgba(192, 38, 211, 0.3); }
 #startButton { background: var(--neon-green); box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3); }
 #stopButton { background: var(--neon-red); box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3); }
@@ -413,6 +413,31 @@ header h1 {
 }
 #video-topic-card h2 { color: var(--neon-magenta); border-bottom: none; padding-bottom: 5px; font-size: 1.1em; }
 #video-topic { font-size: 1.3em; font-weight: 600; color: var(--primary-text); }
+/* ▼▼▼ 修正: ルーム入力欄のデザインを追加 ▼▼▼ */
+.room-input-container {
+    padding: 20px;
+    background-color: var(--dark-card);
+    border: 1px solid var(--outline-color);
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.room-input {
+    padding: 10px 15px;
+    font-size: 1.1em;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 60%;
+    margin-left: 10px;
+    font-family: 'Poppins', sans-serif;
+}
+.room-input:focus {
+    outline: none;
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 5px var(--neon-cyan);
+}
+/* ▲▲▲ 追加ここまで ▲▲▲ */
+
 .video-container { 
     position: relative; width: 100%; aspect-ratio: 16 / 9; background-color: #000; border-radius: 10px; overflow: hidden; margin: 20px 0; 
     border: 1px solid var(--outline-color); 

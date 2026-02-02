@@ -391,6 +391,14 @@
                 <p id="video-topic">What is the most interesting place you have ever visited?</p>
             </div>
             
+            <!-- ▼▼▼ 追加: ルーム入力エリア ▼▼▼ -->
+            <div class="room-input-container card" style="text-align: center;">
+                <label for="room-id-input" style="font-weight: bold; color: var(--light-text);">ルーム名:</label>
+                <input type="text" id="room-id-input" value="room1" class="room-input" placeholder="例: apple, 1234">
+                <p style="font-size: 0.9em; color: #888; margin-top: 5px;">※相手と同じルーム名を入力して「Start Call」を押してください。</p>
+            </div>
+            <!-- ▲▲▲ 追加ここまで ▲▲▲ -->
+
             <!-- 映像表示エリア -->
             <div class="video-container">
                 <video id="remote-video" autoplay playsinline></video>
@@ -401,7 +409,6 @@
 
             <div id="video-controls">
                 <button id="start-call-btn">Start Call</button>
-                <!-- ▼ 追加: カメラ切替ボタン ▼ -->
                 <button id="switch-camera-btn" class="action-button small" disabled>📷 切替</button>
                 <button id="end-call-btn" disabled>End Call</button>
             </div>
