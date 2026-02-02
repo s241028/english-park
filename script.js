@@ -619,9 +619,10 @@ const modalTitle = document.getElementById('modal-title');
 const modalDescription = document.getElementById('modal-description');
 const closeModalBtn = document.querySelector('.close-modal');
 
+// 情報ボタンのイベント設定
 document.querySelectorAll('.info-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-        e.stopPropagation();
+        e.stopPropagation(); // 親要素(カード)のクリックイベントを防止
         const featureKey = btn.dataset.feature;
         const data = featureDescriptions[featureKey];
         if (data) {
@@ -632,9 +633,11 @@ document.querySelectorAll('.info-btn').forEach(btn => {
     });
 });
 
+// モーダルを閉じる処理
 closeModalBtn.addEventListener('click', () => {
     infoModal.classList.add('hidden');
 });
+
 window.addEventListener('click', (e) => {
     if (e.target === infoModal) {
         infoModal.classList.add('hidden');
@@ -649,11 +652,13 @@ const quizLevelScreen = document.getElementById('quiz-level-screen');
 const listeningChallengeScreen = document.getElementById('listening-challenge-screen');
 const readingQuizScreen = document.getElementById('reading-quiz-screen');
 const videoChatScreen = document.getElementById('video-chat-screen');
+// Industry Focus Screens
 const industrySelectionScreen = document.getElementById('industry-selection-screen');
 const industryModuleScreen = document.getElementById('industry-module-screen');
 const industryFlashcardScreen = document.getElementById('industry-flashcard-screen');
 const industryPhraseScreen = document.getElementById('industry-phrase-screen');
 const industryArticleScreen = document.getElementById('industry-article-screen');
+
 
 const startSpeakingPracticeButton = document.getElementById('start-speaking-practice');
 const goToQuizLevelsButton = document.getElementById('go-to-quiz-levels');
@@ -668,6 +673,7 @@ const backButtonFromQuiz = document.getElementById('backButtonFromQuiz');
 const backButtonFromListening = document.getElementById('backButtonFromListening');
 const backButtonFromReading = document.getElementById('backButtonFromReading');
 const backButtonFromVideo = document.getElementById('backButtonFromVideo');
+// Industry Focus Back Buttons
 const backButtonFromIndustry = document.getElementById('backButtonFromIndustry');
 const backButtonFromModule = document.getElementById('backButtonFromModule');
 const backButtonFromIndFlashcard = document.getElementById('backButtonFromIndFlashcard');
@@ -683,7 +689,6 @@ function showScreen(screenToShow) {
     screenToShow.style.display = 'block'; 
     screenToShow.classList.add('active'); 
 
-    // ホーム画面が表示されたらイディオムを更新
     if (screenToShow === homeScreen) {
         displayIdiomOfTheDay();
     }
@@ -939,9 +944,8 @@ stopButton.addEventListener('click', () => {
 
 function generateCombinedFeedback(transcript) {
     const originalText = pronunciationSentences[currentSentenceIndex].en;
-    const cleanOriginal = originalText.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/); 
-    const cleanUser = transcript.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/); 
-
+    const cleanOriginal = originalText.toLowerCase().replace(/[.,!?]/g, '').split(' ');
+    const cleanUser = transcript.toLowerCase().replace(/[.,!?]/g, '').split(' ');
     let correctWords = 0;
     const feedbackHtml = cleanOriginal.map((word, index) => {
         if (cleanUser[index] === word) { correctWords++; return `<span class="correct">${word}</span>`; }
