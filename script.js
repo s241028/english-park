@@ -6,8 +6,9 @@
 const SIGNALING_SERVER_URL = "wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev:8080";
 
 
+
 // =============================================
-//  全体で使用するデータ (完全版)
+//  全体で使用するデータ (完全版・大幅拡充)
 // =============================================
 const pronunciationSentences = [
     { en: "How are you doing?", ja: "調子はどうですか？" },
@@ -403,7 +404,6 @@ const idiomsData = [
     { idiom: "Piece of cake.", meaning: "朝飯前", description: "とても簡単なこと。" },
     { idiom: "Hit the road.", meaning: "出発する", description: "旅に出る、帰る。" },
     { idiom: "Under the weather.", meaning: "体調が悪い", description: "気分が優れないこと。" },
-    // イディオム追加
     { idiom: "Spill the beans", meaning: "秘密を漏らす", description: "豆をこぼす＝秘密をばらす。" },
     { idiom: "Once in a blue moon", meaning: "ごくまれに", description: "めったにないこと。" },
     { idiom: "The ball is in your court", meaning: "次は君の番だ", description: "決定権は相手にある。" },
@@ -567,7 +567,7 @@ const industryData = {
 };
 
 // =============================================
-//  学習記録 & ダッシュボード機能 (New!)
+//  学習記録 & ダッシュボード機能
 // =============================================
 const STORAGE_KEY = 'englishParkData';
 
@@ -599,7 +599,6 @@ function recordSession(scoreData) {
     let data = loadLearningData();
     const today = new Date().toDateString();
 
-    // ストリーク更新
     if (data.lastStudyDate !== today) {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
@@ -607,30 +606,25 @@ function recordSession(scoreData) {
         if (data.lastStudyDate === yesterday.toDateString()) {
             data.streak++;
         } else {
-            data.streak = 1; // 途切れたらリセット（または1からスタート）
+            data.streak = 1;
         }
         data.lastStudyDate = today;
     }
 
-    // 回数カウント
     data.totalSessions++;
 
-    // スコア更新 (もしあれば)
     if (scoreData && scoreData.type === 'wordquiz') {
         if (scoreData.score > (data.scores[scoreData.level] || 0)) {
             data.scores[scoreData.level] = scoreData.score;
         }
     }
 
-    // バッジ判定
     checkBadges(data);
-
     saveLearningData(data);
 }
 
 function checkBadges(data) {
     const newBadges = [];
-    
     if (data.totalSessions >= 1 && !data.badges.includes('first_step')) {
         newBadges.push('first_step');
         alert("🎉 バッジ獲得: はじめの一歩！");
@@ -639,8 +633,6 @@ function checkBadges(data) {
         newBadges.push('streak_3');
         alert("🔥 バッジ獲得: 3日連続学習！");
     }
-    // 他にも条件追加可能
-    
     if (newBadges.length > 0) {
         data.badges.push(...newBadges);
     }
@@ -648,21 +640,16 @@ function checkBadges(data) {
 
 function updateDashboardUI() {
     const data = loadLearningData();
-    
     document.getElementById('dashboard-streak').textContent = `${data.streak} Day Streak`;
     document.getElementById('dashboard-total-sessions').textContent = `${data.totalSessions}回`;
     document.getElementById('dashboard-last-date').textContent = data.lastStudyDate || '未実施';
-    
-    // スコア表示
     document.getElementById('best-score-beginner').textContent = data.scores.beginner || '-';
     document.getElementById('best-score-intermediate').textContent = data.scores.intermediate || '-';
     document.getElementById('best-score-advanced').textContent = data.scores.advanced || '-';
     document.getElementById('best-score-expert').textContent = data.scores.expert || '-';
 
-    // バッジ表示
     const badgeContainer = document.getElementById('badges-container');
     badgeContainer.innerHTML = '';
-    
     const badgeDefinitions = {
         'first_step': { icon: '🌱', name: 'はじめの一歩' },
         'streak_3': { icon: '🔥', name: '三日坊主卒業' },
@@ -683,6 +670,7 @@ function updateDashboardUI() {
         });
     }
 }
+
 
 // =============================================
 //  Audio Context & Speech Synthesis Setup
@@ -730,17 +718,14 @@ function speak(text, callback) {
 // =============================================
 const splashScreen = document.getElementById('splash-screen');
 const enterAppButton = document.getElementById('enter-app-button');
-
-// モーダル要素
 const infoModal = document.getElementById('info-modal');
 const modalTitle = document.getElementById('modal-title');
 const modalDescription = document.getElementById('modal-description');
 const closeModalBtn = document.querySelector('.close-modal');
 
-// 情報ボタンのイベント設定
 document.querySelectorAll('.info-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-        e.stopPropagation(); // 親要素(カード)のクリックイベントを防止
+        e.stopPropagation();
         const featureKey = btn.dataset.feature;
         const data = featureDescriptions[featureKey];
         if (data) {
@@ -750,33 +735,22 @@ document.querySelectorAll('.info-btn').forEach(btn => {
         }
     });
 });
-
-// モーダルを閉じる処理
-closeModalBtn.addEventListener('click', () => {
-    infoModal.classList.add('hidden');
-});
-
-window.addEventListener('click', (e) => {
-    if (e.target === infoModal) {
-        infoModal.classList.add('hidden');
-    }
-});
-
+closeModalBtn.addEventListener('click', () => { infoModal.classList.add('hidden'); });
+window.addEventListener('click', (e) => { if (e.target === infoModal) infoModal.classList.add('hidden'); });
 
 const homeScreen = document.getElementById('home-screen');
+const dashboardScreen = document.getElementById('dashboard-screen');
 const speakingPracticeScreen = document.getElementById('speaking-practice-screen');
 const wordQuizScreen = document.getElementById('word-quiz-screen');
 const quizLevelScreen = document.getElementById('quiz-level-screen');
 const listeningChallengeScreen = document.getElementById('listening-challenge-screen');
 const readingQuizScreen = document.getElementById('reading-quiz-screen');
 const videoChatScreen = document.getElementById('video-chat-screen');
-// Industry Focus Screens
 const industrySelectionScreen = document.getElementById('industry-selection-screen');
 const industryModuleScreen = document.getElementById('industry-module-screen');
 const industryFlashcardScreen = document.getElementById('industry-flashcard-screen');
 const industryPhraseScreen = document.getElementById('industry-phrase-screen');
 const industryArticleScreen = document.getElementById('industry-article-screen');
-
 
 const startSpeakingPracticeButton = document.getElementById('start-speaking-practice');
 const goToQuizLevelsButton = document.getElementById('go-to-quiz-levels');
@@ -784,6 +758,7 @@ const startListeningChallengeButton = document.getElementById('start-listening-c
 const startReadingQuizButton = document.getElementById('start-reading-quiz');
 const startVideoChatButton = document.getElementById('start-video-chat');
 const startIndustryFocusButton = document.getElementById('start-industry-focus');
+const goToDashboardButton = document.getElementById('go-to-dashboard');
 
 const backButtonSpeaking = document.getElementById('backButtonSpeaking');
 const backButtonFromLevels = document.getElementById('backButtonFromLevels');
@@ -791,13 +766,12 @@ const backButtonFromQuiz = document.getElementById('backButtonFromQuiz');
 const backButtonFromListening = document.getElementById('backButtonFromListening');
 const backButtonFromReading = document.getElementById('backButtonFromReading');
 const backButtonFromVideo = document.getElementById('backButtonFromVideo');
-// Industry Focus Back Buttons
+const backButtonFromDashboard = document.getElementById('backButtonFromDashboard');
 const backButtonFromIndustry = document.getElementById('backButtonFromIndustry');
 const backButtonFromModule = document.getElementById('backButtonFromModule');
 const backButtonFromIndFlashcard = document.getElementById('backButtonFromIndFlashcard');
 const backButtonFromIndPhrase = document.getElementById('backButtonFromIndPhrase');
 const backButtonFromIndArticle = document.getElementById('backButtonFromIndArticle');
-
 
 function showScreen(screenToShow) {
     document.querySelectorAll('.screen').forEach(s => {
@@ -806,45 +780,18 @@ function showScreen(screenToShow) {
     });
     screenToShow.style.display = 'block'; 
     screenToShow.classList.add('active'); 
-
-    if (screenToShow === homeScreen) {
-        displayIdiomOfTheDay();
-    }
+    if (screenToShow === homeScreen) { displayIdiomOfTheDay(); }
+    if (screenToShow === dashboardScreen) { updateDashboardUI(); }
 }
 
-enterAppButton.addEventListener('click', () => {
-    // スプラッシュから遷移するときにもイディオムを表示
-    displayIdiomOfTheDay();
-    showScreen(homeScreen);
-});
-
-startSpeakingPracticeButton.addEventListener('click', (e) => { 
-    if(e.target.classList.contains('info-btn')) return; 
-    showScreen(speakingPracticeScreen); initializeSpeakingPractice(); 
-});
-goToQuizLevelsButton.addEventListener('click', (e) => { 
-    if(e.target.classList.contains('info-btn')) return;
-    showScreen(quizLevelScreen); 
-});
-startListeningChallengeButton.addEventListener('click', (e) => { 
-    if(e.target.classList.contains('info-btn')) return;
-    showScreen(listeningChallengeScreen); startNewListeningChallenge(); 
-});
-startReadingQuizButton.addEventListener('click', (e) => { 
-    if(e.target.classList.contains('info-btn')) return;
-    showScreen(readingQuizScreen); startNewReadingQuiz(); 
-});
-startVideoChatButton.addEventListener('click', (e) => { 
-    if(e.target.classList.contains('info-btn')) return;
-    const randomIndex = Math.floor(Math.random() * conversationTopics.length);
-    document.getElementById('video-topic').textContent = conversationTopics[randomIndex];
-    document.getElementById('video-status').textContent = "「Start Call」を押して、カメラとマイクを許可してください。";
-    showScreen(videoChatScreen);
-});
-startIndustryFocusButton.addEventListener('click', (e) => {
-    if(e.target.classList.contains('info-btn')) return;
-    showScreen(industrySelectionScreen);
-});
+enterAppButton.addEventListener('click', () => { displayIdiomOfTheDay(); showScreen(homeScreen); });
+startSpeakingPracticeButton.addEventListener('click', (e) => { if(e.target.classList.contains('info-btn')) return; showScreen(speakingPracticeScreen); initializeSpeakingPractice(); });
+goToQuizLevelsButton.addEventListener('click', (e) => { if(e.target.classList.contains('info-btn')) return; showScreen(quizLevelScreen); });
+startListeningChallengeButton.addEventListener('click', (e) => { if(e.target.classList.contains('info-btn')) return; showScreen(listeningChallengeScreen); startNewListeningChallenge(); });
+startReadingQuizButton.addEventListener('click', (e) => { if(e.target.classList.contains('info-btn')) return; showScreen(readingQuizScreen); startNewReadingQuiz(); });
+startVideoChatButton.addEventListener('click', (e) => { if(e.target.classList.contains('info-btn')) return; const randomIndex = Math.floor(Math.random() * conversationTopics.length); document.getElementById('video-topic').textContent = conversationTopics[randomIndex]; document.getElementById('video-status').textContent = "「Start Call」を押して、カメラとマイクを許可してください。"; showScreen(videoChatScreen); });
+startIndustryFocusButton.addEventListener('click', (e) => { if(e.target.classList.contains('info-btn')) return; showScreen(industrySelectionScreen); });
+goToDashboardButton.addEventListener('click', () => { showScreen(dashboardScreen); });
 
 backButtonSpeaking.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromLevels.addEventListener('click', () => showScreen(homeScreen));
@@ -852,7 +799,7 @@ backButtonFromQuiz.addEventListener('click', () => showScreen(quizLevelScreen));
 backButtonFromListening.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromReading.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromVideo.addEventListener('click', () => { if (typeof peerConnection !== 'undefined' && peerConnection) { hangUp(); } showScreen(homeScreen); });
-// Industry Focus Back Actions
+backButtonFromDashboard.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromIndustry.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromModule.addEventListener('click', () => showScreen(industrySelectionScreen));
 backButtonFromIndFlashcard.addEventListener('click', () => showScreen(industryModuleScreen));
@@ -885,30 +832,11 @@ let userSpeechEndTime = 0;
 let isSpeakingPracticeInitialized = false;
 
 function initializeSpeakingPractice() {
-    if (isSpeakingPracticeInitialized && recognition && mediaRecorder) {
-         setNewSentence(); 
-         return;
-    }
-
-    if (!('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices)) {
-        statusElement.textContent = "エラー: マイクへのアクセスがブラウザでサポートされていません。";
-        [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
-        return;
-    }
-    if (!SpeechRecognition) {
-        statusElement.textContent = "エラー: 音声認識がブラウザでサポートされていません。";
-        [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
-        return;
-    }
-    if (!('MediaRecorder' in window)) {
-         statusElement.textContent = "エラー: 音声録音がブラウザでサポートされていません。";
-        [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
-        return;
-    }
-
-
-    navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
+    if (isSpeakingPracticeInitialized && recognition && mediaRecorder) { setNewSentence(); return; }
+    if (!('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices)) { statusElement.textContent = "エラー: マイクへのアクセスがブラウザでサポートされていません。"; [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true); return; }
+    if (!SpeechRecognition) { statusElement.textContent = "エラー: 音声認識がブラウザでサポートされていません。"; [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true); return; }
+    
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
             try {
                 mediaRecorder = new MediaRecorder(stream);
                 mediaRecorder.ondataavailable = event => { audioChunks.push(event.data); };
@@ -918,17 +846,12 @@ function initializeSpeakingPractice() {
                         const audioUrl = URL.createObjectURL(audioBlob);
                         userRecordingPlayer.src = audioUrl;
                         audioChunks = [];
-                    } else {
-                         userRecordingPlayer.src = ''; 
-                    }
+                    } else { userRecordingPlayer.src = ''; }
                 };
-                mediaRecorder.onerror = (event) => {
-                     statusElement.textContent = `録音エラー: ${event.error.message}`;
-                };
+                mediaRecorder.onerror = (event) => { statusElement.textContent = `録音エラー: ${event.error.message}`; };
 
                 recognition = new SpeechRecognition();
                 Object.assign(recognition, { lang: 'en-US', interimResults: false, continuous: false });
-
                 recognition.addEventListener('result', handleRecognitionResult);
                 recognition.addEventListener('speechstart', handleSpeechStart);
                 recognition.addEventListener('end', handleRecognitionEnd);
@@ -936,7 +859,6 @@ function initializeSpeakingPractice() {
 
                 isSpeakingPracticeInitialized = true; 
                 setNewSentence();
-
             } catch (err) {
                  statusElement.textContent = `初期化エラー: ${err.message}`;
                  [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
@@ -953,53 +875,33 @@ function handleRecognitionResult(event) {
     userSpeechEndTime = performance.now();
     const transcript = event.results[0][0].transcript;
     generateCombinedFeedback(transcript);
-    if (mediaRecorder && mediaRecorder.state === 'recording') {
-        mediaRecorder.stop();
-    }
+    recordSession(); 
+    if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); }
 }
-
-function handleSpeechStart() {
-    if (speakingPracticeScreen.style.display !== 'block') return;
-    userSpeechStartTime = performance.now();
-}
-
+function handleSpeechStart() { if (speakingPracticeScreen.style.display !== 'block') return; userSpeechStartTime = performance.now(); }
 function handleRecognitionEnd() {
     if (speakingPracticeScreen.style.display !== 'block') return;
     if (startButton.disabled) {
         startButton.disabled = false;
         stopButton.disabled = true;
         statusElement.classList.remove('recording');
-        if (feedbackElement.innerHTML === '-') {
-            statusElement.textContent = "音声が認識されませんでした。もう一度試してください。";
-        } else {
-            statusElement.textContent = "結果を確認してください。";
-        }
+        if (feedbackElement.innerHTML === '-') { statusElement.textContent = "音声が認識されませんでした。もう一度試してください。"; } else { statusElement.textContent = "結果を確認してください。"; }
     }
-    if (mediaRecorder && mediaRecorder.state === 'recording') {
-        mediaRecorder.stop();
-    }
+    if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); }
 }
-
 function handleRecognitionError(event) {
     if (speakingPracticeScreen.style.display !== 'block') return;
     statusElement.textContent = `音声認識エラー: ${event.error}`;
-    if (mediaRecorder && mediaRecorder.state === 'recording') {
-        mediaRecorder.stop();
-    }
+    if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); }
 }
-
 function resetResults() {
     scoreElement.innerHTML = `0 <span class="score-unit">/ 100</span>`;
     scoreElement.className = '';
     feedbackElement.innerHTML = '-';
     userRecordingPlayer.src = '';
 }
-
 function setNewSentence() {
-    if (!isSpeakingPracticeInitialized) {
-        initializeSpeakingPractice(); 
-        return;
-    }
+    if (!isSpeakingPracticeInitialized) { initializeSpeakingPractice(); return; }
     let newIndex;
     do { newIndex = Math.floor(Math.random() * pronunciationSentences.length); } while (pronunciationSentences.length > 1 && newIndex === currentSentenceIndex);
     currentSentenceIndex = newIndex;
@@ -1012,7 +914,6 @@ function setNewSentence() {
     startButton.disabled = false;
     stopButton.disabled = true;
 }
-
 listenButton.addEventListener('click', () => {
     const text = pronunciationSentences[currentSentenceIndex].en;
     let startTime;
@@ -1023,12 +924,8 @@ listenButton.addEventListener('click', () => {
     startTime = performance.now();
     listenButton.disabled = true;
 });
-
 startButton.addEventListener('click', () => { 
-    if (!mediaRecorder || !recognition) {
-        statusElement.textContent = "エラー: 録音/認識機能が準備できていません。";
-        return;
-    }
+    if (!mediaRecorder || !recognition) { statusElement.textContent = "エラー: 録音/認識機能が準備できていません。"; return; }
     try {
         resetResults(); 
         mediaRecorder.start();
@@ -1043,15 +940,10 @@ startButton.addEventListener('click', () => {
         stopButton.disabled = true;
     }
 });
-
 stopButton.addEventListener('click', () => {
      try {
-        if (mediaRecorder && mediaRecorder.state === 'recording') {
-            mediaRecorder.stop();
-        }
-        if (recognition) {
-            recognition.stop(); 
-        }
+        if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); }
+        if (recognition) { recognition.stop(); }
     } catch (err) {
         statusElement.textContent = `停止エラー: ${err.message}`;
         startButton.disabled = false;
@@ -1059,7 +951,6 @@ stopButton.addEventListener('click', () => {
         statusElement.classList.remove('recording');
     }
 });
-
 function generateCombinedFeedback(transcript) {
     const originalText = pronunciationSentences[currentSentenceIndex].en;
     const cleanOriginal = originalText.toLowerCase().replace(/[.,!?]/g, '').split(' ');
@@ -1069,37 +960,26 @@ function generateCombinedFeedback(transcript) {
         if (cleanUser[index] === word) { correctWords++; return `<span class="correct">${word}</span>`; }
         else { return `<span class="incorrect" data-word="${word}">${word}</span> (<span class="your-speech">${cleanUser[index] || '×'}</span>)`; }
     }).join(' ');
-
     const score = Math.round((correctWords / cleanOriginal.length) * 100);
     scoreElement.innerHTML = `${score} <span class="score-unit">/ 100</span>`;
     scoreElement.className = score >= 80 ? 'score-high' : score >= 50 ? 'score-mid' : 'score-low';
-    
     let fullFeedback = `<strong>お手本との比較:</strong> ${feedbackHtml}`;
-
     const userSpeechDuration = userSpeechEndTime - userSpeechStartTime;
     let paceFeedback = '';
     if (modelAudioDuration > 0 && userSpeechDuration > 0) {
         const paceRatio = userSpeechDuration / modelAudioDuration;
-        if (paceRatio > 1.4) {
-            paceFeedback = "🐢 <strong>ペース:</strong> もう少しテンポを上げると、より自然なリズムになります。";
-        } else if (paceRatio < 0.8) {
-            paceFeedback = "🐇 <strong>ペース:</strong> 少し早口かもしれません。焦らずゆっくり話すことを意識しましょう。";
-        } else {
-            paceFeedback = "👍 <strong>ペース:</strong> 素晴らしい！お手本に近い自然なスピードで話せています。";
-        }
+        if (paceRatio > 1.4) { paceFeedback = "🐢 <strong>ペース:</strong> もう少しテンポを上げると、より自然なリズムになります。"; } 
+        else if (paceRatio < 0.8) { paceFeedback = "🐇 <strong>ペース:</strong> 少し早口かもしれません。焦らずゆっくり話すことを意識しましょう。"; } 
+        else { paceFeedback = "👍 <strong>ペース:</strong> 素晴らしい！お手本に近い自然なスピードで話せています。"; }
         fullFeedback += `<div class="feedback-pace-section">${paceFeedback}</div>`;
     }
-
     feedbackElement.innerHTML = fullFeedback;
 }
-
 nextButton.addEventListener('click', setNewSentence);
 feedbackElement.addEventListener('click', (e) => {
     if (e.target.classList.contains('incorrect')) {
         const wordToSpeak = e.target.dataset.word;
-        if (wordToSpeak) {
-            speak(wordToSpeak);
-        }
+        if (wordToSpeak) { speak(wordToSpeak); }
     }
 });
 
@@ -1167,7 +1047,6 @@ function showNextQuestion() {
 function handleOptionClick(event) {
     const selectedButton = event.target;
     if (currentQuizIndex >= questionsForCurrentQuiz.length) return; 
-    
     const correctAnswer = questionsForCurrentQuiz[currentQuizIndex].correct;
     document.querySelectorAll('#quiz-options .quiz-option-btn').forEach(btn => {
         btn.disabled = true;
@@ -1190,13 +1069,14 @@ function endQuiz() {
     quizGameArea.style.display = 'none';
     quizEndScreen.style.display = 'block';
     quizFinalScore.textContent = `${questionsForCurrentQuiz.length}問中 ${quizScore}問 正解！`;
+    recordSession({ type: 'wordquiz', level: currentQuizLevel, score: quizScore });
 }
 quizRestartButton.addEventListener('click', startNewQuizSet);
-
 
 // =============================================
 //  リスニングチャレンジロジック
 // =============================================
+// (省略せずそのまま使用)
 const playAudioButton = document.getElementById('play-audio-button');
 const listeningStatus = document.getElementById('listening-status');
 const listeningInput = document.getElementById('listening-input');
@@ -1246,6 +1126,7 @@ submitListeningButton.addEventListener('click', () => {
         listeningResultTitle.textContent = "素晴らしい！正解です！";
         listeningResultTitle.className = 'correct';
         listeningFeedbackText.textContent = '完璧に聞き取れています。';
+        recordSession();
     } else {
         listeningResultTitle.textContent = "おしい！不正解です";
         listeningResultTitle.className = 'incorrect';
@@ -1257,6 +1138,7 @@ nextListeningButton.addEventListener('click', startNewListeningChallenge);
 // =============================================
 //  読解練習ロジック
 // =============================================
+// (省略せずそのまま使用)
 const readingGameArea = document.getElementById('reading-game-area');
 const readingTitle = document.getElementById('reading-title');
 const readingPassage = document.getElementById('reading-passage');
@@ -1276,32 +1158,24 @@ let readingScore = 0;
 function startNewReadingQuiz() {
     const newIndex = Math.floor(Math.random() * readingQuizData.length);
     currentReadingData = readingQuizData[newIndex];
-    
     currentReadingQuestionIndex = 0;
     readingScore = 0;
-
     readingTitle.textContent = currentReadingData.title;
     readingPassage.textContent = currentReadingData.passage;
-
     readingGameArea.style.display = 'block';
     readingEndScreen.style.display = 'none';
-    
     showNextReadingQuestion();
 }
-
 function showNextReadingQuestion() {
     if (!currentReadingData || !currentReadingData.questions || currentReadingQuestionIndex >= currentReadingData.questions.length) {
         endReadingQuiz();
         return;
     }
-
     readingQuestionCounter.textContent = `Question ${currentReadingQuestionIndex + 1} / ${currentReadingData.questions.length}`;
     readingScoreDisplay.textContent = `Score: ${readingScore}`;
     readingFeedback.textContent = '';
-
     const questionData = currentReadingData.questions[currentReadingQuestionIndex];
     readingQuestion.textContent = questionData.q;
-    
     readingOptionsGrid.innerHTML = '';
     const options = shuffleArray([questionData.correct, ...questionData.incorrect]);
     options.forEach(optionText => {
@@ -1312,13 +1186,10 @@ function showNextReadingQuestion() {
         readingOptionsGrid.appendChild(button);
     });
 }
-
 function handleReadingOptionClick(event) {
     const selectedButton = event.target;
     if (currentReadingQuestionIndex >= currentReadingData.questions.length) return; 
-
     const correctAnswer = currentReadingData.questions[currentReadingQuestionIndex].correct;
-
     document.querySelectorAll('#reading-options .quiz-option-btn').forEach(btn => {
         btn.disabled = true;
         if (btn.textContent === correctAnswer) {
@@ -1335,11 +1206,9 @@ function handleReadingOptionClick(event) {
         readingFeedback.textContent = `不正解... 正解は「${correctAnswer}」`;
         readingFeedback.className = 'quiz-feedback incorrect-feedback';
     }
-
     currentReadingQuestionIndex++;
     setTimeout(showNextReadingQuestion, 1500);
 }
-
 function endReadingQuiz() {
     readingGameArea.style.display = 'none';
     readingEndScreen.style.display = 'block';
@@ -1347,17 +1216,17 @@ function endReadingQuiz() {
         readingFinalScore.textContent = `${currentReadingData.questions.length}問中 ${readingScore}問 正解！`;
         document.getElementById('review-passage-en').textContent = currentReadingData.passage;
         document.getElementById('review-passage-ja').textContent = currentReadingData.translation;
+        recordSession();
     } else {
-        readingFinalScore.textContent = "スコアの計算に問題がありました。"; // Fallback message
+        readingFinalScore.textContent = "スコアの計算に問題がありました。";
     }
 }
-
 readingRestartButton.addEventListener('click', startNewReadingQuiz);
-
 
 // =============================================
 //  Industry Focus Logic (New)
 // =============================================
+// (省略せずそのまま使用)
 let indCurrentCategoryKey = null;
 let indCurrentIndex = 0;
 
@@ -1367,11 +1236,9 @@ function selectIndustry(key) {
     document.getElementById('industry-title-display').textContent = data.title;
     showScreen(document.getElementById('industry-module-screen'));
 }
-
 function startIndustryModule(moduleType) {
     indCurrentIndex = 0;
     const data = industryData[indCurrentCategoryKey];
-    
     if (moduleType === 'flashcards') {
         document.getElementById('ind-flashcard-header').textContent = `${data.title} - Flashcards`;
         updateIndFlashcardUI();
@@ -1386,14 +1253,11 @@ function startIndustryModule(moduleType) {
         showScreen(document.getElementById('industry-article-screen'));
     }
 }
-
-// -- Flashcards --
 function updateIndFlashcardUI() {
     const list = industryData[indCurrentCategoryKey].flashcards;
     const item = list[indCurrentIndex];
     const inner = document.getElementById('ind-flashcard-inner');
     inner.classList.remove('flipped'); 
-
     setTimeout(() => {
         document.getElementById('ind-card-front').textContent = item.term;
         document.getElementById('ind-card-back-meaning').textContent = item.meaning;
@@ -1401,9 +1265,7 @@ function updateIndFlashcardUI() {
         document.getElementById('ind-card-progress').textContent = `${indCurrentIndex + 1} / ${list.length}`;
     }, 200);
 }
-function flipIndCard() {
-    document.getElementById('ind-flashcard-inner').classList.toggle('flipped');
-}
+function flipIndCard() { document.getElementById('ind-flashcard-inner').classList.toggle('flipped'); }
 function nextIndCard() {
     const list = industryData[indCurrentCategoryKey].flashcards;
     if (indCurrentIndex < list.length - 1) indCurrentIndex++;
@@ -1416,19 +1278,14 @@ function prevIndCard() {
     else indCurrentIndex = list.length - 1;
     updateIndFlashcardUI();
 }
-
-// -- Phrases --
 function updateIndPhraseUI() {
     const list = industryData[indCurrentCategoryKey].phrases;
     const item = list[indCurrentIndex];
-    
     document.getElementById('ind-phrase-scenario').textContent = item.scenario;
     document.getElementById('ind-scenario-trans').textContent = item.scenarioTrans;
     document.getElementById('ind-phrase-text').textContent = item.keyphrase;
-    
     document.getElementById('ind-phrase-trans-container').classList.add('hidden');
     document.getElementById('ind-scenario-trans').classList.add('hidden');
-    
     document.getElementById('ind-phrase-trans').textContent = item.translation;
     document.getElementById('ind-phrase-progress').textContent = `${indCurrentIndex + 1} / ${list.length}`;
 }
@@ -1442,24 +1299,17 @@ function nextIndPhrase() {
     else indCurrentIndex = 0;
     updateIndPhraseUI();
 }
-
-// -- Articles --
 function updateIndArticleUI() {
     const list = industryData[indCurrentCategoryKey].articles;
     const item = list[indCurrentIndex];
-    
     document.getElementById('ind-article-title').textContent = item.title;
     document.getElementById('ind-article-content').textContent = item.content;
     document.getElementById('ind-article-source').textContent = item.source;
-    
     document.getElementById('ind-article-trans-container').classList.add('hidden');
     document.getElementById('ind-article-trans').textContent = item.translation;
-    
     document.getElementById('ind-article-progress').textContent = `${indCurrentIndex + 1} / ${list.length}`;
 }
-function toggleIndArticleTrans() {
-    document.getElementById('ind-article-trans-container').classList.toggle('hidden');
-}
+function toggleIndArticleTrans() { document.getElementById('ind-article-trans-container').classList.toggle('hidden'); }
 function nextIndArticle() {
     const list = industryData[indCurrentCategoryKey].articles;
     if (indCurrentIndex < list.length - 1) indCurrentIndex++;
@@ -1621,6 +1471,8 @@ async function startCall() {
             msg = `サーバーから切断されました (Code: ${event.code})。再接続してください。`;
         }
         hangUp(msg);
+        // ▼▼▼ 学習記録保存 ▼▼▼
+        recordSession();
     };
 
     socket.onerror = (err) => {
@@ -1655,6 +1507,13 @@ async function switchCamera() {
             const sender = peerConnection.getSenders().find(s => s.track.kind === 'video');
             if (sender) {
                 sender.replaceTrack(videoTrack);
+            }
+            
+            // 音声トラックも更新（必要であれば）
+            const audioTrack = newStream.getAudioTracks()[0];
+            const audioSender = peerConnection.getSenders().find(s => s.track.kind === 'audio');
+            if (audioSender) {
+                audioSender.replaceTrack(audioTrack);
             }
         }
         
@@ -1729,6 +1588,7 @@ function hangUp(message) {
         remoteStream = null;
     }
     if (socket) {
+        // oncloseイベントが再発火しないようにハンドラを削除してから閉じる
         socket.onclose = null;
         socket.close();
         socket = null;
@@ -1740,12 +1600,13 @@ function hangUp(message) {
     if(switchCameraBtn) switchCameraBtn.disabled = true; 
 }
 
+
 // =============================================
 //  今日のイディオムロジック
 // =============================================
 function displayIdiomOfTheDay() {
     try {
-        console.log("Updating idiom of the day..."); // ログ追加
+        console.log("Updating idiom of the day..."); 
         const idiomDateEl = document.getElementById('idiom-date');
         const idiomPhraseEl = document.getElementById('idiom-phrase');
         const idiomMeaningEl = document.getElementById('idiom-meaning');
@@ -1771,7 +1632,7 @@ function displayIdiomOfTheDay() {
         idiomPhraseEl.textContent = dailyIdiom.idiom;
         idiomMeaningEl.textContent = dailyIdiom.meaning;
         idiomDescriptionEl.textContent = dailyIdiom.description;
-        console.log("Idiom updated:", dailyIdiom.idiom); // ログ追加
+        console.log("Idiom updated:", dailyIdiom.idiom);
     } catch (e) {
         console.error("Error in displayIdiomOfTheDay:", e);
     }
