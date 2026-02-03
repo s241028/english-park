@@ -567,6 +567,124 @@ const industryData = {
 };
 
 // =============================================
+//  学習記録 & ダッシュボード機能 (New!)
+// =============================================
+const STORAGE_KEY = 'englishParkData';
+
+function loadLearningData() {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (data) {
+        return JSON.parse(data);
+    } else {
+        return {
+            lastStudyDate: null,
+            streak: 0,
+            totalSessions: 0,
+            scores: {
+                beginner: 0,
+                intermediate: 0,
+                advanced: 0,
+                expert: 0
+            },
+            badges: []
+        };
+    }
+}
+
+function saveLearningData(updatedData) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData));
+}
+
+function recordSession(scoreData) {
+    let data = loadLearningData();
+    const today = new Date().toDateString();
+
+    // ストリーク更新
+    if (data.lastStudyDate !== today) {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        if (data.lastStudyDate === yesterday.toDateString()) {
+            data.streak++;
+        } else {
+            data.streak = 1; // 途切れたらリセット（または1からスタート）
+        }
+        data.lastStudyDate = today;
+    }
+
+    // 回数カウント
+    data.totalSessions++;
+
+    // スコア更新 (もしあれば)
+    if (scoreData && scoreData.type === 'wordquiz') {
+        if (scoreData.score > (data.scores[scoreData.level] || 0)) {
+            data.scores[scoreData.level] = scoreData.score;
+        }
+    }
+
+    // バッジ判定
+    checkBadges(data);
+
+    saveLearningData(data);
+}
+
+function checkBadges(data) {
+    const newBadges = [];
+    
+    if (data.totalSessions >= 1 && !data.badges.includes('first_step')) {
+        newBadges.push('first_step');
+        alert("🎉 バッジ獲得: はじめの一歩！");
+    }
+    if (data.streak >= 3 && !data.badges.includes('streak_3')) {
+        newBadges.push('streak_3');
+        alert("🔥 バッジ獲得: 3日連続学習！");
+    }
+    // 他にも条件追加可能
+    
+    if (newBadges.length > 0) {
+        data.badges.push(...newBadges);
+    }
+}
+
+function updateDashboardUI() {
+    const data = loadLearningData();
+    
+    document.getElementById('dashboard-streak').textContent = `${data.streak} Day Streak`;
+    document.getElementById('dashboard-total-sessions').textContent = `${data.totalSessions}回`;
+    document.getElementById('dashboard-last-date').textContent = data.lastStudyDate || '未実施';
+    
+    // スコア表示
+    document.getElementById('best-score-beginner').textContent = data.scores.beginner || '-';
+    document.getElementById('best-score-intermediate').textContent = data.scores.intermediate || '-';
+    document.getElementById('best-score-advanced').textContent = data.scores.advanced || '-';
+    document.getElementById('best-score-expert').textContent = data.scores.expert || '-';
+
+    // バッジ表示
+    const badgeContainer = document.getElementById('badges-container');
+    badgeContainer.innerHTML = '';
+    
+    const badgeDefinitions = {
+        'first_step': { icon: '🌱', name: 'はじめの一歩' },
+        'streak_3': { icon: '🔥', name: '三日坊主卒業' },
+        'word_master': { icon: '👑', name: '単語マスター' }
+    };
+
+    if (data.badges.length === 0) {
+        badgeContainer.innerHTML = '<p class="no-badges">まだバッジはありません。学習を始めましょう！</p>';
+    } else {
+        data.badges.forEach(badgeId => {
+            const badge = badgeDefinitions[badgeId];
+            if (badge) {
+                const badgeEl = document.createElement('div');
+                badgeEl.className = 'badge';
+                badgeEl.innerHTML = `<div class="badge-icon">${badge.icon}</div><div class="badge-name">${badge.name}</div>`;
+                badgeContainer.appendChild(badgeEl);
+            }
+        });
+    }
+}
+
+// =============================================
 //  Audio Context & Speech Synthesis Setup
 // =============================================
 document.body.addEventListener('click', () => {

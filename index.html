@@ -44,6 +44,14 @@
                 <p id="idiom-description" class="sentence-meaning"></p>
             </div>
 
+            <!-- ▼▼▼ 追加: ダッシュボードへのボタン ▼▼▼ -->
+            <div style="margin-bottom: 30px;">
+                <button id="go-to-dashboard" class="action-button primary" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5em;">📊</span> マイデータを見る
+                </button>
+            </div>
+            <!-- ▲▲▲ 追加ここまで ▲▲▲ -->
+
             <div class="game-selection">
                 <div class="game-card" id="start-speaking-practice">
                     <button class="info-btn" data-feature="speaking">i</button>
@@ -84,6 +92,56 @@
             </div>
         </div>
     </main>
+
+    <!-- ▼▼▼ 追加: ダッシュボード画面 ▼▼▼ -->
+    <main id="dashboard-screen" class="screen">
+        <div class="container">
+            <button id="backButtonFromDashboard" class="back-button">🏠 ホームに戻る</button>
+            <h1>マイデータ 📊</h1>
+            
+            <!-- ストリーク（連続日数） -->
+            <div class="card streak-card">
+                <div class="streak-icon">🔥</div>
+                <div class="streak-info">
+                    <h2 id="dashboard-streak">0 Day Streak</h2>
+                    <p>連続学習日数</p>
+                </div>
+            </div>
+
+            <!-- 統計データ -->
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>総学習回数</h3>
+                    <p id="dashboard-total-sessions">0回</p>
+                </div>
+                <div class="stat-item">
+                    <h3>最終学習日</h3>
+                    <p id="dashboard-last-date">-</p>
+                </div>
+            </div>
+
+            <!-- バッジエリア -->
+            <div class="card">
+                <h2>獲得バッジ 🏆</h2>
+                <div id="badges-container" class="badges-grid">
+                    <!-- JSでバッジが追加されます -->
+                    <p class="no-badges">まだバッジはありません。学習を始めましょう！</p>
+                </div>
+            </div>
+
+            <!-- スコア記録 -->
+            <div class="card">
+                <h2>ベストスコア 🌟</h2>
+                <ul class="best-scores-list">
+                    <li>単語クイズ (初級): <span id="best-score-beginner">-</span></li>
+                    <li>単語クイズ (中級): <span id="best-score-intermediate">-</span></li>
+                    <li>単語クイズ (上級): <span id="best-score-advanced">-</span></li>
+                    <li>単語クイズ (専門家): <span id="best-score-expert">-</span></li>
+                </ul>
+            </div>
+        </div>
+    </main>
+    <!-- ▲▲▲ 追加ここまで ▲▲▲ -->
 
     <!-- スピーキング練習画面 -->
     <main id="speaking-practice-screen" class="screen">
@@ -391,15 +449,12 @@
                 <p id="video-topic">What is the most interesting place you have ever visited?</p>
             </div>
             
-            <!-- ▼▼▼ 追加: ルーム入力エリア ▼▼▼ -->
             <div class="room-input-container card" style="text-align: center;">
                 <label for="room-id-input" style="font-weight: bold; color: var(--light-text);">ルーム名:</label>
                 <input type="text" id="room-id-input" value="room1" class="room-input" placeholder="例: apple, 1234">
                 <p style="font-size: 0.9em; color: #888; margin-top: 5px;">※相手と同じルーム名を入力して「Start Call」を押してください。</p>
             </div>
-            <!-- ▲▲▲ 追加ここまで ▲▲▲ -->
 
-            <!-- 映像表示エリア -->
             <div class="video-container">
                 <video id="remote-video" autoplay playsinline></video>
                 <div class="local-video-wrapper">
