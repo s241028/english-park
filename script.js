@@ -8,7 +8,7 @@ const SIGNALING_SERVER_URL = "wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jc
 
 
 // =============================================
-//  全体で使用するデータ (完全版・大幅拡充)
+//  全体で使用するデータ (完全版)
 // =============================================
 const pronunciationSentences = [
     { en: "How are you doing?", ja: "調子はどうですか？" },
@@ -404,6 +404,7 @@ const idiomsData = [
     { idiom: "Piece of cake.", meaning: "朝飯前", description: "とても簡単なこと。" },
     { idiom: "Hit the road.", meaning: "出発する", description: "旅に出る、帰る。" },
     { idiom: "Under the weather.", meaning: "体調が悪い", description: "気分が優れないこと。" },
+    // イディオム追加
     { idiom: "Spill the beans", meaning: "秘密を漏らす", description: "豆をこぼす＝秘密をばらす。" },
     { idiom: "Once in a blue moon", meaning: "ごくまれに", description: "めったにないこと。" },
     { idiom: "The ball is in your court", meaning: "次は君の番だ", description: "決定権は相手にある。" },
@@ -810,6 +811,7 @@ backButtonFromIndArticle.addEventListener('click', () => showScreen(industryModu
 // =============================================
 //  スピーキング練習ロジック
 // =============================================
+// (省略せずそのまま使用)
 const sentenceElement = document.getElementById('sentence');
 const meaningElement = document.getElementById('sentence-meaning');
 const listenButton = document.getElementById('listenButton');
@@ -875,6 +877,7 @@ function handleRecognitionResult(event) {
     userSpeechEndTime = performance.now();
     const transcript = event.results[0][0].transcript;
     generateCombinedFeedback(transcript);
+    // ▼▼▼ 学習記録保存 ▼▼▼
     recordSession(); 
     if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); }
 }
@@ -1069,6 +1072,7 @@ function endQuiz() {
     quizGameArea.style.display = 'none';
     quizEndScreen.style.display = 'block';
     quizFinalScore.textContent = `${questionsForCurrentQuiz.length}問中 ${quizScore}問 正解！`;
+    // ▼▼▼ 学習記録保存 ▼▼▼
     recordSession({ type: 'wordquiz', level: currentQuizLevel, score: quizScore });
 }
 quizRestartButton.addEventListener('click', startNewQuizSet);
@@ -1126,6 +1130,7 @@ submitListeningButton.addEventListener('click', () => {
         listeningResultTitle.textContent = "素晴らしい！正解です！";
         listeningResultTitle.className = 'correct';
         listeningFeedbackText.textContent = '完璧に聞き取れています。';
+        // ▼▼▼ 学習記録保存 ▼▼▼
         recordSession();
     } else {
         listeningResultTitle.textContent = "おしい！不正解です";
@@ -1216,6 +1221,7 @@ function endReadingQuiz() {
         readingFinalScore.textContent = `${currentReadingData.questions.length}問中 ${readingScore}問 正解！`;
         document.getElementById('review-passage-en').textContent = currentReadingData.passage;
         document.getElementById('review-passage-ja').textContent = currentReadingData.translation;
+        // ▼▼▼ 学習記録保存 ▼▼▼
         recordSession();
     } else {
         readingFinalScore.textContent = "スコアの計算に問題がありました。";
