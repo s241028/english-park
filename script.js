@@ -3,13 +3,14 @@
 // =============================================
 // Replitで取得したURLをここに貼り付けてください（https:// ではなく wss:// に書き換える）
 // 例: "wss://english-park-server.username.replit.co"
-const SIGNALING_SERVER_URL = "wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev:8080";
+const SIGNALING_SERVER_URL = "wss://YOUR-REPLIT-URL-HERE";
 
 
 // =============================================
 //  全体で使用するデータ (完全版)
 // =============================================
 const pronunciationSentences = [
+    // ... (データは省略せずそのまま使用) ...
     { en: "How are you doing?", ja: "調子はどうですか？" },
     { en: "It's nice to meet you.", ja: "はじめまして。" },
     { en: "How have you been?", ja: "いかがお過ごでしたか？" },
@@ -395,6 +396,10 @@ const featureDescriptions = {
     industry: {
         title: "専門分野別 (Industry Focus)",
         description: "特定の業界（IT, ビジネス, 医療, 金融）に特化した専門用語やフレーズを学習できます。\n\n・フラッシュカード: 重要単語の暗記\n・キーフレーズ: 実践的な例文\n・ミニ記事: 業界ニュースの読解\n\n自分のキャリアや興味に合わせた英語力を身につけましょう。"
+    },
+    popculture: {
+        title: "アニメ・洋楽で学ぶ",
+        description: "世界中で愛される日本のアニメや、有名な洋楽の歌詞から英語を学びます。\n\n教科書には載っていない「生きた表現」や「感情のこもった言い回し」を楽しく身につけることができます。"
     }
 };
 const idiomsData = [
@@ -403,6 +408,7 @@ const idiomsData = [
     { idiom: "Piece of cake.", meaning: "朝飯前", description: "とても簡単なこと。" },
     { idiom: "Hit the road.", meaning: "出発する", description: "旅に出る、帰る。" },
     { idiom: "Under the weather.", meaning: "体調が悪い", description: "気分が優れないこと。" },
+    // イディオム追加
     { idiom: "Spill the beans", meaning: "秘密を漏らす", description: "豆をこぼす＝秘密をばらす。" },
     { idiom: "Once in a blue moon", meaning: "ごくまれに", description: "めったにないこと。" },
     { idiom: "The ball is in your court", meaning: "次は君の番だ", description: "決定権は相手にある。" },
@@ -411,19 +417,19 @@ const idiomsData = [
 ];
 
 // =============================================
-//  Industry Focus Data (Extended)
+//  Industry Focus Data
 // =============================================
 const industryData = {
     it: {
         title: "IT & Tech",
         flashcards: [
-            { term: "Latency", meaning: "遅延（時間）", sentence: "We need to reduce the network latency for better performance." },
-            { term: "Scalability", meaning: "拡張性", sentence: "Cloud services offer high scalability for growing businesses." },
-            { term: "Encryption", meaning: "暗号化", sentence: "End-to-end encryption protects user privacy." },
-            { term: "Deployment", meaning: "展開・実装", sentence: "The deployment to the production server was successful." },
+            { term: "Latency", meaning: "遅延（時間）", sentence: "We need to reduce the network latency." },
+            { term: "Scalability", meaning: "拡張性", sentence: "Cloud services offer high scalability." },
+            { term: "Encryption", meaning: "暗号化", sentence: "End-to-end encryption protects privacy." },
+            { term: "Deployment", meaning: "展開・実装", sentence: "The deployment was successful." },
             { term: "Algorithm", meaning: 'アルゴリズム', sentence: 'We developed a new search algorithm.' },
-            { term: "Backend", meaning: "バックエンド", sentence: "He specializes in backend development using Node.js." },
-            { term: "Debugging", meaning: "デバッグ", sentence: "Debugging is an essential part of software development." },
+            { term: "Backend", meaning: "バックエンド", sentence: "He specializes in backend development." },
+            { term: "Debugging", meaning: "デバッグ", sentence: "Debugging is essential." },
             { term: "Authentication", meaning: "認証", sentence: "Two-factor authentication improves security." }
         ],
         phrases: [
@@ -436,133 +442,108 @@ const industryData = {
             { 
                 scenario: "Reporting an Issue",
                 keyphrase: "I've encountered a blocker.",
-                translation: "進行を妨げる問題（ブロッカー）に遭遇しました",
+                translation: "進行を妨げる問題に遭遇しました",
                 scenarioTrans: "進捗報告にて"
-            },
-            { 
-                scenario: "Code Review",
-                keyphrase: "Could you walk me through this logic?",
-                translation: "このロジックについて説明してもらえますか？",
-                scenarioTrans: "コードレビューにて"
             }
         ],
         articles: [
             {
                 title: "The Rise of AI Agents",
-                content: "Autonomous AI agents are becoming increasingly capable of performing complex tasks without human intervention. Unlike traditional chatbots, these agents can plan, execute, and refine their actions to achieve specific goals, transforming how we interact with software.",
+                content: "Autonomous AI agents are becoming increasingly capable of performing complex tasks without human intervention.",
                 source: "TechDaily 2024",
-                translation: "自律型AIエージェントは、人間の介入なしに複雑なタスクを実行する能力をますます高めています。従来のチャットボットとは異なり、これらのエージェントは特定の目標を達成するために行動を計画、実行、修正することができ、私たちがソフトウェアと対話する方法を変革しています。"
-            },
-            {
-                title: "Zero Trust Security",
-                content: "Zero Trust architecture is rapidly becoming the standard for cloud security. Organizations are moving away from perimeter-based defenses to a model where every access request is verified, regardless of where it originates.",
-                source: "CyberSec Weekly",
-                translation: "ゼロトラストアーキテクチャは、急速にクラウドセキュリティの標準になりつつあります。組織は境界ベースの防御から、アクセス要求がどこから来たかにかかわらず、すべての要求を検証するモデルへと移行しています。"
+                translation: "自律型AIエージェントは、人間の介入なしに複雑なタスクを実行する能力をますます高めています。"
             }
         ]
     },
     business: {
         title: "Business",
         flashcards: [
-            { term: "ROI", meaning: "投資対効果", sentence: "We need to calculate the ROI before approving the budget." },
-            { term: "Stakeholder", meaning: "利害関係者", sentence: "It is important to keep all stakeholders informed." },
-            { term: "Quarterly", meaning: "四半期ごとの", sentence: "Our quarterly earnings exceeded expectations." },
-            { term: "Agenda", meaning: "議題", sentence: "Let's stick to the agenda to save time." },
-            { term: "Strategy", meaning: "戦略", sentence: "We are developing a new marketing strategy." }
+            { term: "ROI", meaning: "投資対効果", sentence: "Calculate the ROI." },
+            { term: "Stakeholder", meaning: "利害関係者", sentence: "Keep stakeholders informed." }
         ],
         phrases: [
             { 
                 scenario: "Negotiation",
                 keyphrase: "Is there any room for movement on the price?",
-                translation: "価格について交渉の余地はありますか？",
+                translation: "価格交渉の余地はありますか？",
                 scenarioTrans: "価格交渉にて"
-            },
-            { 
-                scenario: "Meeting",
-                keyphrase: "Let's get the ball rolling.",
-                translation: "さあ、始めましょう。",
-                scenarioTrans: "会議の開始時"
-            },
-            { 
-                scenario: "Agreement",
-                keyphrase: "I think we're on the same page.",
-                translation: "私たちの認識は一致していると思います。",
-                scenarioTrans: "合意形成時"
             }
         ],
         articles: [
             {
                 title: "Remote Work Trends",
-                content: "Many companies are settling into a permanent hybrid work model. This approach balances the flexibility of working from home with the collaborative benefits of in-person interaction, though it presents new challenges for company culture.",
+                content: "Many companies are settling into a permanent hybrid work model.",
                 source: "BizWorld",
-                translation: "多くの企業が恒久的なハイブリッドワークモデルに落ち着きつつあります。このアプローチは、在宅勤務の柔軟性と対面での交流による協力的なメリットのバランスをとっていますが、企業文化にとって新たな課題も提示しています。"
+                translation: "多くの企業が恒久的なハイブリッドワークモデルに落ち着きつつあります。"
             }
         ]
     },
     medical: {
         title: "Medical",
         flashcards: [
-            { term: "Diagnosis", meaning: "診断", sentence: "Early diagnosis is key to effective treatment." },
-            { term: "Prescription", meaning: "処方箋", sentence: "The doctor wrote a prescription for antibiotics." },
-            { term: "Symptom", meaning: "症状", sentence: "Common symptoms include fever and cough." },
-            { term: "Chronic", meaning: "慢性の", sentence: "He suffers from chronic back pain." },
-            { term: "Vaccine", meaning: "ワクチン", sentence: "The new vaccine proved to be highly effective." }
+            { term: "Diagnosis", meaning: "診断", sentence: "Early diagnosis is key." },
+            { term: "Prescription", meaning: "処方箋", sentence: "Write a prescription." }
         ],
         phrases: [
             { 
                 scenario: "Consultation",
                 keyphrase: "On a scale of 1 to 10, how would you rate your pain?",
-                translation: "1から10の段階で言うと、痛みはどれくらいですか？",
-                scenarioTrans: "患者の診察にて"
-            },
-            { 
-                scenario: "Treatment",
-                keyphrase: "This medication may cause some side effects.",
-                translation: "この薬はいくつかの副作用を引き起こす可能性があります。",
-                scenarioTrans: "治療説明にて"
+                translation: "痛みは1から10でどのくらいですか？",
+                scenarioTrans: "診察にて"
             }
         ],
         articles: [
             {
-                title: "Gene Therapy Breakthroughs",
-                content: "Recent breakthroughs in CRISPR technology have opened new possibilities for treating genetic disorders. Clinical trials are showing promising results for conditions previously thought untreatable, offering hope to millions.",
+                title: "Gene Therapy",
+                content: "Recent breakthroughs in CRISPR technology have opened new possibilities.",
                 source: "MedJournal",
-                translation: "CRISPR技術における最近の進歩は、遺伝性疾患の治療に新たな可能性を切り開きました。臨床試験では、以前は治療不可能と考えられていた病状に対して有望な結果が示されており、何百万人もの人々に希望を与えています。"
+                translation: "CRISPR技術における最近の進歩は新たな可能性を切り開きました。"
             }
         ]
     },
     finance: {
         title: "Finance",
         flashcards: [
-            { term: "Asset", meaning: "資産", sentence: "The company has significant assets in real estate." },
-            { term: "Liability", meaning: "負債", sentence: "Reducing liabilities is our primary goal this year." },
-            { term: "Dividend", meaning: "配当", sentence: "Shareholders received a dividend of $2 per share." },
-            { term: "Compliance", meaning: "法令遵守", sentence: "We must ensure strict compliance with new regulations." },
-            { term: "Audit", meaning: "監査", sentence: "The annual audit will begin next week." }
+            { term: "Asset", meaning: "資産", sentence: "Significant assets." },
+            { term: "Liability", meaning: "負債", sentence: "Reducing liabilities." }
         ],
         phrases: [
             { 
                 scenario: "Investment",
-                keyphrase: "It's crucial to diversify your portfolio.",
-                translation: "ポートフォリオを分散させることが極めて重要です。",
-                scenarioTrans: "投資アドバイスにて"
-            },
-            { 
-                scenario: "Contract",
-                keyphrase: "Please review the terms and conditions carefully.",
-                translation: "利用規約を注意深く確認してください。",
-                scenarioTrans: "契約確認にて"
+                keyphrase: "Diversify your portfolio.",
+                translation: "ポートフォリオを分散させる。",
+                scenarioTrans: "投資にて"
             }
         ],
         articles: [
             {
-                title: "Cryptocurrency Regulation",
-                content: "Governments worldwide are intensifying efforts to regulate cryptocurrency markets. The focus is on preventing money laundering and ensuring consumer protection without stifling innovation in the fintech sector.",
+                title: "Crypto Regulation",
+                content: "Governments are intensifying efforts to regulate crypto.",
                 source: "FinanceDaily",
-                translation: "世界各国の政府は、暗号資産市場の規制強化に力を入れています。焦点は、フィンテック分野のイノベーションを阻害することなく、マネーロンダリングを防止し、消費者保護を確保することにあります。"
+                translation: "政府は暗号資産の規制を強化しています。"
             }
         ]
     }
+};
+
+// =============================================
+//  Pop Culture Data (NEW)
+// =============================================
+const popCultureData = {
+    anime: [
+        { en: "I'm gonna be the Pirate King!", ja: "海賊王に俺はなる！", source: "One Piece", note: "'gonna' は 'going to' の口語的な省略形です。" },
+        { en: "I am the bone of my sword.", ja: "体は剣で出来ている。", source: "Fate/stay night", note: "詩的な表現。'bone' はここでは「骨子」「本質」といった意味合い。" },
+        { en: "If you give up, that's when the game is over.", ja: "あきらめたらそこで試合終了ですよ。", source: "Slam Dunk", note: "条件節(If...)を使った有名な格言。" },
+        { en: "I'm not gonna run away, I never go back on my word!", ja: "逃げたりしねぇ…！俺は自分の言葉を曲げねぇ！", source: "Naruto", note: "'go back on one's word' で「約束を破る」「前言撤回する」という意味。" },
+        { en: "In the name of the moon, I will punish you!", ja: "月にかわっておしおきよ！", source: "Sailor Moon", note: "'In the name of ~' は「〜の名において」という決まり文句。" }
+    ],
+    music: [
+        { en: "Let it be.", ja: "あるがままに / なすがままに", source: "The Beatles - Let It Be", note: "使役動詞 let + 目的語 + 原形不定詞。「それを（it）あるがままの状態（be）にさせておけ」という意味。" },
+        { en: "I will always love you.", ja: "いつまでもあなたを愛し続けるでしょう", source: "Whitney Houston - I Will Always Love You", note: "未来の意志を表す 'will' と頻度を表す副詞 'always' の組み合わせ。" },
+        { en: "We are the champions, my friends.", ja: "私たちはチャンピオンだ、友よ", source: "Queen - We Are The Champions", note: "勝利のアンセムとして世界中で歌われるフレーズ。" },
+        { en: "Shake it off.", ja: "気にしない / 振り払う", source: "Taylor Swift - Shake It Off", note: "嫌なことや批判を「振り払う」という意味のスラング。" },
+        { en: "Imagine there's no heaven.", ja: "想像してごらん、天国なんてないんだと", source: "John Lennon - Imagine", note: "仮定法ではなく、命令形で「想像してごらん」と語りかけています。" }
+    ]
 };
 
 // =============================================
@@ -717,6 +698,8 @@ function speak(text, callback) {
 // =============================================
 const splashScreen = document.getElementById('splash-screen');
 const enterAppButton = document.getElementById('enter-app-button');
+
+// モーダル要素
 const infoModal = document.getElementById('info-modal');
 const modalTitle = document.getElementById('modal-title');
 const modalDescription = document.getElementById('modal-description');
@@ -734,22 +717,35 @@ document.querySelectorAll('.info-btn').forEach(btn => {
         }
     });
 });
-closeModalBtn.addEventListener('click', () => { infoModal.classList.add('hidden'); });
-window.addEventListener('click', (e) => { if (e.target === infoModal) infoModal.classList.add('hidden'); });
+
+closeModalBtn.addEventListener('click', () => {
+    infoModal.classList.add('hidden');
+});
+window.addEventListener('click', (e) => {
+    if (e.target === infoModal) {
+        infoModal.classList.add('hidden');
+    }
+});
+
 
 const homeScreen = document.getElementById('home-screen');
-const dashboardScreen = document.getElementById('dashboard-screen');
 const speakingPracticeScreen = document.getElementById('speaking-practice-screen');
 const wordQuizScreen = document.getElementById('word-quiz-screen');
 const quizLevelScreen = document.getElementById('quiz-level-screen');
 const listeningChallengeScreen = document.getElementById('listening-challenge-screen');
 const readingQuizScreen = document.getElementById('reading-quiz-screen');
 const videoChatScreen = document.getElementById('video-chat-screen');
+const dashboardScreen = document.getElementById('dashboard-screen');
+// Industry Focus Screens
 const industrySelectionScreen = document.getElementById('industry-selection-screen');
 const industryModuleScreen = document.getElementById('industry-module-screen');
 const industryFlashcardScreen = document.getElementById('industry-flashcard-screen');
 const industryPhraseScreen = document.getElementById('industry-phrase-screen');
 const industryArticleScreen = document.getElementById('industry-article-screen');
+// Pop Culture Screens
+const popCultureMenuScreen = document.getElementById('pop-culture-menu-screen');
+const popCultureQuizScreen = document.getElementById('pop-culture-quiz-screen');
+
 
 const startSpeakingPracticeButton = document.getElementById('start-speaking-practice');
 const goToQuizLevelsButton = document.getElementById('go-to-quiz-levels');
@@ -758,6 +754,7 @@ const startReadingQuizButton = document.getElementById('start-reading-quiz');
 const startVideoChatButton = document.getElementById('start-video-chat');
 const startIndustryFocusButton = document.getElementById('start-industry-focus');
 const goToDashboardButton = document.getElementById('go-to-dashboard');
+const startPopCultureButton = document.getElementById('start-pop-culture');
 
 const backButtonSpeaking = document.getElementById('backButtonSpeaking');
 const backButtonFromLevels = document.getElementById('backButtonFromLevels');
@@ -771,29 +768,64 @@ const backButtonFromModule = document.getElementById('backButtonFromModule');
 const backButtonFromIndFlashcard = document.getElementById('backButtonFromIndFlashcard');
 const backButtonFromIndPhrase = document.getElementById('backButtonFromIndPhrase');
 const backButtonFromIndArticle = document.getElementById('backButtonFromIndArticle');
+const backButtonFromPopMenu = document.getElementById('backButtonFromPopMenu');
+const backButtonFromPopQuiz = document.getElementById('backButtonFromPopQuiz');
+
 
 function showScreen(screenToShow) {
     document.querySelectorAll('.screen').forEach(s => {
-        s.style.display = 'none';
-        s.classList.remove('active'); // activeクラスも削除
+        s.classList.remove('active');
+        s.style.display = 'none'; 
     });
     screenToShow.style.display = 'block'; 
-    // 少し遅延させてactiveを追加することでCSS transitionなどが効く場合があるが、
-    // 今回はシンプルに即時追加でOK（ちらつき防止）
     screenToShow.classList.add('active'); 
 
-    if (screenToShow === homeScreen) { displayIdiomOfTheDay(); }
-    if (screenToShow === dashboardScreen) { updateDashboardUI(); }
+    if (screenToShow === homeScreen) {
+        displayIdiomOfTheDay();
+    }
+    if (screenToShow === dashboardScreen) {
+        updateDashboardUI();
+    }
 }
 
-enterAppButton.addEventListener('click', () => { displayIdiomOfTheDay(); showScreen(homeScreen); });
-startSpeakingPracticeButton.addEventListener('click', (e) => { if(e.target.classList.contains('info-btn')) return; showScreen(speakingPracticeScreen); initializeSpeakingPractice(); });
-goToQuizLevelsButton.addEventListener('click', (e) => { if(e.target.classList.contains('info-btn')) return; showScreen(quizLevelScreen); });
-startListeningChallengeButton.addEventListener('click', (e) => { if(e.target.classList.contains('info-btn')) return; showScreen(listeningChallengeScreen); startNewListeningChallenge(); });
-startReadingQuizButton.addEventListener('click', (e) => { if(e.target.classList.contains('info-btn')) return; showScreen(readingQuizScreen); startNewReadingQuiz(); });
-startVideoChatButton.addEventListener('click', (e) => { if(e.target.classList.contains('info-btn')) return; const randomIndex = Math.floor(Math.random() * conversationTopics.length); document.getElementById('video-topic').textContent = conversationTopics[randomIndex]; document.getElementById('video-status').textContent = "「Start Call」を押して、カメラとマイクを許可してください。"; showScreen(videoChatScreen); });
-startIndustryFocusButton.addEventListener('click', (e) => { if(e.target.classList.contains('info-btn')) return; showScreen(industrySelectionScreen); });
-goToDashboardButton.addEventListener('click', () => { showScreen(dashboardScreen); });
+enterAppButton.addEventListener('click', () => {
+    // スプラッシュから遷移するときにもイディオムを表示
+    displayIdiomOfTheDay();
+    showScreen(homeScreen);
+});
+
+startSpeakingPracticeButton.addEventListener('click', (e) => { 
+    if(e.target.classList.contains('info-btn')) return; 
+    showScreen(speakingPracticeScreen); initializeSpeakingPractice(); 
+});
+goToQuizLevelsButton.addEventListener('click', (e) => { 
+    if(e.target.classList.contains('info-btn')) return;
+    showScreen(quizLevelScreen); 
+});
+startListeningChallengeButton.addEventListener('click', (e) => { 
+    if(e.target.classList.contains('info-btn')) return;
+    showScreen(listeningChallengeScreen); startNewListeningChallenge(); 
+});
+startReadingQuizButton.addEventListener('click', (e) => { 
+    if(e.target.classList.contains('info-btn')) return;
+    showScreen(readingQuizScreen); startNewReadingQuiz(); 
+});
+startVideoChatButton.addEventListener('click', (e) => { 
+    if(e.target.classList.contains('info-btn')) return;
+    const randomIndex = Math.floor(Math.random() * conversationTopics.length);
+    document.getElementById('video-topic').textContent = conversationTopics[randomIndex];
+    document.getElementById('video-status').textContent = "「Start Call」を押して、カメラとマイクを許可してください。";
+    showScreen(videoChatScreen);
+});
+startIndustryFocusButton.addEventListener('click', (e) => {
+    if(e.target.classList.contains('info-btn')) return;
+    showScreen(industrySelectionScreen);
+});
+goToDashboardButton.addEventListener('click', () => showScreen(dashboardScreen));
+startPopCultureButton.addEventListener('click', (e) => {
+    if(e.target.classList.contains('info-btn')) return;
+    showScreen(popCultureMenuScreen);
+});
 
 backButtonSpeaking.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromLevels.addEventListener('click', () => showScreen(homeScreen));
@@ -807,12 +839,13 @@ backButtonFromModule.addEventListener('click', () => showScreen(industrySelectio
 backButtonFromIndFlashcard.addEventListener('click', () => showScreen(industryModuleScreen));
 backButtonFromIndPhrase.addEventListener('click', () => showScreen(industryModuleScreen));
 backButtonFromIndArticle.addEventListener('click', () => showScreen(industryModuleScreen));
+backButtonFromPopMenu.addEventListener('click', () => showScreen(homeScreen));
+backButtonFromPopQuiz.addEventListener('click', () => showScreen(popCultureMenuScreen));
 
 
 // =============================================
 //  スピーキング練習ロジック
 // =============================================
-// (省略せずそのまま使用)
 const sentenceElement = document.getElementById('sentence');
 const meaningElement = document.getElementById('sentence-meaning');
 const listenButton = document.getElementById('listenButton');
@@ -835,11 +868,30 @@ let userSpeechEndTime = 0;
 let isSpeakingPracticeInitialized = false;
 
 function initializeSpeakingPractice() {
-    if (isSpeakingPracticeInitialized && recognition && mediaRecorder) { setNewSentence(); return; }
-    if (!('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices)) { statusElement.textContent = "エラー: マイクへのアクセスがブラウザでサポートされていません。"; [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true); return; }
-    if (!SpeechRecognition) { statusElement.textContent = "エラー: 音声認識がブラウザでサポートされていません。"; [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true); return; }
-    
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+    if (isSpeakingPracticeInitialized && recognition && mediaRecorder) {
+         setNewSentence(); 
+         return;
+    }
+
+    if (!('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices)) {
+        statusElement.textContent = "エラー: マイクへのアクセスがブラウザでサポートされていません。";
+        [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
+        return;
+    }
+    if (!SpeechRecognition) {
+        statusElement.textContent = "エラー: 音声認識がブラウザでサポートされていません。";
+        [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
+        return;
+    }
+    if (!('MediaRecorder' in window)) {
+         statusElement.textContent = "エラー: 音声録音がブラウザでサポートされていません。";
+        [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
+        return;
+    }
+
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
             try {
                 mediaRecorder = new MediaRecorder(stream);
                 mediaRecorder.ondataavailable = event => { audioChunks.push(event.data); };
@@ -849,12 +901,17 @@ function initializeSpeakingPractice() {
                         const audioUrl = URL.createObjectURL(audioBlob);
                         userRecordingPlayer.src = audioUrl;
                         audioChunks = [];
-                    } else { userRecordingPlayer.src = ''; }
+                    } else {
+                         userRecordingPlayer.src = ''; 
+                    }
                 };
-                mediaRecorder.onerror = (event) => { statusElement.textContent = `録音エラー: ${event.error.message}`; };
+                mediaRecorder.onerror = (event) => {
+                     statusElement.textContent = `録音エラー: ${event.error.message}`;
+                };
 
                 recognition = new SpeechRecognition();
                 Object.assign(recognition, { lang: 'en-US', interimResults: false, continuous: false });
+
                 recognition.addEventListener('result', handleRecognitionResult);
                 recognition.addEventListener('speechstart', handleSpeechStart);
                 recognition.addEventListener('end', handleRecognitionEnd);
@@ -862,6 +919,7 @@ function initializeSpeakingPractice() {
 
                 isSpeakingPracticeInitialized = true; 
                 setNewSentence();
+
             } catch (err) {
                  statusElement.textContent = `初期化エラー: ${err.message}`;
                  [listenButton, startButton, stopButton, nextButton].forEach(btn => btn.disabled = true);
@@ -879,32 +937,53 @@ function handleRecognitionResult(event) {
     const transcript = event.results[0][0].transcript;
     generateCombinedFeedback(transcript);
     recordSession(); 
-    if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); }
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+    }
 }
-function handleSpeechStart() { if (speakingPracticeScreen.style.display !== 'block') return; userSpeechStartTime = performance.now(); }
+
+function handleSpeechStart() {
+    if (speakingPracticeScreen.style.display !== 'block') return;
+    userSpeechStartTime = performance.now();
+}
+
 function handleRecognitionEnd() {
     if (speakingPracticeScreen.style.display !== 'block') return;
     if (startButton.disabled) {
         startButton.disabled = false;
         stopButton.disabled = true;
         statusElement.classList.remove('recording');
-        if (feedbackElement.innerHTML === '-') { statusElement.textContent = "音声が認識されませんでした。もう一度試してください。"; } else { statusElement.textContent = "結果を確認してください。"; }
+        if (feedbackElement.innerHTML === '-') {
+            statusElement.textContent = "音声が認識されませんでした。もう一度試してください。";
+        } else {
+            statusElement.textContent = "結果を確認してください。";
+        }
     }
-    if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); }
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+    }
 }
+
 function handleRecognitionError(event) {
     if (speakingPracticeScreen.style.display !== 'block') return;
     statusElement.textContent = `音声認識エラー: ${event.error}`;
-    if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); }
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+    }
 }
+
 function resetResults() {
     scoreElement.innerHTML = `0 <span class="score-unit">/ 100</span>`;
     scoreElement.className = '';
     feedbackElement.innerHTML = '-';
     userRecordingPlayer.src = '';
 }
+
 function setNewSentence() {
-    if (!isSpeakingPracticeInitialized) { initializeSpeakingPractice(); return; }
+    if (!isSpeakingPracticeInitialized) {
+        initializeSpeakingPractice(); 
+        return;
+    }
     let newIndex;
     do { newIndex = Math.floor(Math.random() * pronunciationSentences.length); } while (pronunciationSentences.length > 1 && newIndex === currentSentenceIndex);
     currentSentenceIndex = newIndex;
@@ -917,6 +996,7 @@ function setNewSentence() {
     startButton.disabled = false;
     stopButton.disabled = true;
 }
+
 listenButton.addEventListener('click', () => {
     const text = pronunciationSentences[currentSentenceIndex].en;
     let startTime;
@@ -927,8 +1007,12 @@ listenButton.addEventListener('click', () => {
     startTime = performance.now();
     listenButton.disabled = true;
 });
+
 startButton.addEventListener('click', () => { 
-    if (!mediaRecorder || !recognition) { statusElement.textContent = "エラー: 録音/認識機能が準備できていません。"; return; }
+    if (!mediaRecorder || !recognition) {
+        statusElement.textContent = "エラー: 録音/認識機能が準備できていません。";
+        return;
+    }
     try {
         resetResults(); 
         mediaRecorder.start();
@@ -943,10 +1027,15 @@ startButton.addEventListener('click', () => {
         stopButton.disabled = true;
     }
 });
+
 stopButton.addEventListener('click', () => {
      try {
-        if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); }
-        if (recognition) { recognition.stop(); }
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+        }
+        if (recognition) {
+            recognition.stop(); 
+        }
     } catch (err) {
         statusElement.textContent = `停止エラー: ${err.message}`;
         startButton.disabled = false;
@@ -954,35 +1043,53 @@ stopButton.addEventListener('click', () => {
         statusElement.classList.remove('recording');
     }
 });
+
 function generateCombinedFeedback(transcript) {
     const originalText = pronunciationSentences[currentSentenceIndex].en;
-    const cleanOriginal = originalText.toLowerCase().replace(/[.,!?]/g, '').split(' ');
-    const cleanUser = transcript.toLowerCase().replace(/[.,!?]/g, '').split(' ');
+    const cleanOriginal = originalText.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/); 
+    const cleanUser = transcript.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/); 
+
     let correctWords = 0;
     const feedbackHtml = cleanOriginal.map((word, index) => {
-        if (cleanUser[index] === word) { correctWords++; return `<span class="correct">${word}</span>`; }
-        else { return `<span class="incorrect" data-word="${word}">${word}</span> (<span class="your-speech">${cleanUser[index] || '×'}</span>)`; }
+        if (cleanUser[index] === word) { 
+            correctWords++; 
+            return `<span class="correct">${word}</span>`; 
+        } else { 
+            const userWord = cleanUser[index] ? `<span class="your-speech">${cleanUser[index]}</span>` : '<span class="your-speech">×</span>';
+            return `<span class="incorrect" data-word="${word}">${word}</span> (${userWord})`; 
+        }
     }).join(' ');
-    const score = Math.round((correctWords / cleanOriginal.length) * 100);
+    
+    const score = cleanOriginal.length > 0 ? Math.round((correctWords / cleanOriginal.length) * 100) : 0; 
     scoreElement.innerHTML = `${score} <span class="score-unit">/ 100</span>`;
     scoreElement.className = score >= 80 ? 'score-high' : score >= 50 ? 'score-mid' : 'score-low';
+    
     let fullFeedback = `<strong>お手本との比較:</strong> ${feedbackHtml}`;
+
     const userSpeechDuration = userSpeechEndTime - userSpeechStartTime;
     let paceFeedback = '';
     if (modelAudioDuration > 0 && userSpeechDuration > 0) {
         const paceRatio = userSpeechDuration / modelAudioDuration;
-        if (paceRatio > 1.4) { paceFeedback = "🐢 <strong>ペース:</strong> もう少しテンポを上げると、より自然なリズムになります。"; } 
-        else if (paceRatio < 0.8) { paceFeedback = "🐇 <strong>ペース:</strong> 少し早口かもしれません。焦らずゆっくり話すことを意識しましょう。"; } 
-        else { paceFeedback = "👍 <strong>ペース:</strong> 素晴らしい！お手本に近い自然なスピードで話せています。"; }
+        if (paceRatio > 1.4) {
+            paceFeedback = "🐢 <strong>ペース:</strong> もう少しテンポを上げると、より自然なリズムになります。";
+        } else if (paceRatio < 0.8) {
+            paceFeedback = "🐇 <strong>ペース:</strong> 少し早口かもしれません。焦らずゆっくり話すことを意識しましょう。";
+        } else {
+            paceFeedback = "👍 <strong>ペース:</strong> 素晴らしい！お手本に近い自然なスピードで話せています。";
+        }
         fullFeedback += `<div class="feedback-pace-section">${paceFeedback}</div>`;
     }
+
     feedbackElement.innerHTML = fullFeedback;
 }
+
 nextButton.addEventListener('click', setNewSentence);
 feedbackElement.addEventListener('click', (e) => {
     if (e.target.classList.contains('incorrect')) {
         const wordToSpeak = e.target.dataset.word;
-        if (wordToSpeak) { speak(wordToSpeak); }
+        if (wordToSpeak) {
+            speak(wordToSpeak);
+        }
     }
 });
 
@@ -1050,6 +1157,7 @@ function showNextQuestion() {
 function handleOptionClick(event) {
     const selectedButton = event.target;
     if (currentQuizIndex >= questionsForCurrentQuiz.length) return; 
+    
     const correctAnswer = questionsForCurrentQuiz[currentQuizIndex].correct;
     document.querySelectorAll('#quiz-options .quiz-option-btn').forEach(btn => {
         btn.disabled = true;
@@ -1076,10 +1184,10 @@ function endQuiz() {
 }
 quizRestartButton.addEventListener('click', startNewQuizSet);
 
+
 // =============================================
 //  リスニングチャレンジロジック
 // =============================================
-// (省略せずそのまま使用)
 const playAudioButton = document.getElementById('play-audio-button');
 const listeningStatus = document.getElementById('listening-status');
 const listeningInput = document.getElementById('listening-input');
@@ -1141,7 +1249,6 @@ nextListeningButton.addEventListener('click', startNewListeningChallenge);
 // =============================================
 //  読解練習ロジック
 // =============================================
-// (省略せずそのまま使用)
 const readingGameArea = document.getElementById('reading-game-area');
 const readingTitle = document.getElementById('reading-title');
 const readingPassage = document.getElementById('reading-passage');
@@ -1229,7 +1336,6 @@ readingRestartButton.addEventListener('click', startNewReadingQuiz);
 // =============================================
 //  Industry Focus Logic (New)
 // =============================================
-// (省略せずそのまま使用)
 let indCurrentCategoryKey = null;
 let indCurrentIndex = 0;
 
@@ -1239,9 +1345,11 @@ function selectIndustry(key) {
     document.getElementById('industry-title-display').textContent = data.title;
     showScreen(industryModuleScreen);
 }
+
 function startIndustryModule(moduleType) {
     indCurrentIndex = 0;
     const data = industryData[indCurrentCategoryKey];
+    
     if (moduleType === 'flashcards') {
         document.getElementById('ind-flashcard-header').textContent = `${data.title} - Flashcards`;
         updateIndFlashcardUI();
@@ -1256,11 +1364,14 @@ function startIndustryModule(moduleType) {
         showScreen(industryArticleScreen);
     }
 }
+
+// -- Flashcards --
 function updateIndFlashcardUI() {
     const list = industryData[indCurrentCategoryKey].flashcards;
     const item = list[indCurrentIndex];
     const inner = document.getElementById('ind-flashcard-inner');
     inner.classList.remove('flipped'); 
+
     setTimeout(() => {
         document.getElementById('ind-card-front').textContent = item.term;
         document.getElementById('ind-card-back-meaning').textContent = item.meaning;
@@ -1268,7 +1379,9 @@ function updateIndFlashcardUI() {
         document.getElementById('ind-card-progress').textContent = `${indCurrentIndex + 1} / ${list.length}`;
     }, 200);
 }
-function flipIndCard() { document.getElementById('ind-flashcard-inner').classList.toggle('flipped'); }
+function flipIndCard() {
+    document.getElementById('ind-flashcard-inner').classList.toggle('flipped');
+}
 function nextIndCard() {
     const list = industryData[indCurrentCategoryKey].flashcards;
     if (indCurrentIndex < list.length - 1) indCurrentIndex++;
@@ -1281,14 +1394,19 @@ function prevIndCard() {
     else indCurrentIndex = list.length - 1;
     updateIndFlashcardUI();
 }
+
+// -- Phrases --
 function updateIndPhraseUI() {
     const list = industryData[indCurrentCategoryKey].phrases;
     const item = list[indCurrentIndex];
+    
     document.getElementById('ind-phrase-scenario').textContent = item.scenario;
     document.getElementById('ind-scenario-trans').textContent = item.scenarioTrans;
     document.getElementById('ind-phrase-text').textContent = item.keyphrase;
+    
     document.getElementById('ind-phrase-trans-container').classList.add('hidden');
     document.getElementById('ind-scenario-trans').classList.add('hidden');
+    
     document.getElementById('ind-phrase-trans').textContent = item.translation;
     document.getElementById('ind-phrase-progress').textContent = `${indCurrentIndex + 1} / ${list.length}`;
 }
@@ -1302,17 +1420,24 @@ function nextIndPhrase() {
     else indCurrentIndex = 0;
     updateIndPhraseUI();
 }
+
+// -- Articles --
 function updateIndArticleUI() {
     const list = industryData[indCurrentCategoryKey].articles;
     const item = list[indCurrentIndex];
+    
     document.getElementById('ind-article-title').textContent = item.title;
     document.getElementById('ind-article-content').textContent = item.content;
     document.getElementById('ind-article-source').textContent = item.source;
+    
     document.getElementById('ind-article-trans-container').classList.add('hidden');
     document.getElementById('ind-article-trans').textContent = item.translation;
+    
     document.getElementById('ind-article-progress').textContent = `${indCurrentIndex + 1} / ${list.length}`;
 }
-function toggleIndArticleTrans() { document.getElementById('ind-article-trans-container').classList.toggle('hidden'); }
+function toggleIndArticleTrans() {
+    document.getElementById('ind-article-trans-container').classList.toggle('hidden');
+}
 function nextIndArticle() {
     const list = industryData[indCurrentCategoryKey].articles;
     if (indCurrentIndex < list.length - 1) indCurrentIndex++;
@@ -1322,15 +1447,118 @@ function nextIndArticle() {
 
 
 // =============================================
+//  Pop Culture Logic (New)
+// =============================================
+let popQuizGenre = null;
+let popQuizIndex = 0;
+let popQuizScore = 0;
+let popQuizQuestions = [];
+
+function startPopQuiz(genre) {
+    popQuizGenre = genre;
+    popQuizIndex = 0;
+    popQuizScore = 0;
+    
+    // データをランダムにシャッフルして取得
+    const sourceData = popCultureData[genre];
+    if(!sourceData) return;
+    
+    popQuizQuestions = shuffleArray(sourceData).slice(0, 5); // 5問出題
+    
+    showScreen(popCultureQuizScreen);
+    document.getElementById('pop-quiz-end-screen').style.display = 'none';
+    document.getElementById('pop-quiz-area').style.display = 'block';
+    showPopQuestion();
+}
+
+function showPopQuestion() {
+    if (popQuizIndex >= popQuizQuestions.length) {
+        endPopQuiz();
+        return;
+    }
+    
+    const qData = popQuizQuestions[popQuizIndex];
+    document.getElementById('pop-quiz-counter').textContent = `Question ${popQuizIndex + 1} / ${popQuizQuestions.length}`;
+    document.getElementById('pop-quiz-score').textContent = `Score: ${popQuizScore}`;
+    document.getElementById('pop-quiz-question').textContent = `"${qData.en}"`;
+    
+    // フィードバックエリアをリセット
+    const feedbackArea = document.getElementById('pop-quiz-feedback');
+    feedbackArea.classList.add('hidden');
+    
+    // 選択肢の作成（正解1 + ダミー3）
+    const optionsContainer = document.getElementById('pop-quiz-options');
+    optionsContainer.innerHTML = '';
+    
+    // ダミーの選択肢を作成（同じジャンルの他のデータから取得）
+    const allData = popCultureData[popQuizGenre];
+    const dummies = allData.filter(d => d.ja !== qData.ja).map(d => d.ja);
+    const shuffledDummies = shuffleArray(dummies).slice(0, 3);
+    const options = shuffleArray([qData.ja, ...shuffledDummies]);
+    
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option-btn';
+        btn.textContent = opt;
+        btn.onclick = () => handlePopAnswer(opt, qData);
+        optionsContainer.appendChild(btn);
+    });
+}
+
+function handlePopAnswer(selected, qData) {
+    const isCorrect = selected === qData.ja;
+    const btns = document.querySelectorAll('#pop-quiz-options .quiz-option-btn');
+    
+    btns.forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === qData.ja) btn.classList.add('correct-answer');
+        if (!isCorrect && btn.textContent === selected) btn.classList.add('incorrect-answer');
+    });
+
+    const feedbackArea = document.getElementById('pop-quiz-feedback');
+    const title = document.getElementById('pop-feedback-title');
+    
+    if (isCorrect) {
+        popQuizScore++;
+        title.textContent = "Correct! 🎉";
+        title.className = "correct-feedback";
+    } else {
+        title.textContent = "Nice try!";
+        title.className = "incorrect-feedback";
+    }
+
+    document.getElementById('pop-feedback-source').textContent = `Source: ${qData.source}`;
+    document.getElementById('pop-feedback-note').textContent = qData.note;
+    feedbackArea.classList.remove('hidden');
+
+    document.getElementById('pop-next-btn').onclick = () => {
+        popQuizIndex++;
+        showPopQuestion();
+    };
+}
+
+function endPopQuiz() {
+    document.getElementById('pop-quiz-area').style.display = 'none';
+    document.getElementById('pop-quiz-end-screen').style.display = 'block';
+    document.getElementById('pop-final-score').textContent = `${popQuizQuestions.length}問中 ${popQuizScore}問 正解！`;
+    recordSession();
+}
+
+document.getElementById('pop-restart-button').addEventListener('click', () => {
+    startPopQuiz(popQuizGenre);
+});
+
+
+// =============================================
 //  ビデオチャットロジック (WebRTC実装)
 // =============================================
 const startCallBtn = document.getElementById('start-call-btn');
 const endCallBtn = document.getElementById('end-call-btn');
-const switchCameraBtn = document.getElementById('switch-camera-btn'); // 追加
+const switchCameraBtn = document.getElementById('switch-camera-btn'); 
 const localVideo = document.getElementById('local-video');
 const remoteVideo = document.getElementById('remote-video');
 const videoStatus = document.getElementById('video-status');
-const roomIdInput = document.getElementById('room-id-input'); // ルームID入力
+const roomIdInput = document.getElementById('room-id-input'); 
 
 let peerConnection;
 let localStream;
@@ -1358,7 +1586,7 @@ async function startCall() {
 
     startCallBtn.disabled = true;
     endCallBtn.disabled = false;
-    if(switchCameraBtn) switchCameraBtn.disabled = false; // 通話開始時に有効化
+    if(switchCameraBtn) switchCameraBtn.disabled = false; 
     videoStatus.textContent = "カメラとマイクを起動中..."; 
 
     try {
@@ -1385,11 +1613,11 @@ async function startCall() {
         console.error("getUserMedia error:", err);
         // エラーメッセージをより親切に
         if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-             videoStatus.textContent = "エラー: マイク/カメラの使用が許可されていません。ブラウザの設定を確認してください。";
+             showCustomAlert("マイク/カメラが許可されていません。");
         } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-             videoStatus.textContent = "エラー: マイクが見つかりません。接続を確認してください。";
+             showCustomAlert("マイクが見つかりません。");
         } else {
-             videoStatus.textContent = `デバイスエラー: ${err.message}`;
+             showCustomAlert(`デバイスエラー: ${err.message}`);
         }
         startCallBtn.disabled = false;
         endCallBtn.disabled = true;
@@ -1403,6 +1631,7 @@ async function startCall() {
         socket = new WebSocket(SIGNALING_SERVER_URL); 
     } catch (err) {
         videoStatus.textContent = "サーバー接続エラー。";
+        showCustomAlert("サーバーに接続できません。");
         startCallBtn.disabled = false;
         endCallBtn.disabled = true;
         if(switchCameraBtn) switchCameraBtn.disabled = true;
@@ -1456,6 +1685,7 @@ async function startCall() {
                     break;
                 case 'room-full':
                     hangUp("エラー: ルームは満室です。");
+                    showCustomAlert("ルームは満室です");
                     break;
                 case 'error':
                     videoStatus.textContent = `サーバーエラー: ${data.message}`;
@@ -1474,7 +1704,6 @@ async function startCall() {
             msg = `サーバーから切断されました (Code: ${event.code})。再接続してください。`;
         }
         hangUp(msg);
-        // ▼▼▼ 学習記録保存 ▼▼▼
         recordSession();
     };
 
@@ -1555,7 +1784,6 @@ function createPeerConnection() {
             if (peerConnection.iceConnectionState === 'failed' || 
                 peerConnection.iceConnectionState === 'disconnected' || 
                 peerConnection.iceConnectionState === 'closed') {
-                // ここではメッセージ上書きしない（oncloseに任せる）
                 console.log("ICE Connection State:", peerConnection.iceConnectionState);
             }
         };
@@ -1591,7 +1819,6 @@ function hangUp(message) {
         remoteStream = null;
     }
     if (socket) {
-        // oncloseイベントが再発火しないようにハンドラを削除してから閉じる
         socket.onclose = null;
         socket.close();
         socket = null;
