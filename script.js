@@ -7,7 +7,7 @@ const SIGNALING_SERVER_URL = "wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jc
 
 
 // =============================================
-//  全体で使用するデータ (完全版・大幅拡充)
+//  全体で使用するデータ (完全版)
 // =============================================
 const pronunciationSentences = [
     { en: "How are you doing?", ja: "調子はどうですか？" },
@@ -690,8 +690,8 @@ function playSe(type) {
 
     if (type === 'correct') {
         oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(880, now); // A5
-        oscillator.frequency.exponentialRampToValueAtTime(1760, now + 0.1); // A6
+        oscillator.frequency.setValueAtTime(880, now); 
+        oscillator.frequency.exponentialRampToValueAtTime(1760, now + 0.1); 
         gainNode.gain.setValueAtTime(0.5, now);
         gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
         oscillator.start(now);
@@ -818,21 +818,23 @@ const backButtonFromIndPhrase = document.getElementById('backButtonFromIndPhrase
 const backButtonFromIndArticle = document.getElementById('backButtonFromIndArticle');
 
 function showScreen(screenToShow) {
-    const currentActive = document.querySelector('.screen.active');
-    if (currentActive) {
-        currentActive.style.opacity = 0;
-        setTimeout(() => {
-            currentActive.classList.remove('active');
-            currentActive.style.display = 'none';
-            screenToShow.style.display = 'block';
-            void screenToShow.offsetWidth; 
-            screenToShow.classList.add('active');
-        }, 300);
-    } else {
-        screenToShow.style.display = 'block';
-        setTimeout(() => screenToShow.classList.add('active'), 10);
-    }
+    // 1. すべての画面をリセット
+    document.querySelectorAll('.screen').forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none';
+        s.style.opacity = '0';
+    });
 
+    // 2. 表示したい画面を準備
+    screenToShow.style.display = 'block';
+
+    // 3. フェードイン
+    setTimeout(() => {
+        screenToShow.classList.add('active');
+        screenToShow.style.opacity = '1';
+    }, 10);
+
+    // 4. 画面ごとの固有処理
     if (screenToShow === homeScreen) { displayIdiomOfTheDay(); }
     if (screenToShow === dashboardScreen) { updateDashboardUI(); }
 }
@@ -1291,7 +1293,6 @@ readingRestartButton.addEventListener('click', startNewReadingQuiz);
 // =============================================
 //  Industry Focus Logic (New)
 // =============================================
-// (省略せずそのまま使用)
 let indCurrentCategoryKey = null;
 let indCurrentIndex = 0;
 
@@ -1299,30 +1300,35 @@ function selectIndustry(key) {
     indCurrentCategoryKey = key;
     const data = industryData[key];
     document.getElementById('industry-title-display').textContent = data.title;
-    showScreen(document.getElementById('industry-module-screen'));
+    showScreen(industryModuleScreen);
 }
+
 function startIndustryModule(moduleType) {
     indCurrentIndex = 0;
     const data = industryData[indCurrentCategoryKey];
+    
     if (moduleType === 'flashcards') {
         document.getElementById('ind-flashcard-header').textContent = `${data.title} - Flashcards`;
         updateIndFlashcardUI();
-        showScreen(document.getElementById('industry-flashcard-screen'));
+        showScreen(industryFlashcardScreen);
     } else if (moduleType === 'phrases') {
         document.getElementById('ind-phrase-header').textContent = `${data.title} - Key Phrases`;
         updateIndPhraseUI();
-        showScreen(document.getElementById('industry-phrase-screen'));
+        showScreen(industryPhraseScreen);
     } else if (moduleType === 'articles') {
         document.getElementById('ind-article-header').textContent = `${data.title} - Mini Articles`;
         updateIndArticleUI();
-        showScreen(document.getElementById('industry-article-screen'));
+        showScreen(industryArticleScreen);
     }
 }
+
+// -- Flashcards --
 function updateIndFlashcardUI() {
     const list = industryData[indCurrentCategoryKey].flashcards;
     const item = list[indCurrentIndex];
     const inner = document.getElementById('ind-flashcard-inner');
     inner.classList.remove('flipped'); 
+
     setTimeout(() => {
         document.getElementById('ind-card-front').textContent = item.term;
         document.getElementById('ind-card-back-meaning').textContent = item.meaning;
@@ -1330,7 +1336,9 @@ function updateIndFlashcardUI() {
         document.getElementById('ind-card-progress').textContent = `${indCurrentIndex + 1} / ${list.length}`;
     }, 200);
 }
-function flipIndCard() { document.getElementById('ind-flashcard-inner').classList.toggle('flipped'); }
+function flipIndCard() {
+    document.getElementById('ind-flashcard-inner').classList.toggle('flipped');
+}
 function nextIndCard() {
     const list = industryData[indCurrentCategoryKey].flashcards;
     if (indCurrentIndex < list.length - 1) indCurrentIndex++;
@@ -1343,14 +1351,19 @@ function prevIndCard() {
     else indCurrentIndex = list.length - 1;
     updateIndFlashcardUI();
 }
+
+// -- Phrases --
 function updateIndPhraseUI() {
     const list = industryData[indCurrentCategoryKey].phrases;
     const item = list[indCurrentIndex];
+    
     document.getElementById('ind-phrase-scenario').textContent = item.scenario;
     document.getElementById('ind-scenario-trans').textContent = item.scenarioTrans;
     document.getElementById('ind-phrase-text').textContent = item.keyphrase;
+    
     document.getElementById('ind-phrase-trans-container').classList.add('hidden');
     document.getElementById('ind-scenario-trans').classList.add('hidden');
+    
     document.getElementById('ind-phrase-trans').textContent = item.translation;
     document.getElementById('ind-phrase-progress').textContent = `${indCurrentIndex + 1} / ${list.length}`;
 }
@@ -1364,17 +1377,24 @@ function nextIndPhrase() {
     else indCurrentIndex = 0;
     updateIndPhraseUI();
 }
+
+// -- Articles --
 function updateIndArticleUI() {
     const list = industryData[indCurrentCategoryKey].articles;
     const item = list[indCurrentIndex];
+    
     document.getElementById('ind-article-title').textContent = item.title;
     document.getElementById('ind-article-content').textContent = item.content;
     document.getElementById('ind-article-source').textContent = item.source;
+    
     document.getElementById('ind-article-trans-container').classList.add('hidden');
     document.getElementById('ind-article-trans').textContent = item.translation;
+    
     document.getElementById('ind-article-progress').textContent = `${indCurrentIndex + 1} / ${list.length}`;
 }
-function toggleIndArticleTrans() { document.getElementById('ind-article-trans-container').classList.toggle('hidden'); }
+function toggleIndArticleTrans() {
+    document.getElementById('ind-article-trans-container').classList.toggle('hidden');
+}
 function nextIndArticle() {
     const list = industryData[indCurrentCategoryKey].articles;
     if (indCurrentIndex < list.length - 1) indCurrentIndex++;
@@ -1388,19 +1408,24 @@ function nextIndArticle() {
 // =============================================
 const startCallBtn = document.getElementById('start-call-btn');
 const endCallBtn = document.getElementById('end-call-btn');
-const switchCameraBtn = document.getElementById('switch-camera-btn');
+const switchCameraBtn = document.getElementById('switch-camera-btn'); // 追加
 const localVideo = document.getElementById('local-video');
 const remoteVideo = document.getElementById('remote-video');
 const videoStatus = document.getElementById('video-status');
-const roomIdInput = document.getElementById('room-id-input'); 
+const roomIdInput = document.getElementById('room-id-input'); // ルームID入力
 
 let peerConnection;
 let localStream;
 let remoteStream;
 let socket;
-let currentFacingMode = 'user'; 
+let currentFacingMode = 'user'; // デフォルトは内カメ
 
-const stunServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+// Googleが提供するパブリックSTUNサーバー
+const stunServers = {
+    iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' }
+    ]
+};
 
 startCallBtn.addEventListener('click', startCall);
 endCallBtn.addEventListener('click', hangUp);
@@ -1415,7 +1440,7 @@ async function startCall() {
 
     startCallBtn.disabled = true;
     endCallBtn.disabled = false;
-    if(switchCameraBtn) switchCameraBtn.disabled = false; 
+    if(switchCameraBtn) switchCameraBtn.disabled = false; // 通話開始時に有効化
     videoStatus.textContent = "カメラとマイクを起動中..."; 
 
     try {
@@ -1713,21 +1738,29 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.screen').forEach(s => {
         s.classList.remove('active');
         s.style.display = 'none';
+        s.style.opacity = '0';
     });
 
     // スプラッシュスクリーン表示
     const splashScreen = document.getElementById('splash-screen');
     if (splashScreen) {
         splashScreen.style.display = 'flex'; 
-        splashScreen.classList.add('active');
+        // わずかな遅延を入れてフェードインさせる
+        setTimeout(() => {
+            splashScreen.classList.add('active');
+        }, 10);
 
         // 3秒後に自動遷移
         setTimeout(() => {
             if (splashScreen.classList.contains('active')) {
                 // スプラッシュを隠してホームを表示
-                splashScreen.style.display = 'none';
-                splashScreen.classList.remove('active');
+                // ここで直接DOM操作せず showScreen を使う
                 showScreen(homeScreen);
+                // スプラッシュ自体は少し待ってから非表示（フェードアウト後）
+                setTimeout(() => {
+                     splashScreen.style.display = 'none';
+                     splashScreen.classList.remove('active');
+                }, 500);
             }
         }, 3000);
     } else {
