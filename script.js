@@ -3,12 +3,11 @@
 // =============================================
 // Replitで取得したURLをここに貼り付けてください（https:// ではなく wss:// に書き換える）
 // 例: "wss://english-park-server.username.replit.co"
-const SIGNALING_SERVER_URL = "wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev:8080";
-
+const SIGNALING_SERVER_URL = "wss://YOUR-REPLIT-URL-HERE";
 
 
 // =============================================
-//  全体で使用するデータ (完全版)
+//  全体で使用するデータ (完全版・大幅拡充)
 // =============================================
 const pronunciationSentences = [
     { en: "How are you doing?", ja: "調子はどうですか？" },
@@ -404,7 +403,6 @@ const idiomsData = [
     { idiom: "Piece of cake.", meaning: "朝飯前", description: "とても簡単なこと。" },
     { idiom: "Hit the road.", meaning: "出発する", description: "旅に出る、帰る。" },
     { idiom: "Under the weather.", meaning: "体調が悪い", description: "気分が優れないこと。" },
-    // イディオム追加
     { idiom: "Spill the beans", meaning: "秘密を漏らす", description: "豆をこぼす＝秘密をばらす。" },
     { idiom: "Once in a blue moon", meaning: "ごくまれに", description: "めったにないこと。" },
     { idiom: "The ball is in your court", meaning: "次は君の番だ", description: "決定権は相手にある。" },
@@ -628,11 +626,11 @@ function checkBadges(data) {
     const newBadges = [];
     if (data.totalSessions >= 1 && !data.badges.includes('first_step')) {
         newBadges.push('first_step');
-        alert("🎉 バッジ獲得: はじめの一歩！");
+        showToast("🎉 バッジ獲得: はじめの一歩！", "success");
     }
     if (data.streak >= 3 && !data.badges.includes('streak_3')) {
         newBadges.push('streak_3');
-        alert("🔥 バッジ獲得: 3日連続学習！");
+        showToast("🔥 バッジ獲得: 3日連続学習！", "success");
     }
     if (newBadges.length > 0) {
         data.badges.push(...newBadges);
@@ -676,11 +674,43 @@ function updateDashboardUI() {
 // =============================================
 //  Audio Context & Speech Synthesis Setup
 // =============================================
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playSe(type) {
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    const now = audioCtx.currentTime;
+
+    if (type === 'correct') {
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(880, now); // A5
+        oscillator.frequency.exponentialRampToValueAtTime(1760, now + 0.1); // A6
+        gainNode.gain.setValueAtTime(0.5, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+        oscillator.start(now);
+        oscillator.stop(now + 0.5);
+    } else if (type === 'wrong') {
+        oscillator.type = 'sawtooth';
+        oscillator.frequency.setValueAtTime(150, now);
+        oscillator.frequency.linearRampToValueAtTime(100, now + 0.3);
+        gainNode.gain.setValueAtTime(0.5, now);
+        gainNode.gain.linearRampToValueAtTime(0.01, now + 0.3);
+        oscillator.start(now);
+        oscillator.stop(now + 0.3);
+    }
+}
+
 document.body.addEventListener('click', () => {
     try {
-        const audioContext = window.AudioContext || window.webkitAudioContext;
-        if (audioContext && new audioContext().state === 'suspended') {
-            new audioContext().resume().catch(e => console.error("AudioContext resume failed:", e));
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
         }
     } catch(e) {
         console.error("Could not resume AudioContext", e);
@@ -739,6 +769,19 @@ document.querySelectorAll('.info-btn').forEach(btn => {
 closeModalBtn.addEventListener('click', () => { infoModal.classList.add('hidden'); });
 window.addEventListener('click', (e) => { if (e.target === infoModal) infoModal.classList.add('hidden'); });
 
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 500);
+    }, 3000);
+}
+
 const homeScreen = document.getElementById('home-screen');
 const dashboardScreen = document.getElementById('dashboard-screen');
 const speakingPracticeScreen = document.getElementById('speaking-practice-screen');
@@ -775,12 +818,21 @@ const backButtonFromIndPhrase = document.getElementById('backButtonFromIndPhrase
 const backButtonFromIndArticle = document.getElementById('backButtonFromIndArticle');
 
 function showScreen(screenToShow) {
-    document.querySelectorAll('.screen').forEach(s => {
-        s.classList.remove('active');
-        s.style.display = 'none'; 
-    });
-    screenToShow.style.display = 'block'; 
-    screenToShow.classList.add('active'); 
+    const currentActive = document.querySelector('.screen.active');
+    if (currentActive) {
+        currentActive.style.opacity = 0;
+        setTimeout(() => {
+            currentActive.classList.remove('active');
+            currentActive.style.display = 'none';
+            screenToShow.style.display = 'block';
+            void screenToShow.offsetWidth; 
+            screenToShow.classList.add('active');
+        }, 300);
+    } else {
+        screenToShow.style.display = 'block';
+        setTimeout(() => screenToShow.classList.add('active'), 10);
+    }
+
     if (screenToShow === homeScreen) { displayIdiomOfTheDay(); }
     if (screenToShow === dashboardScreen) { updateDashboardUI(); }
 }
@@ -877,7 +929,6 @@ function handleRecognitionResult(event) {
     userSpeechEndTime = performance.now();
     const transcript = event.results[0][0].transcript;
     generateCombinedFeedback(transcript);
-    // ▼▼▼ 学習記録保存 ▼▼▼
     recordSession(); 
     if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); }
 }
@@ -1013,7 +1064,7 @@ function shuffleArray(array) { return [...array].sort(() => Math.random() - 0.5)
 function startNewQuizSet() {
     const fullQuizData = quizDataSets[currentQuizLevel];
     if (!fullQuizData || fullQuizData.length === 0) {
-        alert(`レベル「${currentQuizLevel}」の単語データが見つかりません。`);
+        showToast(`レベル「${currentQuizLevel}」の単語データが見つかりません。`, 'error');
         return;
     }
     questionsForCurrentQuiz = shuffleArray(fullQuizData).slice(0, 10); 
@@ -1060,10 +1111,13 @@ function handleOptionClick(event) {
         quizScore++;
         quizFeedback.textContent = "正解！🎉";
         quizFeedback.className = 'quiz-feedback correct-feedback';
+        playSe('correct'); // SE
     } else {
         selectedButton.classList.add('incorrect-answer');
+        selectedButton.classList.add('shake'); // Animation
         quizFeedback.textContent = `不正解... 正解は「${correctAnswer}」`;
         quizFeedback.className = 'quiz-feedback incorrect-feedback';
+        playSe('wrong'); // SE
     }
     currentQuizIndex++;
     setTimeout(showNextQuestion, 1500); 
@@ -1115,7 +1169,7 @@ playAudioButton.addEventListener('click', () => {
 submitListeningButton.addEventListener('click', () => {
     const userAnswer = listeningInput.value.trim();
     if (userAnswer === '') { 
-        showCustomAlert('何か入力してください。'); 
+        showToast('何か入力してください。', 'error'); // Alert -> Toast
         return; 
     }
     if (!currentListeningSentence || !currentListeningSentence.en) return;
@@ -1130,12 +1184,14 @@ submitListeningButton.addEventListener('click', () => {
         listeningResultTitle.textContent = "素晴らしい！正解です！";
         listeningResultTitle.className = 'correct';
         listeningFeedbackText.textContent = '完璧に聞き取れています。';
+        playSe('correct');
         // ▼▼▼ 学習記録保存 ▼▼▼
         recordSession();
     } else {
         listeningResultTitle.textContent = "おしい！不正解です";
         listeningResultTitle.className = 'incorrect';
         listeningFeedbackText.textContent = 'もう一度挑戦してみましょう。';
+        playSe('wrong');
     }
 });
 nextListeningButton.addEventListener('click', startNewListeningChallenge);
@@ -1206,10 +1262,13 @@ function handleReadingOptionClick(event) {
         readingScore++;
         readingFeedback.textContent = "正解！🎉";
         readingFeedback.className = 'quiz-feedback correct-feedback';
+        playSe('correct');
     } else {
         selectedButton.classList.add('incorrect-answer');
+        selectedButton.classList.add('shake');
         readingFeedback.textContent = `不正解... 正解は「${correctAnswer}」`;
         readingFeedback.className = 'quiz-feedback incorrect-feedback';
+        playSe('wrong');
     }
     currentReadingQuestionIndex++;
     setTimeout(showNextReadingQuestion, 1500);
@@ -1333,7 +1392,7 @@ const switchCameraBtn = document.getElementById('switch-camera-btn');
 const localVideo = document.getElementById('local-video');
 const remoteVideo = document.getElementById('remote-video');
 const videoStatus = document.getElementById('video-status');
-const roomIdInput = document.getElementById('room-id-input'); // ルームID入力
+const roomIdInput = document.getElementById('room-id-input'); 
 
 let peerConnection;
 let localStream;
@@ -1341,12 +1400,7 @@ let remoteStream;
 let socket;
 let currentFacingMode = 'user'; 
 
-// Googleが提供するパブリックSTUNサーバー
-const stunServers = {
-    iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' }
-    ]
-};
+const stunServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
 startCallBtn.addEventListener('click', startCall);
 endCallBtn.addEventListener('click', hangUp);
@@ -1355,7 +1409,7 @@ if(switchCameraBtn) switchCameraBtn.addEventListener('click', switchCamera);
 async function startCall() {
     // 接続先URLが設定されているかチェック
     if (SIGNALING_SERVER_URL.includes("YOUR-REPLIT-URL-HERE")) {
-        showCustomAlert("サーバーのURLが設定されていません。script.jsの先頭を確認してください。");
+        showToast("サーバーURLが未設定です。script.jsを確認してください。", 'error');
         return;
     }
 
@@ -1388,11 +1442,11 @@ async function startCall() {
         console.error("getUserMedia error:", err);
         // エラーメッセージをより親切に
         if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-             videoStatus.textContent = "エラー: マイク/カメラの使用が許可されていません。ブラウザの設定を確認してください。";
+             showToast("マイク/カメラが許可されていません。", 'error');
         } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-             videoStatus.textContent = "エラー: マイクが見つかりません。接続を確認してください。";
+             showToast("マイクが見つかりません。", 'error');
         } else {
-             videoStatus.textContent = `デバイスエラー: ${err.message}`;
+             showToast(`デバイスエラー: ${err.message}`, 'error');
         }
         startCallBtn.disabled = false;
         endCallBtn.disabled = true;
@@ -1406,6 +1460,7 @@ async function startCall() {
         socket = new WebSocket(SIGNALING_SERVER_URL); 
     } catch (err) {
         videoStatus.textContent = "サーバー接続エラー。";
+        showToast("サーバーに接続できません。", 'error');
         startCallBtn.disabled = false;
         endCallBtn.disabled = true;
         if(switchCameraBtn) switchCameraBtn.disabled = true;
@@ -1455,10 +1510,12 @@ async function startCall() {
                     break;
                 case 'user-left':
                     videoStatus.textContent = "相手が退出しました。";
+                    showToast("相手が退出しました", 'info');
                     hangUp("相手が退出したため、通話を終了しました。"); 
                     break;
                 case 'room-full':
                     hangUp("エラー: ルームは満室です。");
+                    showToast("ルームは満室です", 'error');
                     break;
                 case 'error':
                     videoStatus.textContent = `サーバーエラー: ${data.message}`;
@@ -1475,6 +1532,7 @@ async function startCall() {
         let msg = "通話を終了しました。";
         if (event.code !== 1000 && event.code !== 1005) {
             msg = `サーバーから切断されました (Code: ${event.code})。再接続してください。`;
+            showToast("サーバーから切断されました", 'error');
         }
         hangUp(msg);
         // ▼▼▼ 学習記録保存 ▼▼▼
@@ -1484,6 +1542,7 @@ async function startCall() {
     socket.onerror = (err) => {
         console.error("WebSocket error:", err);
         videoStatus.textContent = "サーバー接続エラー。URL設定を確認してください。";
+        showToast("サーバー接続エラー", 'error');
     };
 }
 
@@ -1529,6 +1588,7 @@ async function switchCamera() {
     } catch (err) {
         console.error("Camera switch error:", err);
         videoStatus.textContent = "カメラの切り替えに失敗しました。";
+        showToast("カメラ切り替えに失敗しました", 'error');
     }
 }
 
