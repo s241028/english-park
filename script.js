@@ -626,11 +626,11 @@ function checkBadges(data) {
     const newBadges = [];
     if (data.totalSessions >= 1 && !data.badges.includes('first_step')) {
         newBadges.push('first_step');
-        showToast("🎉 バッジ獲得: はじめの一歩！", "success");
+        alert("🎉 バッジ獲得: はじめの一歩！");
     }
     if (data.streak >= 3 && !data.badges.includes('streak_3')) {
         newBadges.push('streak_3');
-        showToast("🔥 バッジ獲得: 3日連続学習！", "success");
+        alert("🔥 バッジ獲得: 3日連続学習！");
     }
     if (newBadges.length > 0) {
         data.badges.push(...newBadges);
@@ -674,43 +674,11 @@ function updateDashboardUI() {
 // =============================================
 //  Audio Context & Speech Synthesis Setup
 // =============================================
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-function playSe(type) {
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-
-    const now = audioCtx.currentTime;
-
-    if (type === 'correct') {
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(880, now); 
-        oscillator.frequency.exponentialRampToValueAtTime(1760, now + 0.1); 
-        gainNode.gain.setValueAtTime(0.5, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-        oscillator.start(now);
-        oscillator.stop(now + 0.5);
-    } else if (type === 'wrong') {
-        oscillator.type = 'sawtooth';
-        oscillator.frequency.setValueAtTime(150, now);
-        oscillator.frequency.linearRampToValueAtTime(100, now + 0.3);
-        gainNode.gain.setValueAtTime(0.5, now);
-        gainNode.gain.linearRampToValueAtTime(0.01, now + 0.3);
-        oscillator.start(now);
-        oscillator.stop(now + 0.3);
-    }
-}
-
 document.body.addEventListener('click', () => {
     try {
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
+        const audioContext = window.AudioContext || window.webkitAudioContext;
+        if (audioContext && new audioContext().state === 'suspended') {
+            new audioContext().resume().catch(e => console.error("AudioContext resume failed:", e));
         }
     } catch(e) {
         console.error("Could not resume AudioContext", e);
@@ -769,19 +737,6 @@ document.querySelectorAll('.info-btn').forEach(btn => {
 closeModalBtn.addEventListener('click', () => { infoModal.classList.add('hidden'); });
 window.addEventListener('click', (e) => { if (e.target === infoModal) infoModal.classList.add('hidden'); });
 
-function showToast(message, type = 'info') {
-    const container = document.getElementById('toast-container');
-    if (!container) return;
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-    container.appendChild(toast);
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 500);
-    }, 3000);
-}
-
 const homeScreen = document.getElementById('home-screen');
 const dashboardScreen = document.getElementById('dashboard-screen');
 const speakingPracticeScreen = document.getElementById('speaking-practice-screen');
@@ -818,23 +773,15 @@ const backButtonFromIndPhrase = document.getElementById('backButtonFromIndPhrase
 const backButtonFromIndArticle = document.getElementById('backButtonFromIndArticle');
 
 function showScreen(screenToShow) {
-    // 1. すべての画面をリセット
     document.querySelectorAll('.screen').forEach(s => {
-        s.classList.remove('active');
         s.style.display = 'none';
-        s.style.opacity = '0';
+        s.classList.remove('active'); // activeクラスも削除
     });
+    screenToShow.style.display = 'block'; 
+    // 少し遅延させてactiveを追加することでCSS transitionなどが効く場合があるが、
+    // 今回はシンプルに即時追加でOK（ちらつき防止）
+    screenToShow.classList.add('active'); 
 
-    // 2. 表示したい画面を準備
-    screenToShow.style.display = 'block';
-
-    // 3. フェードイン
-    setTimeout(() => {
-        screenToShow.classList.add('active');
-        screenToShow.style.opacity = '1';
-    }, 10);
-
-    // 4. 画面ごとの固有処理
     if (screenToShow === homeScreen) { displayIdiomOfTheDay(); }
     if (screenToShow === dashboardScreen) { updateDashboardUI(); }
 }
@@ -1066,7 +1013,7 @@ function shuffleArray(array) { return [...array].sort(() => Math.random() - 0.5)
 function startNewQuizSet() {
     const fullQuizData = quizDataSets[currentQuizLevel];
     if (!fullQuizData || fullQuizData.length === 0) {
-        showToast(`レベル「${currentQuizLevel}」の単語データが見つかりません。`, 'error');
+        alert(`レベル「${currentQuizLevel}」の単語データが見つかりません。`);
         return;
     }
     questionsForCurrentQuiz = shuffleArray(fullQuizData).slice(0, 10); 
@@ -1113,13 +1060,10 @@ function handleOptionClick(event) {
         quizScore++;
         quizFeedback.textContent = "正解！🎉";
         quizFeedback.className = 'quiz-feedback correct-feedback';
-        playSe('correct'); // SE
     } else {
         selectedButton.classList.add('incorrect-answer');
-        selectedButton.classList.add('shake'); // Animation
         quizFeedback.textContent = `不正解... 正解は「${correctAnswer}」`;
         quizFeedback.className = 'quiz-feedback incorrect-feedback';
-        playSe('wrong'); // SE
     }
     currentQuizIndex++;
     setTimeout(showNextQuestion, 1500); 
@@ -1128,7 +1072,6 @@ function endQuiz() {
     quizGameArea.style.display = 'none';
     quizEndScreen.style.display = 'block';
     quizFinalScore.textContent = `${questionsForCurrentQuiz.length}問中 ${quizScore}問 正解！`;
-    // ▼▼▼ 学習記録保存 ▼▼▼
     recordSession({ type: 'wordquiz', level: currentQuizLevel, score: quizScore });
 }
 quizRestartButton.addEventListener('click', startNewQuizSet);
@@ -1171,7 +1114,7 @@ playAudioButton.addEventListener('click', () => {
 submitListeningButton.addEventListener('click', () => {
     const userAnswer = listeningInput.value.trim();
     if (userAnswer === '') { 
-        showToast('何か入力してください。', 'error'); // Alert -> Toast
+        showCustomAlert('何か入力してください。'); 
         return; 
     }
     if (!currentListeningSentence || !currentListeningSentence.en) return;
@@ -1186,14 +1129,11 @@ submitListeningButton.addEventListener('click', () => {
         listeningResultTitle.textContent = "素晴らしい！正解です！";
         listeningResultTitle.className = 'correct';
         listeningFeedbackText.textContent = '完璧に聞き取れています。';
-        playSe('correct');
-        // ▼▼▼ 学習記録保存 ▼▼▼
         recordSession();
     } else {
         listeningResultTitle.textContent = "おしい！不正解です";
         listeningResultTitle.className = 'incorrect';
         listeningFeedbackText.textContent = 'もう一度挑戦してみましょう。';
-        playSe('wrong');
     }
 });
 nextListeningButton.addEventListener('click', startNewListeningChallenge);
@@ -1264,13 +1204,10 @@ function handleReadingOptionClick(event) {
         readingScore++;
         readingFeedback.textContent = "正解！🎉";
         readingFeedback.className = 'quiz-feedback correct-feedback';
-        playSe('correct');
     } else {
         selectedButton.classList.add('incorrect-answer');
-        selectedButton.classList.add('shake');
         readingFeedback.textContent = `不正解... 正解は「${correctAnswer}」`;
         readingFeedback.className = 'quiz-feedback incorrect-feedback';
-        playSe('wrong');
     }
     currentReadingQuestionIndex++;
     setTimeout(showNextReadingQuestion, 1500);
@@ -1282,7 +1219,6 @@ function endReadingQuiz() {
         readingFinalScore.textContent = `${currentReadingData.questions.length}問中 ${readingScore}問 正解！`;
         document.getElementById('review-passage-en').textContent = currentReadingData.passage;
         document.getElementById('review-passage-ja').textContent = currentReadingData.translation;
-        // ▼▼▼ 学習記録保存 ▼▼▼
         recordSession();
     } else {
         readingFinalScore.textContent = "スコアの計算に問題がありました。";
@@ -1293,6 +1229,7 @@ readingRestartButton.addEventListener('click', startNewReadingQuiz);
 // =============================================
 //  Industry Focus Logic (New)
 // =============================================
+// (省略せずそのまま使用)
 let indCurrentCategoryKey = null;
 let indCurrentIndex = 0;
 
@@ -1302,11 +1239,9 @@ function selectIndustry(key) {
     document.getElementById('industry-title-display').textContent = data.title;
     showScreen(industryModuleScreen);
 }
-
 function startIndustryModule(moduleType) {
     indCurrentIndex = 0;
     const data = industryData[indCurrentCategoryKey];
-    
     if (moduleType === 'flashcards') {
         document.getElementById('ind-flashcard-header').textContent = `${data.title} - Flashcards`;
         updateIndFlashcardUI();
@@ -1321,14 +1256,11 @@ function startIndustryModule(moduleType) {
         showScreen(industryArticleScreen);
     }
 }
-
-// -- Flashcards --
 function updateIndFlashcardUI() {
     const list = industryData[indCurrentCategoryKey].flashcards;
     const item = list[indCurrentIndex];
     const inner = document.getElementById('ind-flashcard-inner');
     inner.classList.remove('flipped'); 
-
     setTimeout(() => {
         document.getElementById('ind-card-front').textContent = item.term;
         document.getElementById('ind-card-back-meaning').textContent = item.meaning;
@@ -1336,9 +1268,7 @@ function updateIndFlashcardUI() {
         document.getElementById('ind-card-progress').textContent = `${indCurrentIndex + 1} / ${list.length}`;
     }, 200);
 }
-function flipIndCard() {
-    document.getElementById('ind-flashcard-inner').classList.toggle('flipped');
-}
+function flipIndCard() { document.getElementById('ind-flashcard-inner').classList.toggle('flipped'); }
 function nextIndCard() {
     const list = industryData[indCurrentCategoryKey].flashcards;
     if (indCurrentIndex < list.length - 1) indCurrentIndex++;
@@ -1351,19 +1281,14 @@ function prevIndCard() {
     else indCurrentIndex = list.length - 1;
     updateIndFlashcardUI();
 }
-
-// -- Phrases --
 function updateIndPhraseUI() {
     const list = industryData[indCurrentCategoryKey].phrases;
     const item = list[indCurrentIndex];
-    
     document.getElementById('ind-phrase-scenario').textContent = item.scenario;
     document.getElementById('ind-scenario-trans').textContent = item.scenarioTrans;
     document.getElementById('ind-phrase-text').textContent = item.keyphrase;
-    
     document.getElementById('ind-phrase-trans-container').classList.add('hidden');
     document.getElementById('ind-scenario-trans').classList.add('hidden');
-    
     document.getElementById('ind-phrase-trans').textContent = item.translation;
     document.getElementById('ind-phrase-progress').textContent = `${indCurrentIndex + 1} / ${list.length}`;
 }
@@ -1377,24 +1302,17 @@ function nextIndPhrase() {
     else indCurrentIndex = 0;
     updateIndPhraseUI();
 }
-
-// -- Articles --
 function updateIndArticleUI() {
     const list = industryData[indCurrentCategoryKey].articles;
     const item = list[indCurrentIndex];
-    
     document.getElementById('ind-article-title').textContent = item.title;
     document.getElementById('ind-article-content').textContent = item.content;
     document.getElementById('ind-article-source').textContent = item.source;
-    
     document.getElementById('ind-article-trans-container').classList.add('hidden');
     document.getElementById('ind-article-trans').textContent = item.translation;
-    
     document.getElementById('ind-article-progress').textContent = `${indCurrentIndex + 1} / ${list.length}`;
 }
-function toggleIndArticleTrans() {
-    document.getElementById('ind-article-trans-container').classList.toggle('hidden');
-}
+function toggleIndArticleTrans() { document.getElementById('ind-article-trans-container').classList.toggle('hidden'); }
 function nextIndArticle() {
     const list = industryData[indCurrentCategoryKey].articles;
     if (indCurrentIndex < list.length - 1) indCurrentIndex++;
@@ -1434,7 +1352,7 @@ if(switchCameraBtn) switchCameraBtn.addEventListener('click', switchCamera);
 async function startCall() {
     // 接続先URLが設定されているかチェック
     if (SIGNALING_SERVER_URL.includes("YOUR-REPLIT-URL-HERE")) {
-        showToast("サーバーURLが未設定です。script.jsを確認してください。", 'error');
+        showCustomAlert("サーバーのURLが設定されていません。script.jsの先頭を確認してください。");
         return;
     }
 
@@ -1467,11 +1385,11 @@ async function startCall() {
         console.error("getUserMedia error:", err);
         // エラーメッセージをより親切に
         if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-             showToast("マイク/カメラが許可されていません。", 'error');
+             videoStatus.textContent = "エラー: マイク/カメラの使用が許可されていません。ブラウザの設定を確認してください。";
         } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-             showToast("マイクが見つかりません。", 'error');
+             videoStatus.textContent = "エラー: マイクが見つかりません。接続を確認してください。";
         } else {
-             showToast(`デバイスエラー: ${err.message}`, 'error');
+             videoStatus.textContent = `デバイスエラー: ${err.message}`;
         }
         startCallBtn.disabled = false;
         endCallBtn.disabled = true;
@@ -1485,7 +1403,6 @@ async function startCall() {
         socket = new WebSocket(SIGNALING_SERVER_URL); 
     } catch (err) {
         videoStatus.textContent = "サーバー接続エラー。";
-        showToast("サーバーに接続できません。", 'error');
         startCallBtn.disabled = false;
         endCallBtn.disabled = true;
         if(switchCameraBtn) switchCameraBtn.disabled = true;
@@ -1535,12 +1452,10 @@ async function startCall() {
                     break;
                 case 'user-left':
                     videoStatus.textContent = "相手が退出しました。";
-                    showToast("相手が退出しました", 'info');
                     hangUp("相手が退出したため、通話を終了しました。"); 
                     break;
                 case 'room-full':
                     hangUp("エラー: ルームは満室です。");
-                    showToast("ルームは満室です", 'error');
                     break;
                 case 'error':
                     videoStatus.textContent = `サーバーエラー: ${data.message}`;
@@ -1557,7 +1472,6 @@ async function startCall() {
         let msg = "通話を終了しました。";
         if (event.code !== 1000 && event.code !== 1005) {
             msg = `サーバーから切断されました (Code: ${event.code})。再接続してください。`;
-            showToast("サーバーから切断されました", 'error');
         }
         hangUp(msg);
         // ▼▼▼ 学習記録保存 ▼▼▼
@@ -1567,7 +1481,6 @@ async function startCall() {
     socket.onerror = (err) => {
         console.error("WebSocket error:", err);
         videoStatus.textContent = "サーバー接続エラー。URL設定を確認してください。";
-        showToast("サーバー接続エラー", 'error');
     };
 }
 
@@ -1613,7 +1526,6 @@ async function switchCamera() {
     } catch (err) {
         console.error("Camera switch error:", err);
         videoStatus.textContent = "カメラの切り替えに失敗しました。";
-        showToast("カメラ切り替えに失敗しました", 'error');
     }
 }
 
@@ -1738,29 +1650,21 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.screen').forEach(s => {
         s.classList.remove('active');
         s.style.display = 'none';
-        s.style.opacity = '0';
     });
 
     // スプラッシュスクリーン表示
     const splashScreen = document.getElementById('splash-screen');
     if (splashScreen) {
         splashScreen.style.display = 'flex'; 
-        // わずかな遅延を入れてフェードインさせる
-        setTimeout(() => {
-            splashScreen.classList.add('active');
-        }, 10);
+        splashScreen.classList.add('active');
 
         // 3秒後に自動遷移
         setTimeout(() => {
             if (splashScreen.classList.contains('active')) {
                 // スプラッシュを隠してホームを表示
-                // ここで直接DOM操作せず showScreen を使う
+                splashScreen.style.display = 'none';
+                splashScreen.classList.remove('active');
                 showScreen(homeScreen);
-                // スプラッシュ自体は少し待ってから非表示（フェードアウト後）
-                setTimeout(() => {
-                     splashScreen.style.display = 'none';
-                     splashScreen.classList.remove('active');
-                }, 500);
             }
         }, 3000);
     } else {
