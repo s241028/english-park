@@ -527,22 +527,40 @@ const industryData = {
 };
 
 // =============================================
-//  Pop Culture Data (NEW)
+//  Pop Culture Data (NEW & EXPANDED)
 // =============================================
 const popCultureData = {
     anime: [
+        // Original
         { en: "I'm gonna be the Pirate King!", ja: "海賊王に俺はなる！", source: "One Piece", note: "'gonna' は 'going to' の口語的な省略形です。" },
         { en: "I am the bone of my sword.", ja: "体は剣で出来ている。", source: "Fate/stay night", note: "詩的な表現。'bone' はここでは「骨子」「本質」といった意味合い。" },
         { en: "If you give up, that's when the game is over.", ja: "あきらめたらそこで試合終了ですよ。", source: "Slam Dunk", note: "条件節(If...)を使った有名な格言。" },
         { en: "I'm not gonna run away, I never go back on my word!", ja: "逃げたりしねぇ…！俺は自分の言葉を曲げねぇ！", source: "Naruto", note: "'go back on one's word' で「約束を破る」「前言撤回する」という意味。" },
-        { en: "In the name of the moon, I will punish you!", ja: "月にかわっておしおきよ！", source: "Sailor Moon", note: "'In the name of ~' は「〜の名において」という決まり文句。" }
+        { en: "In the name of the moon, I will punish you!", ja: "月にかわっておしおきよ！", source: "Sailor Moon", note: "'In the name of ~' は「〜の名において」という決まり文句。" },
+        // Added
+        { en: "Set your heart ablaze.", ja: "心を燃やせ。", source: "Demon Slayer: Mugen Train", note: "'ablaze' は「燃え上がって」「輝いて」という意味の形容詞。" },
+        { en: "If you don't fight, you can't win.", ja: "戦わなければ勝てない。", source: "Attack on Titan", note: "シンプルな条件文。戦う意志の強さを表しています。" },
+        { en: "Once you've met someone you never really forget them.", ja: "一度あったことは忘れないものさ。", source: "Spirited Away", note: "記憶の奥底には残っているという、千と千尋の神隠しの名言。" },
+        { en: "Try laughing. Then whatever scares you will go away.", ja: "笑ってみな。そうすれば怖いものは消えていくよ。", source: "My Neighbor Totoro", note: "'whatever' は「〜するものは何でも」という意味の関係代名詞。" },
+        { en: "A lesson without pain is meaningless.", ja: "痛みを伴わない教訓には意義がない。", source: "Fullmetal Alchemist", note: "等価交換の法則を説く深いセリフ。" },
+        { en: "I want to change the world.", ja: "僕は新世界の神になる。", source: "Death Note", note: "意訳ですが、英語ではシンプルに「世界を変えたい」と表現されることが多いです。" },
+        { en: "It's over 9000!", ja: "戦闘力たったの5か…ゴミめ。（※英語圏では9000以上！）", source: "Dragon Ball Z", note: "英語圏のネットミームとして有名な誤訳（原作は8000）。" }
     ],
     music: [
+        // Original
         { en: "Let it be.", ja: "あるがままに / なすがままに", source: "The Beatles - Let It Be", note: "使役動詞 let + 目的語 + 原形不定詞。「それを（it）あるがままの状態（be）にさせておけ」という意味。" },
         { en: "I will always love you.", ja: "いつまでもあなたを愛し続けるでしょう", source: "Whitney Houston - I Will Always Love You", note: "未来の意志を表す 'will' と頻度を表す副詞 'always' の組み合わせ。" },
         { en: "We are the champions, my friends.", ja: "私たちはチャンピオンだ、友よ", source: "Queen - We Are The Champions", note: "勝利のアンセムとして世界中で歌われるフレーズ。" },
         { en: "Shake it off.", ja: "気にしない / 振り払う", source: "Taylor Swift - Shake It Off", note: "嫌なことや批判を「振り払う」という意味のスラング。" },
-        { en: "Imagine there's no heaven.", ja: "想像してごらん、天国なんてないんだと", source: "John Lennon - Imagine", note: "仮定法ではなく、命令形で「想像してごらん」と語りかけています。" }
+        { en: "Imagine there's no heaven.", ja: "想像してごらん、天国なんてないんだと", source: "John Lennon - Imagine", note: "仮定法ではなく、命令形で「想像してごらん」と語りかけています。" },
+        // Added
+        { en: "If you want to make the world a better place, take a look at yourself.", ja: "世界を良くしたいなら、まず自分自身を見つめ直せ", source: "Michael Jackson - Man in the Mirror", note: "変革は自分から、という強いメッセージ。" },
+        { en: "Let it go, let it go. Can't hold it back anymore.", ja: "ありのままで。もうこれ以上抑えられない", source: "Disney - Frozen", note: "'hold back' で「抑える」「隠す」という意味。" },
+        { en: "All you need is love.", ja: "愛こそすべて", source: "The Beatles - All You Need Is Love", note: "文法的には「あなたが必要とするすべては、愛である」。" },
+        { en: "I'm in love with the shape of you.", ja: "君のその姿に恋してるんだ", source: "Ed Sheeran - Shape of You", note: "'be in love with' で「〜に恋している」。" },
+        { en: "Hello from the other side.", ja: "向こう側から、ハロー", source: "Adele - Hello", note: "別れた相手への電話。「向こう側」は物理的な距離や心理的な距離を表します。" },
+        { en: "Don't stop believin'.", ja: "信じることをやめないで", source: "Journey - Don't Stop Believin'", note: "否定命令文。希望を持ち続けることの大切さを歌っています。" },
+        { en: "Just the way you are.", ja: "そのままの君でいて", source: "Bruno Mars - Just the Way You Are", note: "「君のありのままの姿」という意味。" }
     ]
 };
 

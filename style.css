@@ -14,7 +14,34 @@
     100% { transform: scale(1); }
 }
 
-/* --- Theme Colors (White Background + Neon Accents) --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 揺れるアニメーション (不正解時) */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+.shake { animation: shake 0.4s ease-in-out; border-color: var(--neon-red) !important; }
+
+/* 回転するローディングスピナー */
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.loading-spinner {
+    display: inline-block;
+    width: 20px; height: 20px;
+    border: 3px solid rgba(0,0,0,0.1);
+    border-radius: 50%;
+    border-top-color: var(--neon-cyan);
+    animation: spin 1s linear infinite;
+    vertical-align: middle;
+}
+.loading-spinner.small { width: 14px; height: 14px; border-width: 2px; }
+
+
+/* --- Theme Colors --- */
 :root {
     --dark-bg: #f0f4f8;       
     --dark-surface: #ffffff;  
@@ -53,7 +80,6 @@ body {
     margin: 0 auto;
 }
 
-/* ビデオチャット画面だけコンテナを広くする */
 #video-chat-screen .container {
     max-width: 1000px; 
 }
@@ -76,12 +102,14 @@ h1 {
     padding: 30px 40px;
     border: 1px solid var(--outline-color); 
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    /* animation: fadeIn 0.5s ease-out; */
     box-sizing: border-box;
-    position: relative; /* Back button positioning */
+    position: relative; 
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
 }
 .screen.active {
     display: block;
+    opacity: 1;
 }
 
 /* --- オープニング画面 --- */
@@ -99,7 +127,7 @@ h1 {
     z-index: 1000; 
     padding: 20px;
     box-sizing: border-box;
-    opacity: 1; /* Reset opacity for splash */
+    opacity: 1; 
 }
 #splash-screen.active { display: flex; }
 .splash-logo { font-size: 120px; margin-bottom: 20px; animation: bounceIn 1s ease-out; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2)); }
@@ -126,6 +154,7 @@ h1 {
     background-color: rgba(0,0,0,0.5); 
     justify-content: center;
     align-items: center;
+    animation: fadeIn 0.3s;
 }
 .modal:not(.hidden) { display: flex; }
 .modal-content {
@@ -479,7 +508,7 @@ header h1 {
 .text-neon-green { color: var(--neon-green); }
 .text-light-text { color: var(--light-text); }
 
-/* --- Industry Focus: フラッシュカードの文字サイズ調整 --- */
+/* --- Industry Focus: フラッシュカードの文字サイズ調整 (新規追加) --- */
 #ind-card-front {
     font-size: 3.5em; 
     font-weight: 700;
@@ -647,3 +676,9 @@ header h1 {
     font-weight: bold;
     color: var(--neon-green);
 }
+
+/* ▼▼▼ 追加: 汎用的な .hidden クラス ▼▼▼ */
+.hidden {
+    display: none !important;
+}
+/* ▲▲▲ 追加ここまで ▲▲▲ */
