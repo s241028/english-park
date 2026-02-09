@@ -544,7 +544,15 @@ const popCultureData = {
         { en: "Try laughing. Then whatever scares you will go away.", ja: "笑ってみな。そうすれば怖いものは消えていくよ。", source: "My Neighbor Totoro", note: "'whatever' は「〜するものは何でも」という意味の関係代名詞。" },
         { en: "A lesson without pain is meaningless.", ja: "痛みを伴わない教訓には意義がない。", source: "Fullmetal Alchemist", note: "等価交換の法則を説く深いセリフ。" },
         { en: "I want to change the world.", ja: "僕は新世界の神になる。", source: "Death Note", note: "意訳ですが、英語ではシンプルに「世界を変えたい」と表現されることが多いです。" },
-        { en: "It's over 9000!", ja: "戦闘力たったの5か…ゴミめ。（※英語圏では9000以上！）", source: "Dragon Ball Z", note: "英語圏のネットミームとして有名な誤訳（原作は8000）。" }
+        { en: "It's over 9000!", ja: "戦闘力たったの5か…ゴミめ。（※英語圏では9000以上！）", source: "Dragon Ball Z", note: "英語圏のネットミームとして有名な誤訳（原作は8000）。" },
+                { en: "Whatever you lose, you'll find it again.", ja: "失くしたものは、きっとまた見つかる。", source: "Spirited Away", note: "'whatever' は「〜するものは何でも」という包括的な表現。" },
+        { en: "Plus Ultra!", ja: "さらに向こうへ！", source: "My Hero Academia", note: "ラテン語由来のスローガン。限界を超えるという意味。" },
+        { en: "I’ll take a potato chip… and eat it!", ja: "計画通り。", source: "Death Note", note: "英語版では動作を強調するため、シンプルな文に誇張が加えられている。" },
+        { en: "No matter how deep the night, it always turns to day.", ja: "どんなに深い夜でも、必ず朝は来る。", source: "One Piece", note: "'no matter how' は「どんなに〜でも」という譲歩表現。" },
+        { en: "If you can’t do something, then don’t.", ja: "できないことは、無理にやらなくていい。", source: "Attack on Titan", note: "シンプルだが重みのある否定命令文。" },
+        { en: "Your life is your own.", ja: "自分の人生は、自分のものだ。", source: "Neon Genesis Evangelion", note: "所有を表す 'your own' による強調表現。" },
+        { en: "We don’t know what tomorrow holds. That’s why we can live for today.", ja: "明日がどうなるか分からない。だから今日を生きられる。", source: "Attack on Titan", note: "因果関係を 'That’s why' でつないだ構文。" },
+        { en: "I am me.", ja: "私は私だ。", source: "Pokémon", note: "非常に短いが、アイデンティティを強調する自己肯定表現。" }
     ],
     music: [
         // Original
@@ -560,7 +568,15 @@ const popCultureData = {
         { en: "I'm in love with the shape of you.", ja: "君のその姿に恋してるんだ", source: "Ed Sheeran - Shape of You", note: "'be in love with' で「〜に恋している」。" },
         { en: "Hello from the other side.", ja: "向こう側から、ハロー", source: "Adele - Hello", note: "別れた相手への電話。「向こう側」は物理的な距離や心理的な距離を表します。" },
         { en: "Don't stop believin'.", ja: "信じることをやめないで", source: "Journey - Don't Stop Believin'", note: "否定命令文。希望を持ち続けることの大切さを歌っています。" },
-        { en: "Just the way you are.", ja: "そのままの君でいて", source: "Bruno Mars - Just the Way You Are", note: "「君のありのままの姿」という意味。" }
+        { en: "Just the way you are.", ja: "そのままの君でいて", source: "Bruno Mars - Just the Way You Are", note: "「君のありのままの姿」という意味。" },
+        { en: "You may say I'm a dreamer.", ja: "僕のことを夢想家と言うかもしれないね", source: "John Lennon - Imagine", note: "'may' は「〜かもしれない」という推量。" },
+        { en: "Cause baby, you're a firework.", ja: "だって君は花火みたいな存在だから", source: "Katy Perry - Firework", note: "'cause' は 'because' の口語形。" },
+        { en: "I still haven't found what I'm looking for.", ja: "僕はまだ探しているものを見つけられていない", source: "U2 - I Still Haven't Found What I'm Looking For", note: "現在完了形で「今もその状態が続いている」ことを表す。" },
+        { en: "This is who I am.", ja: "これが私という人間だ", source: "The Greatest Showman - This Is Me", note: "'who I am' は自己定義を表す定番フレーズ。" },
+        { en: "We could be heroes, just for one day.", ja: "たった一日でも、僕らはヒーローになれる", source: "David Bowie - Heroes", note: "'could' は可能性・仮定を表す助動詞。" },
+        { en: "I got that sunshine in my pocket.", ja: "僕はポケットに太陽を持ってるんだ", source: "Justin Timberlake - CAN'T STOP THE FEELING!", note: "比喩表現。幸せやポジティブな気分を表す。" },
+        { en: "You only get one shot, do not miss your chance.", ja: "チャンスは一度きり、逃すな", source: "Eminem - Lose Yourself", note: "'only' による強調と命令文の組み合わせ。" },
+        { en: "Today is where your book begins.", ja: "今日が、君の物語の始まりだ", source: "Taylor Swift - Welcome To New York", note: "比喩としての 'book'＝人生・物語。" }
     ]
 };
 
