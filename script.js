@@ -3,7 +3,7 @@
 // =============================================
 // Replitで取得したURLをここに貼り付けてください（https:// ではなく wss:// に書き換える）
 // 例: "wss://english-park-server.username.replit.co"
-const SIGNALING_SERVER_URL = "wss://YOUR-REPLIT-URL-HERE";
+const SIGNALING_SERVER_URL = "wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev:8080";
 
 
 // =============================================
