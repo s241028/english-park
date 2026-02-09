@@ -3,7 +3,7 @@
 // =============================================
 // Replitで取得したURLをここに貼り付けてください（https:// ではなく wss:// に書き換える）
 // 例: "wss://english-park-server.username.replit.co"
-const SIGNALING_SERVER_URL = "wss://https://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev:8080/";
+const SIGNALING_SERVER_URL = "wss://YOUR-REPLIT-URL-HERE";
 
 
 // =============================================
@@ -527,40 +527,22 @@ const industryData = {
 };
 
 // =============================================
-//  Pop Culture Data (NEW & EXPANDED)
+//  Pop Culture Data (NEW)
 // =============================================
 const popCultureData = {
     anime: [
-        // Original
         { en: "I'm gonna be the Pirate King!", ja: "海賊王に俺はなる！", source: "One Piece", note: "'gonna' は 'going to' の口語的な省略形です。" },
         { en: "I am the bone of my sword.", ja: "体は剣で出来ている。", source: "Fate/stay night", note: "詩的な表現。'bone' はここでは「骨子」「本質」といった意味合い。" },
         { en: "If you give up, that's when the game is over.", ja: "あきらめたらそこで試合終了ですよ。", source: "Slam Dunk", note: "条件節(If...)を使った有名な格言。" },
         { en: "I'm not gonna run away, I never go back on my word!", ja: "逃げたりしねぇ…！俺は自分の言葉を曲げねぇ！", source: "Naruto", note: "'go back on one's word' で「約束を破る」「前言撤回する」という意味。" },
-        { en: "In the name of the moon, I will punish you!", ja: "月にかわっておしおきよ！", source: "Sailor Moon", note: "'In the name of ~' は「〜の名において」という決まり文句。" },
-        // Added
-        { en: "Set your heart ablaze.", ja: "心を燃やせ。", source: "Demon Slayer: Mugen Train", note: "'ablaze' は「燃え上がって」「輝いて」という意味の形容詞。" },
-        { en: "If you don't fight, you can't win.", ja: "戦わなければ勝てない。", source: "Attack on Titan", note: "シンプルな条件文。戦う意志の強さを表しています。" },
-        { en: "Once you've met someone you never really forget them.", ja: "一度あったことは忘れないものさ。", source: "Spirited Away", note: "記憶の奥底には残っているという、千と千尋の神隠しの名言。" },
-        { en: "Try laughing. Then whatever scares you will go away.", ja: "笑ってみな。そうすれば怖いものは消えていくよ。", source: "My Neighbor Totoro", note: "'whatever' は「〜するものは何でも」という意味の関係代名詞。" },
-        { en: "A lesson without pain is meaningless.", ja: "痛みを伴わない教訓には意義がない。", source: "Fullmetal Alchemist", note: "等価交換の法則を説く深いセリフ。" },
-        { en: "I want to change the world.", ja: "僕は新世界の神になる。", source: "Death Note", note: "意訳ですが、英語ではシンプルに「世界を変えたい」と表現されることが多いです。" },
-        { en: "It's over 9000!", ja: "戦闘力たったの5か…ゴミめ。（※英語圏では9000以上！）", source: "Dragon Ball Z", note: "英語圏のネットミームとして有名な誤訳（原作は8000）。" }
+        { en: "In the name of the moon, I will punish you!", ja: "月にかわっておしおきよ！", source: "Sailor Moon", note: "'In the name of ~' は「〜の名において」という決まり文句。" }
     ],
     music: [
-        // Original
         { en: "Let it be.", ja: "あるがままに / なすがままに", source: "The Beatles - Let It Be", note: "使役動詞 let + 目的語 + 原形不定詞。「それを（it）あるがままの状態（be）にさせておけ」という意味。" },
         { en: "I will always love you.", ja: "いつまでもあなたを愛し続けるでしょう", source: "Whitney Houston - I Will Always Love You", note: "未来の意志を表す 'will' と頻度を表す副詞 'always' の組み合わせ。" },
         { en: "We are the champions, my friends.", ja: "私たちはチャンピオンだ、友よ", source: "Queen - We Are The Champions", note: "勝利のアンセムとして世界中で歌われるフレーズ。" },
         { en: "Shake it off.", ja: "気にしない / 振り払う", source: "Taylor Swift - Shake It Off", note: "嫌なことや批判を「振り払う」という意味のスラング。" },
-        { en: "Imagine there's no heaven.", ja: "想像してごらん、天国なんてないんだと", source: "John Lennon - Imagine", note: "仮定法ではなく、命令形で「想像してごらん」と語りかけています。" },
-        // Added
-        { en: "If you want to make the world a better place, take a look at yourself.", ja: "世界を良くしたいなら、まず自分自身を見つめ直せ", source: "Michael Jackson - Man in the Mirror", note: "変革は自分から、という強いメッセージ。" },
-        { en: "Let it go, let it go. Can't hold it back anymore.", ja: "ありのままで。もうこれ以上抑えられない", source: "Disney - Frozen", note: "'hold back' で「抑える」「隠す」という意味。" },
-        { en: "All you need is love.", ja: "愛こそすべて", source: "The Beatles - All You Need Is Love", note: "文法的には「あなたが必要とするすべては、愛である」。" },
-        { en: "I'm in love with the shape of you.", ja: "君のその姿に恋してるんだ", source: "Ed Sheeran - Shape of You", note: "'be in love with' で「〜に恋している」。" },
-        { en: "Hello from the other side.", ja: "向こう側から、ハロー", source: "Adele - Hello", note: "別れた相手への電話。「向こう側」は物理的な距離や心理的な距離を表します。" },
-        { en: "Don't stop believin'.", ja: "信じることをやめないで", source: "Journey - Don't Stop Believin'", note: "否定命令文。希望を持ち続けることの大切さを歌っています。" },
-        { en: "Just the way you are.", ja: "そのままの君でいて", source: "Bruno Mars - Just the Way You Are", note: "「君のありのままの姿」という意味。" }
+        { en: "Imagine there's no heaven.", ja: "想像してごらん、天国なんてないんだと", source: "John Lennon - Imagine", note: "仮定法ではなく、命令形で「想像してごらん」と語りかけています。" }
     ]
 };
 
@@ -1568,30 +1550,37 @@ document.getElementById('pop-restart-button').addEventListener('click', () => {
 
 
 // =============================================
-//  ビデオチャットロジック (WebRTC実装 - 自動マッチング版)
+//  ビデオチャットロジック (WebRTC実装)
 // =============================================
 const startCallBtn = document.getElementById('start-call-btn');
 const endCallBtn = document.getElementById('end-call-btn');
-const switchCameraBtn = document.getElementById('switch-camera-btn');
+const switchCameraBtn = document.getElementById('switch-camera-btn'); 
 const localVideo = document.getElementById('local-video');
 const remoteVideo = document.getElementById('remote-video');
 const videoStatus = document.getElementById('video-status');
+const roomIdInput = document.getElementById('room-id-input'); 
 
 let peerConnection;
 let localStream;
 let remoteStream;
 let socket;
-let currentFacingMode = 'user'; 
+let currentFacingMode = 'user'; // デフォルトは内カメ
 
-const stunServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+// Googleが提供するパブリックSTUNサーバー
+const stunServers = {
+    iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' }
+    ]
+};
 
 startCallBtn.addEventListener('click', startCall);
 endCallBtn.addEventListener('click', hangUp);
 if(switchCameraBtn) switchCameraBtn.addEventListener('click', switchCamera); 
 
 async function startCall() {
+    // 接続先URLが設定されているかチェック
     if (SIGNALING_SERVER_URL.includes("YOUR-REPLIT-URL-HERE")) {
-        showToast("サーバーURLが未設定です。script.jsを確認してください。", 'error');
+        showCustomAlert("サーバーのURLが設定されていません。script.jsの先頭を確認してください。");
         return;
     }
 
@@ -1601,6 +1590,7 @@ async function startCall() {
     videoStatus.textContent = "カメラとマイクを起動中..."; 
 
     try {
+        // ▼▼▼ 映像あり ▼▼▼
         try {
             localStream = await navigator.mediaDevices.getUserMedia({ 
                 video: { facingMode: currentFacingMode }, 
@@ -1615,23 +1605,33 @@ async function startCall() {
             videoStatus.textContent = "カメラが見つかりません。音声のみで接続します...";
         }
         
+        // 映像がある場合のみセット
         if(localStream.getVideoTracks().length > 0) {
             localVideo.srcObject = localStream;
         }
     } catch (err) {
         console.error("getUserMedia error:", err);
+        // エラーメッセージをより親切に
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+             showCustomAlert("マイク/カメラが許可されていません。");
+        } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+             showCustomAlert("マイクが見つかりません。");
+        } else {
+             showCustomAlert(`デバイスエラー: ${err.message}`);
+        }
         startCallBtn.disabled = false;
         endCallBtn.disabled = true;
         if(switchCameraBtn) switchCameraBtn.disabled = true;
         return;
     }
 
-    videoStatus.textContent = "マッチング中...";
+    videoStatus.textContent = "シグナリングサーバーに接続中...";
 
     try {
         socket = new WebSocket(SIGNALING_SERVER_URL); 
     } catch (err) {
         videoStatus.textContent = "サーバー接続エラー。";
+        showCustomAlert("サーバーに接続できません。");
         startCallBtn.disabled = false;
         endCallBtn.disabled = true;
         if(switchCameraBtn) switchCameraBtn.disabled = true;
@@ -1639,30 +1639,31 @@ async function startCall() {
     }
 
     socket.onopen = () => {
-        // ▼▼▼ 自動マッチングのため、room指定なしで送信 ▼▼▼
-        socket.send(JSON.stringify({ type: 'join' }));
+        videoStatus.textContent = "サーバーに接続しました。ルームに参加します...";
+        // ▼ ルームID入力欄の値を使用（空ならdefault-room）
+        const roomName = roomIdInput && roomIdInput.value ? roomIdInput.value : 'default-room';
+        socket.send(JSON.stringify({ type: 'join', room: roomName }));
     };
 
     socket.onmessage = async (message) => {
         const data = JSON.parse(message.data);
-        console.log('Signal:', data);
+        console.log('シグナリングメッセージ受信:', data);
 
         try {
             switch (data.type) {
                 case 'joined':
-                    // 自動で割り当てられた部屋IDが入っている
-                    videoStatus.textContent = "待機中... 相手を探しています";
+                    videoStatus.textContent = "ルームに参加しました。相手を待っています...";
                     createPeerConnection();
                     break;
                 case 'user-joined':
-                    videoStatus.textContent = "相手が見つかりました！接続中...";
+                    videoStatus.textContent = "相手が参加しました。接続を開始します...";
                     createPeerConnection(); 
                     const offer = await peerConnection.createOffer();
                     await peerConnection.setLocalDescription(offer);
                     socket.send(JSON.stringify({ type: 'offer', sdp: peerConnection.localDescription }));
                     break;
                 case 'offer':
-                    videoStatus.textContent = "接続リクエストを受信...";
+                    videoStatus.textContent = "接続リクエストを受信しました...";
                     createPeerConnection(); 
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
                     const answer = await peerConnection.createAnswer();
@@ -1670,7 +1671,7 @@ async function startCall() {
                     socket.send(JSON.stringify({ type: 'answer', sdp: peerConnection.localDescription }));
                     break;
                 case 'answer':
-                    videoStatus.textContent = "接続完了！通話を開始します";
+                    videoStatus.textContent = "接続が確立されました。";
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
                     break;
                 case 'candidate':
@@ -1679,94 +1680,149 @@ async function startCall() {
                     }
                     break;
                 case 'user-left':
-                    videoStatus.textContent = "相手が退出しました。通話を終了します。";
-                    hangUp("相手が退出しました。"); 
+                    videoStatus.textContent = "相手が退出しました。";
+                    hangUp("相手が退出したため、通話を終了しました。"); 
+                    break;
+                case 'room-full':
+                    hangUp("エラー: ルームは満室です。");
+                    showCustomAlert("ルームは満室です");
                     break;
                 case 'error':
-                    videoStatus.textContent = `エラー: ${data.message}`;
+                    videoStatus.textContent = `サーバーエラー: ${data.message}`;
                     break;
             }
         } catch (err) {
             console.error(err);
         }
     };
-    
-    // ... (onclose, onerror, switchCamera, createPeerConnection, hangUp は変更なし) ...
-    // (省略せず元のコードを使ってください)
+
     socket.onclose = (event) => {
+        console.log("WebSocket closed:", event);
+        // 正常終了(1000)以外ならエラーメッセージ
         let msg = "通話を終了しました。";
         if (event.code !== 1000 && event.code !== 1005) {
-            msg = `サーバーから切断されました (Code: ${event.code})`;
+            msg = `サーバーから切断されました (Code: ${event.code})。再接続してください。`;
         }
         hangUp(msg);
         recordSession();
     };
 
     socket.onerror = (err) => {
-        videoStatus.textContent = "サーバー接続エラー";
+        console.error("WebSocket error:", err);
+        videoStatus.textContent = "サーバー接続エラー。URL設定を確認してください。";
     };
 }
 
-// ... (残りの関数は以前のまま) ...
-
+// カメラ切り替え関数
 async function switchCamera() {
     if (!localStream) return;
+
+    // 現在のフェーシングモードを反転
     currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+    
+    // 既存の映像トラックを停止
     localStream.getVideoTracks().forEach(track => track.stop());
+
     try {
+        // 新しい制約でストリームを取得
         const newStream = await navigator.mediaDevices.getUserMedia({
-            audio: true, video: { facingMode: currentFacingMode }
+            audio: true, // 音声も必要
+            video: { facingMode: currentFacingMode }
         });
+
+        // 映像要素を更新
         localVideo.srcObject = newStream;
+        
+        // PeerConnectionの送信トラックを置換
         if (peerConnection) {
             const videoTrack = newStream.getVideoTracks()[0];
             const sender = peerConnection.getSenders().find(s => s.track.kind === 'video');
-            if (sender) sender.replaceTrack(videoTrack);
+            if (sender) {
+                sender.replaceTrack(videoTrack);
+            }
+            
+            // 音声トラックも更新（必要であれば）
             const audioTrack = newStream.getAudioTracks()[0];
             const audioSender = peerConnection.getSenders().find(s => s.track.kind === 'audio');
-            if (audioSender) audioSender.replaceTrack(audioTrack);
+            if (audioSender) {
+                audioSender.replaceTrack(audioTrack);
+            }
         }
+        
+        // グローバル変数を更新
         localStream = newStream;
+
     } catch (err) {
         console.error("Camera switch error:", err);
+        videoStatus.textContent = "カメラの切り替えに失敗しました。";
     }
 }
 
 function createPeerConnection() {
     if (peerConnection) return; 
+
     try {
         peerConnection = new RTCPeerConnection(stunServers);
+
         peerConnection.ontrack = (event) => {
-            if (!remoteStream) remoteStream = new MediaStream();
-            event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track));
+            if (!remoteStream) {
+                remoteStream = new MediaStream();
+            }
+            event.streams[0].getTracks().forEach(track => {
+                remoteStream.addTrack(track);
+            });
             remoteVideo.srcObject = remoteStream; 
         };
+
         peerConnection.onicecandidate = (event) => {
             if (event.candidate && socket && socket.readyState === WebSocket.OPEN) {
                 socket.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
             }
         };
+        
         peerConnection.oniceconnectionstatechange = () => {
-            if (peerConnection.iceConnectionState === 'failed' || peerConnection.iceConnectionState === 'disconnected' || peerConnection.iceConnectionState === 'closed') {
+            if (peerConnection.iceConnectionState === 'failed' || 
+                peerConnection.iceConnectionState === 'disconnected' || 
+                peerConnection.iceConnectionState === 'closed') {
                 console.log("ICE Connection State:", peerConnection.iceConnectionState);
             }
         };
+
         if (localStream) {
-            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
         }
     } catch (err) {
         console.error("Error creating PeerConnection:", err);
+        videoStatus.textContent = "接続の作成に失敗しました。";
     }
 }
 
 function hangUp(message) {
-    if (message) videoStatus.textContent = message;
-    else if (videoStatus.textContent !== "通話を終了しました。" && !videoStatus.textContent.includes("エラー")) videoStatus.textContent = "通話を終了しました。";
+    if (message) {
+        videoStatus.textContent = message;
+    } else if (videoStatus.textContent !== "通話を終了しました。" && !videoStatus.textContent.includes("エラー") && !videoStatus.textContent.includes("切断")) {
+         videoStatus.textContent = "通話を終了しました。";
+    }
     
-    if (peerConnection) { peerConnection.close(); peerConnection = null; }
-    if (localStream) { localStream.getTracks().forEach(track => track.stop()); localStream = null; }
-    if (remoteStream) { remoteStream.getTracks().forEach(track => track.stop()); remoteStream = null; }
-    if (socket) { socket.onclose = null; socket.close(); socket = null; }
+    if (peerConnection) {
+        peerConnection.close();
+        peerConnection = null;
+    }
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+    }
+    if (remoteStream) {
+        remoteStream.getTracks().forEach(track => track.stop());
+        remoteStream = null;
+    }
+    if (socket) {
+        socket.onclose = null;
+        socket.close();
+        socket = null;
+    }
     localVideo.srcObject = null;
     remoteVideo.srcObject = null;
     startCallBtn.disabled = false;
@@ -1774,62 +1830,6 @@ function hangUp(message) {
     if(switchCameraBtn) switchCameraBtn.disabled = true; 
 }
 
-// ... (displayIdiomOfTheDay, DOMContentLoaded などは省略せずそのまま使用) ...
-function displayIdiomOfTheDay() {
-    try {
-        const idiomDateEl = document.getElementById('idiom-date');
-        const idiomPhraseEl = document.getElementById('idiom-phrase');
-        const idiomMeaningEl = document.getElementById('idiom-meaning');
-        const idiomDescriptionEl = document.getElementById('idiom-description');
-
-        if (!idiomDateEl || !idiomPhraseEl || !idiomMeaningEl || !idiomDescriptionEl) return;
-         if (!idiomsData || idiomsData.length === 0) { idiomPhraseEl.textContent = "データ読込エラー"; return; }
-
-        const today = new Date();
-        const startOfYear = new Date(today.getFullYear(), 0, 1);
-        const dayIndex = Math.floor((today - startOfYear) / (1000 * 60 * 60 * 24));
-        const idiomIndex = dayIndex % idiomsData.length;
-        const dailyIdiom = idiomsData[idiomIndex];
-
-        idiomDateEl.textContent = `${today.getMonth() + 1}月${today.getDate()}日`;
-        idiomPhraseEl.textContent = dailyIdiom.idiom;
-        idiomMeaningEl.textContent = dailyIdiom.meaning;
-        idiomDescriptionEl.textContent = dailyIdiom.description;
-    } catch (e) {
-        console.error("Error in displayIdiomOfTheDay:", e);
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
-    const splashScreen = document.getElementById('splash-screen');
-    if (splashScreen) {
-        splashScreen.style.display = 'flex'; 
-        splashScreen.classList.add('active');
-        setTimeout(() => {
-            if (splashScreen.classList.contains('active')) {
-                splashScreen.style.display = 'none';
-                splashScreen.classList.remove('active');
-                showScreen(homeScreen);
-            }
-        }, 3000);
-    } else { showScreen(homeScreen); }
-    displayIdiomOfTheDay();
-});
-
-function showToast(message, type = 'info') {
-    // ... (省略せずそのまま)
-    const container = document.getElementById('toast-container');
-    if (!container) return;
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-    container.appendChild(toast);
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 500);
-    }, 3000);
-}
 
 // =============================================
 //  今日のイディオムロジック

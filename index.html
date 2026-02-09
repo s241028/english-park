@@ -28,9 +28,6 @@
         </div>
     </div>
 
-    <!-- トースト通知 -->
-    <div id="toast-container"></div>
-
     <!-- ホーム画面 -->
     <main id="home-screen" class="screen">
         <div class="container">
@@ -47,6 +44,7 @@
                 <p id="idiom-description" class="sentence-meaning"></p>
             </div>
 
+            <!-- ダッシュボードへのボタン -->
             <div style="margin-bottom: 30px;">
                 <button id="go-to-dashboard" class="action-button primary" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;">
                     <span style="font-size: 1.5em;">📊</span> マイデータを見る
@@ -78,6 +76,14 @@
                     <h3>読解練習</h3>
                     <p>短い英文を読み、内容に関するクイズに挑戦しよう。</p>
                 </div>
+                <!-- ▼▼▼ 新機能: ポップカルチャー英語 ▼▼▼ -->
+                <div class="game-card" id="start-pop-culture">
+                    <button class="info-btn" data-feature="popculture">i</button>
+                    <div class="game-icon">🎬</div>
+                    <h3>アニメ・洋楽で学ぶ</h3>
+                    <p>名言や歌詞から生きた英語フレーズを学びます。</p>
+                </div>
+                <!-- ▲▲▲ 追加ここまで ▲▲▲ -->
                 <div class="game-card" id="start-industry-focus">
                     <button class="info-btn" data-feature="industry">i</button>
                     <div class="game-icon">🚀</div>
@@ -126,6 +132,64 @@
         </div>
     </main>
 
+    <!-- ポップカルチャー選択画面 -->
+    <main id="pop-culture-menu-screen" class="screen">
+        <div class="container">
+            <button id="backButtonFromPopMenu" class="back-button">🏠 ホームに戻る</button>
+            <h1>アニメ・洋楽で学ぶ 🎬</h1>
+            <p class="description">好きなジャンルを選んでください。</p>
+            <div class="game-selection">
+                <div class="game-card" onclick="startPopQuiz('anime')">
+                    <div class="game-icon">⚔️</div>
+                    <h3>アニメの名言</h3>
+                    <p>心に響くあのセリフを英語で。</p>
+                </div>
+                <div class="game-card" onclick="startPopQuiz('music')">
+                    <div class="game-icon">🎵</div>
+                    <h3>洋楽フレーズ</h3>
+                    <p>ヒット曲の歌詞から表現を学ぶ。</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ポップカルチャー クイズ画面 -->
+    <main id="pop-culture-quiz-screen" class="screen">
+        <div class="container">
+            <button id="backButtonFromPopQuiz" class="back-button">↩ ジャンル選択に戻る</button>
+            <h1 id="pop-quiz-header">Pop Culture Quiz</h1>
+            
+            <div id="pop-quiz-area">
+                <div class="card quiz-card">
+                    <div id="pop-quiz-hud"><span id="pop-quiz-counter"></span><span id="pop-quiz-score"></span></div>
+                    
+                    <!-- 名言表示エリア -->
+                    <div class="quote-display-area">
+                        <p id="pop-quiz-question" class="quote-text"></p>
+                    </div>
+
+                    <div id="pop-quiz-options" class="quiz-options-grid"></div>
+                    
+                    <!-- 解説・出典表示エリア (回答後に表示) -->
+                    <div id="pop-quiz-feedback" class="pop-feedback hidden">
+                        <h3 id="pop-feedback-title"></h3>
+                        <p id="pop-feedback-source" class="quote-source"></p>
+                        <p id="pop-feedback-note" class="quote-note"></p>
+                        <button id="pop-next-btn" class="action-button primary">次へ</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pop-quiz-end-screen" class="card" style="display: none;">
+                <h2>クイズ終了！</h2>
+                <p class="final-score-text">あなたのスコア</p>
+                <p id="pop-final-score"></p>
+                <button id="pop-restart-button" class="restart-button">もう一度遊ぶ</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- (以下、既存の学習画面) -->
     <!-- スピーキング練習画面 -->
     <main id="speaking-practice-screen" class="screen">
         <div class="container">
@@ -335,54 +399,6 @@
         </div>
     </main>
 
-    <!-- ポップカルチャー選択画面 -->
-    <main id="pop-culture-menu-screen" class="screen">
-        <div class="container">
-            <button id="backButtonFromPopMenu" class="back-button">🏠 ホームに戻る</button>
-            <h1>アニメ・洋楽で学ぶ 🎬</h1>
-            <p class="description">好きなジャンルを選んでください。</p>
-            <div class="game-selection">
-                <div class="game-card" onclick="startPopQuiz('anime')">
-                    <div class="game-icon">⚔️</div>
-                    <h3>アニメの名言</h3>
-                    <p>心に響くあのセリフを英語で。</p>
-                </div>
-                <div class="game-card" onclick="startPopQuiz('music')">
-                    <div class="game-icon">🎵</div>
-                    <h3>洋楽フレーズ</h3>
-                    <p>ヒット曲の歌詞から表現を学ぶ。</p>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- ポップカルチャー クイズ画面 -->
-    <main id="pop-culture-quiz-screen" class="screen">
-        <div class="container">
-            <button id="backButtonFromPopQuiz" class="back-button">↩ ジャンル選択に戻る</button>
-            <h1 id="pop-quiz-header">Pop Culture Quiz</h1>
-            <div id="pop-quiz-area">
-                <div class="card quiz-card">
-                    <div id="pop-quiz-hud"><span id="pop-quiz-counter"></span><span id="pop-quiz-score"></span></div>
-                    <div class="quote-display-area"><p id="pop-quiz-question" class="quote-text"></p></div>
-                    <div id="pop-quiz-options" class="quiz-options-grid"></div>
-                    <div id="pop-quiz-feedback" class="pop-feedback hidden">
-                        <h3 id="pop-feedback-title"></h3>
-                        <p id="pop-feedback-source" class="quote-source"></p>
-                        <p id="pop-feedback-note" class="quote-note"></p>
-                        <button id="pop-next-btn" class="action-button primary">次へ</button>
-                    </div>
-                </div>
-            </div>
-            <div id="pop-quiz-end-screen" class="card" style="display: none;">
-                <h2>クイズ終了！</h2>
-                <p class="final-score-text">あなたのスコア</p>
-                <p id="pop-final-score"></p>
-                <button id="pop-restart-button" class="restart-button">もう一度遊ぶ</button>
-            </div>
-        </div>
-    </main>
-
     <!-- ビデオチャット画面 -->
     <main id="video-chat-screen" class="screen">
         <div class="container">
@@ -392,16 +408,15 @@
                 <h2>Conversation Topic</h2>
                 <p id="video-topic">What is the most interesting place you have ever visited?</p>
             </div>
-            
-            <p class="description" style="margin-bottom: 20px;">「Start Call」を押すと、自動的に空いている相手とマッチングします。</p>
-
+            <div class="room-input-container card" style="text-align: center;">
+                <label for="room-id-input" style="font-weight: bold; color: var(--light-text);">ルーム名:</label>
+                <input type="text" id="room-id-input" value="room1" class="room-input" placeholder="例: apple, 1234">
+                <p style="font-size: 0.9em; color: #888; margin-top: 5px;">※相手と同じルーム名を入力して「Start Call」を押してください。</p>
+            </div>
             <div class="video-container">
                 <video id="remote-video" autoplay playsinline></video>
-                <div class="local-video-wrapper">
-                    <video id="local-video" autoplay muted playsinline></video>
-                </div>
+                <div class="local-video-wrapper"><video id="local-video" autoplay muted playsinline></video></div>
             </div>
-
             <div id="video-controls">
                 <button id="start-call-btn">Start Call</button>
                 <button id="switch-camera-btn" class="action-button small" disabled>📷 切替</button>
