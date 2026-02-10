@@ -588,7 +588,14 @@ const popCultureData = {
         { en: "Try laughing. Then whatever scares you will go away.", ja: "笑ってみな。そうすれば怖いものは消えていくよ。", source: "My Neighbor Totoro", note: "'whatever' は「〜するものは何でも」という意味の関係代名詞。" },
         { en: "A lesson without pain is meaningless.", ja: "痛みを伴わない教訓には意義がない。", source: "Fullmetal Alchemist", note: "等価交換の法則を説く深いセリフ。" },
         { en: "I want to change the world.", ja: "僕は新世界の神になる。", source: "Death Note", note: "意訳ですが、英語ではシンプルに「世界を変えたい」と表現されることが多いです。" },
-        { en: "It's over 9000!", ja: "戦闘力たったの5か…ゴミめ。（※英語圏では9000以上！）", source: "Dragon Ball Z", note: "英語圏のネットミームとして有名な誤訳（原作は8000）。" }
+        { en: "I don’t want to regret the way I lived.",ja: "生き様で後悔はしたくない。",source: "Jujutsu Kaisen",note: "want to + 動詞原形。the way I lived は「自分の生き方」を包括的に表す定番表現。"},
+        { en: "I want to know! What “I love you” means… I want to know.",ja: "知りたいのです！『あいしてる』を……知りたいのです。",source: "Violet Evergarden",note: "What “I love you” means は間接疑問文。感情語をそのまま引用符で扱うことで、言葉そのものへの問いになっている。"},
+        { en: "Even a low-class warrior can surpass an elite, if he works hard enough.",ja: "落ちこぼれだって必死で努力すりゃ、エリートを超えることがあるかもよ。",source: "Dragon Ball Z (Son Goku)",note: "Even ～ can ～ で「〜でさえ〜できるかもしれない」。if he works hard enough は条件を強調する定型表現。"},
+        { en: "It's over 9000!", ja: "戦闘力たったの5か…ゴミめ。（※英語圏では9000以上！）", source: "Dragon Ball Z", note: "英語圏のネットミームとして有名な誤訳（原作は8000）。" },
+        { en: "Resolve is carving out your path through the darkness of the wilderness!!", ja: "『覚悟』とは！！暗闇の荒野に！！進むべき道を切り開く事だッ！", source: "JoJo's Bizarre Adventure", note: "Resolve を主語にした定義文。比喩（darkness / wilderness）で精神性を描くジョジョ特有の演説調。"},
+        { en: "There are times when you have to do something even when you know it’s impossible.", ja: "無理だと分かってても、やらなきゃなんねー時だってあるんだ。", source: "Dragon Ball", note: "There are times when ～ で一般論を提示しつつ、even when で逆境条件を重ねる名文。" },
+        { en: "Someone who doesn’t believe in themselves has no value in making an effort!!!", ja: "自分を信じない奴になんかに、努力する価値は無い!!!", source: "Naruto", note: "関係代名詞 Someone who ～ で人物を定義し、has no value in ～ で価値の否定を強調する断言表現。" }
+
     ],
     music: [
         // Original
