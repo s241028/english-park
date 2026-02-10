@@ -7,10 +7,9 @@ const SIGNALING_SERVER_URL = "wss://YOUR-REPLIT-URL-HERE";
 
 
 // =============================================
-//  全体で使用するデータ (完全版)
+//  全体で使用するデータ (完全版・大幅拡充)
 // =============================================
 const pronunciationSentences = [
-    // ... (データは省略せずそのまま使用) ...
     { en: "How are you doing?", ja: "調子はどうですか？" },
     { en: "It's nice to meet you.", ja: "はじめまして。" },
     { en: "How have you been?", ja: "いかがお過ごでしたか？" },
@@ -417,19 +416,19 @@ const idiomsData = [
 ];
 
 // =============================================
-//  Industry Focus Data
+//  Industry Focus Data (Extended)
 // =============================================
 const industryData = {
     it: {
         title: "IT & Tech",
         flashcards: [
-            { term: "Latency", meaning: "遅延（時間）", sentence: "We need to reduce the network latency." },
-            { term: "Scalability", meaning: "拡張性", sentence: "Cloud services offer high scalability." },
-            { term: "Encryption", meaning: "暗号化", sentence: "End-to-end encryption protects privacy." },
-            { term: "Deployment", meaning: "展開・実装", sentence: "The deployment was successful." },
+            { term: "Latency", meaning: "遅延（時間）", sentence: "We need to reduce the network latency for better performance." },
+            { term: "Scalability", meaning: "拡張性", sentence: "Cloud services offer high scalability for growing businesses." },
+            { term: "Encryption", meaning: "暗号化", sentence: "End-to-end encryption protects user privacy." },
+            { term: "Deployment", meaning: "展開・実装", sentence: "The deployment to the production server was successful." },
             { term: "Algorithm", meaning: 'アルゴリズム', sentence: 'We developed a new search algorithm.' },
-            { term: "Backend", meaning: "バックエンド", sentence: "He specializes in backend development." },
-            { term: "Debugging", meaning: "デバッグ", sentence: "Debugging is essential." },
+            { term: "Backend", meaning: "バックエンド", sentence: "He specializes in backend development using Node.js." },
+            { term: "Debugging", meaning: "デバッグ", sentence: "Debugging is an essential part of software development." },
             { term: "Authentication", meaning: "認証", sentence: "Two-factor authentication improves security." }
         ],
         phrases: [
@@ -442,92 +441,137 @@ const industryData = {
             { 
                 scenario: "Reporting an Issue",
                 keyphrase: "I've encountered a blocker.",
-                translation: "進行を妨げる問題に遭遇しました",
+                translation: "進行を妨げる問題（ブロッカー）に遭遇しました",
                 scenarioTrans: "進捗報告にて"
+            },
+            { 
+                scenario: "Code Review",
+                keyphrase: "Could you walk me through this logic?",
+                translation: "このロジックについて説明してもらえますか？",
+                scenarioTrans: "コードレビューにて"
             }
         ],
         articles: [
             {
                 title: "The Rise of AI Agents",
-                content: "Autonomous AI agents are becoming increasingly capable of performing complex tasks without human intervention.",
+                content: "Autonomous AI agents are becoming increasingly capable of performing complex tasks without human intervention. Unlike traditional chatbots, these agents can plan, execute, and refine their actions to achieve specific goals, transforming how we interact with software.",
                 source: "TechDaily 2024",
-                translation: "自律型AIエージェントは、人間の介入なしに複雑なタスクを実行する能力をますます高めています。"
+                translation: "自律型AIエージェントは、人間の介入なしに複雑なタスクを実行する能力をますます高めています。従来のチャットボットとは異なり、これらのエージェントは特定の目標を達成するために行動を計画、実行、修正することができ、私たちがソフトウェアと対話する方法を変革しています。"
+            },
+            {
+                title: "Zero Trust Security",
+                content: "Zero Trust architecture is rapidly becoming the standard for cloud security. Organizations are moving away from perimeter-based defenses to a model where every access request is verified, regardless of where it originates.",
+                source: "CyberSec Weekly",
+                translation: "ゼロトラストアーキテクチャは、急速にクラウドセキュリティの標準になりつつあります。組織は境界ベースの防御から、アクセス要求がどこから来たかにかかわらず、すべての要求を検証するモデルへと移行しています。"
             }
         ]
     },
     business: {
         title: "Business",
         flashcards: [
-            { term: "ROI", meaning: "投資対効果", sentence: "Calculate the ROI." },
-            { term: "Stakeholder", meaning: "利害関係者", sentence: "Keep stakeholders informed." }
+            { term: "ROI", meaning: "投資対効果", sentence: "We need to calculate the ROI before approving the budget." },
+            { term: "Stakeholder", meaning: "利害関係者", sentence: "It is important to keep all stakeholders informed." },
+            { term: "Quarterly", meaning: "四半期ごとの", sentence: "Our quarterly earnings exceeded expectations." },
+            { term: "Agenda", meaning: "議題", sentence: "Let's stick to the agenda to save time." },
+            { term: "Strategy", meaning: "戦略", sentence: "We are developing a new marketing strategy." }
         ],
         phrases: [
             { 
                 scenario: "Negotiation",
                 keyphrase: "Is there any room for movement on the price?",
-                translation: "価格交渉の余地はありますか？",
+                translation: "価格について交渉の余地はありますか？",
                 scenarioTrans: "価格交渉にて"
+            },
+            { 
+                scenario: "Meeting",
+                keyphrase: "Let's get the ball rolling.",
+                translation: "さあ、始めましょう。",
+                scenarioTrans: "会議の開始時"
+            },
+            { 
+                scenario: "Agreement",
+                keyphrase: "I think we're on the same page.",
+                translation: "私たちの認識は一致していると思います。",
+                scenarioTrans: "合意形成時"
             }
         ],
         articles: [
             {
                 title: "Remote Work Trends",
-                content: "Many companies are settling into a permanent hybrid work model.",
+                content: "Many companies are settling into a permanent hybrid work model. This approach balances the flexibility of working from home with the collaborative benefits of in-person interaction, though it presents new challenges for company culture.",
                 source: "BizWorld",
-                translation: "多くの企業が恒久的なハイブリッドワークモデルに落ち着きつつあります。"
+                translation: "多くの企業が恒久的なハイブリッドワークモデルに落ち着きつつあります。このアプローチは、在宅勤務の柔軟性と対面での交流による協力的なメリットのバランスをとっていますが、企業文化にとって新たな課題も提示しています。"
             }
         ]
     },
     medical: {
         title: "Medical",
         flashcards: [
-            { term: "Diagnosis", meaning: "診断", sentence: "Early diagnosis is key." },
-            { term: "Prescription", meaning: "処方箋", sentence: "Write a prescription." }
+            { term: "Diagnosis", meaning: "診断", sentence: "Early diagnosis is key to effective treatment." },
+            { term: "Prescription", meaning: "処方箋", sentence: "The doctor wrote a prescription for antibiotics." },
+            { term: "Symptom", meaning: "症状", sentence: "Common symptoms include fever and cough." },
+            { term: "Chronic", meaning: "慢性の", sentence: "He suffers from chronic back pain." },
+            { term: "Vaccine", meaning: "ワクチン", sentence: "The new vaccine proved to be highly effective." }
         ],
         phrases: [
             { 
                 scenario: "Consultation",
                 keyphrase: "On a scale of 1 to 10, how would you rate your pain?",
-                translation: "痛みは1から10でどのくらいですか？",
-                scenarioTrans: "診察にて"
+                translation: "1から10の段階で言うと、痛みはどれくらいですか？",
+                scenarioTrans: "患者の診察にて"
+            },
+            { 
+                scenario: "Treatment",
+                keyphrase: "This medication may cause some side effects.",
+                translation: "この薬はいくつかの副作用を引き起こす可能性があります。",
+                scenarioTrans: "治療説明にて"
             }
         ],
         articles: [
             {
-                title: "Gene Therapy",
-                content: "Recent breakthroughs in CRISPR technology have opened new possibilities.",
+                title: "Gene Therapy Breakthroughs",
+                content: "Recent breakthroughs in CRISPR technology have opened new possibilities for treating genetic disorders. Clinical trials are showing promising results for conditions previously thought untreatable, offering hope to millions.",
                 source: "MedJournal",
-                translation: "CRISPR技術における最近の進歩は新たな可能性を切り開きました。"
+                translation: "CRISPR技術における最近の進歩は、遺伝性疾患の治療に新たな可能性を切り開きました。臨床試験では、以前は治療不可能と考えられていた病状に対して有望な結果が示されており、何百万人もの人々に希望を与えています。"
             }
         ]
     },
     finance: {
         title: "Finance",
         flashcards: [
-            { term: "Asset", meaning: "資産", sentence: "Significant assets." },
-            { term: "Liability", meaning: "負債", sentence: "Reducing liabilities." }
+            { term: "Asset", meaning: "資産", sentence: "The company has significant assets in real estate." },
+            { term: "Liability", meaning: "負債", sentence: "Reducing liabilities is our primary goal this year." },
+            { term: "Dividend", meaning: "配当", sentence: "Shareholders received a dividend of $2 per share." },
+            { term: "Compliance", meaning: "法令遵守", sentence: "We must ensure strict compliance with new regulations." },
+            { term: "Audit", meaning: "監査", sentence: "The annual audit will begin next week." }
         ],
         phrases: [
             { 
                 scenario: "Investment",
-                keyphrase: "Diversify your portfolio.",
-                translation: "ポートフォリオを分散させる。",
-                scenarioTrans: "投資にて"
+                keyphrase: "It's crucial to diversify your portfolio.",
+                translation: "ポートフォリオを分散させることが極めて重要です。",
+                scenarioTrans: "投資アドバイスにて"
+            },
+            { 
+                scenario: "Contract",
+                keyphrase: "Please review the terms and conditions carefully.",
+                translation: "利用規約を注意深く確認してください。",
+                scenarioTrans: "契約確認にて"
             }
         ],
         articles: [
             {
-                title: "Crypto Regulation",
-                content: "Governments are intensifying efforts to regulate crypto.",
+                title: "Cryptocurrency Regulation",
+                content: "Governments worldwide are intensifying efforts to regulate cryptocurrency markets. The focus is on preventing money laundering and ensuring consumer protection without stifling innovation in the fintech sector.",
                 source: "FinanceDaily",
-                translation: "政府は暗号資産の規制を強化しています。"
+                translation: "世界各国の政府は、暗号資産市場の規制強化に力を入れています。焦点は、フィンテック分野のイノベーションを阻害することなく、マネーロンダリングを防止し、消費者保護を確保することにあります。"
             }
         ]
     }
 };
 
 // =============================================
-//  Pop Culture Data (NEW)
+//  Pop Culture Data (NEW & EXPANDED)
 // =============================================
 const popCultureData = {
     anime: [
@@ -544,15 +588,7 @@ const popCultureData = {
         { en: "Try laughing. Then whatever scares you will go away.", ja: "笑ってみな。そうすれば怖いものは消えていくよ。", source: "My Neighbor Totoro", note: "'whatever' は「〜するものは何でも」という意味の関係代名詞。" },
         { en: "A lesson without pain is meaningless.", ja: "痛みを伴わない教訓には意義がない。", source: "Fullmetal Alchemist", note: "等価交換の法則を説く深いセリフ。" },
         { en: "I want to change the world.", ja: "僕は新世界の神になる。", source: "Death Note", note: "意訳ですが、英語ではシンプルに「世界を変えたい」と表現されることが多いです。" },
-        { en: "It's over 9000!", ja: "戦闘力たったの5か…ゴミめ。（※英語圏では9000以上！）", source: "Dragon Ball Z", note: "英語圏のネットミームとして有名な誤訳（原作は8000）。" },
-                { en: "Whatever you lose, you'll find it again.", ja: "失くしたものは、きっとまた見つかる。", source: "Spirited Away", note: "'whatever' は「〜するものは何でも」という包括的な表現。" },
-        { en: "Plus Ultra!", ja: "さらに向こうへ！", source: "My Hero Academia", note: "ラテン語由来のスローガン。限界を超えるという意味。" },
-        { en: "I’ll take a potato chip… and eat it!", ja: "計画通り。", source: "Death Note", note: "英語版では動作を強調するため、シンプルな文に誇張が加えられている。" },
-        { en: "No matter how deep the night, it always turns to day.", ja: "どんなに深い夜でも、必ず朝は来る。", source: "One Piece", note: "'no matter how' は「どんなに〜でも」という譲歩表現。" },
-        { en: "If you can’t do something, then don’t.", ja: "できないことは、無理にやらなくていい。", source: "Attack on Titan", note: "シンプルだが重みのある否定命令文。" },
-        { en: "Your life is your own.", ja: "自分の人生は、自分のものだ。", source: "Neon Genesis Evangelion", note: "所有を表す 'your own' による強調表現。" },
-        { en: "We don’t know what tomorrow holds. That’s why we can live for today.", ja: "明日がどうなるか分からない。だから今日を生きられる。", source: "Attack on Titan", note: "因果関係を 'That’s why' でつないだ構文。" },
-        { en: "I am me.", ja: "私は私だ。", source: "Pokémon", note: "非常に短いが、アイデンティティを強調する自己肯定表現。" }
+        { en: "It's over 9000!", ja: "戦闘力たったの5か…ゴミめ。（※英語圏では9000以上！）", source: "Dragon Ball Z", note: "英語圏のネットミームとして有名な誤訳（原作は8000）。" }
     ],
     music: [
         // Original
@@ -568,15 +604,7 @@ const popCultureData = {
         { en: "I'm in love with the shape of you.", ja: "君のその姿に恋してるんだ", source: "Ed Sheeran - Shape of You", note: "'be in love with' で「〜に恋している」。" },
         { en: "Hello from the other side.", ja: "向こう側から、ハロー", source: "Adele - Hello", note: "別れた相手への電話。「向こう側」は物理的な距離や心理的な距離を表します。" },
         { en: "Don't stop believin'.", ja: "信じることをやめないで", source: "Journey - Don't Stop Believin'", note: "否定命令文。希望を持ち続けることの大切さを歌っています。" },
-        { en: "Just the way you are.", ja: "そのままの君でいて", source: "Bruno Mars - Just the Way You Are", note: "「君のありのままの姿」という意味。" },
-        { en: "You may say I'm a dreamer.", ja: "僕のことを夢想家と言うかもしれないね", source: "John Lennon - Imagine", note: "'may' は「〜かもしれない」という推量。" },
-        { en: "Cause baby, you're a firework.", ja: "だって君は花火みたいな存在だから", source: "Katy Perry - Firework", note: "'cause' は 'because' の口語形。" },
-        { en: "I still haven't found what I'm looking for.", ja: "僕はまだ探しているものを見つけられていない", source: "U2 - I Still Haven't Found What I'm Looking For", note: "現在完了形で「今もその状態が続いている」ことを表す。" },
-        { en: "This is who I am.", ja: "これが私という人間だ", source: "The Greatest Showman - This Is Me", note: "'who I am' は自己定義を表す定番フレーズ。" },
-        { en: "We could be heroes, just for one day.", ja: "たった一日でも、僕らはヒーローになれる", source: "David Bowie - Heroes", note: "'could' は可能性・仮定を表す助動詞。" },
-        { en: "I got that sunshine in my pocket.", ja: "僕はポケットに太陽を持ってるんだ", source: "Justin Timberlake - CAN'T STOP THE FEELING!", note: "比喩表現。幸せやポジティブな気分を表す。" },
-        { en: "You only get one shot, do not miss your chance.", ja: "チャンスは一度きり、逃すな", source: "Eminem - Lose Yourself", note: "'only' による強調と命令文の組み合わせ。" },
-        { en: "Today is where your book begins.", ja: "今日が、君の物語の始まりだ", source: "Taylor Swift - Welcome To New York", note: "比喩としての 'book'＝人生・物語。" }
+        { en: "Just the way you are.", ja: "そのままの君でいて", source: "Bruno Mars - Just the Way You Are", note: "「君のありのままの姿」という意味。" }
     ]
 };
 
@@ -732,8 +760,6 @@ function speak(text, callback) {
 // =============================================
 const splashScreen = document.getElementById('splash-screen');
 const enterAppButton = document.getElementById('enter-app-button');
-
-// モーダル要素
 const infoModal = document.getElementById('info-modal');
 const modalTitle = document.getElementById('modal-title');
 const modalDescription = document.getElementById('modal-description');
@@ -1350,9 +1376,11 @@ function handleReadingOptionClick(event) {
         readingFeedback.textContent = `不正解... 正解は「${correctAnswer}」`;
         readingFeedback.className = 'quiz-feedback incorrect-feedback';
     }
+
     currentReadingQuestionIndex++;
     setTimeout(showNextReadingQuestion, 1500);
 }
+
 function endReadingQuiz() {
     readingGameArea.style.display = 'none';
     readingEndScreen.style.display = 'block';
@@ -1362,10 +1390,12 @@ function endReadingQuiz() {
         document.getElementById('review-passage-ja').textContent = currentReadingData.translation;
         recordSession();
     } else {
-        readingFinalScore.textContent = "スコアの計算に問題がありました。";
+        readingFinalScore.textContent = "スコアの計算に問題がありました。"; // Fallback message
     }
 }
+
 readingRestartButton.addEventListener('click', startNewReadingQuiz);
+
 
 // =============================================
 //  Industry Focus Logic (New)
@@ -1493,15 +1523,16 @@ function startPopQuiz(genre) {
     popQuizIndex = 0;
     popQuizScore = 0;
     
-    // データをランダムにシャッフルして取得
     const sourceData = popCultureData[genre];
     if(!sourceData) return;
     
-    popQuizQuestions = shuffleArray(sourceData).slice(0, 5); // 5問出題
+    popQuizQuestions = shuffleArray(sourceData).slice(0, 5); 
     
     showScreen(popCultureQuizScreen);
     document.getElementById('pop-quiz-end-screen').style.display = 'none';
     document.getElementById('pop-quiz-area').style.display = 'block';
+    document.getElementById('pop-quiz-feedback').classList.add('hidden');
+    
     showPopQuestion();
 }
 
@@ -1516,15 +1547,12 @@ function showPopQuestion() {
     document.getElementById('pop-quiz-score').textContent = `Score: ${popQuizScore}`;
     document.getElementById('pop-quiz-question').textContent = `"${qData.en}"`;
     
-    // フィードバックエリアをリセット
     const feedbackArea = document.getElementById('pop-quiz-feedback');
     feedbackArea.classList.add('hidden');
     
-    // 選択肢の作成（正解1 + ダミー3）
     const optionsContainer = document.getElementById('pop-quiz-options');
     optionsContainer.innerHTML = '';
     
-    // ダミーの選択肢を作成（同じジャンルの他のデータから取得）
     const allData = popCultureData[popQuizGenre];
     const dummies = allData.filter(d => d.ja !== qData.ja).map(d => d.ja);
     const shuffledDummies = shuffleArray(dummies).slice(0, 3);
@@ -1598,7 +1626,7 @@ let peerConnection;
 let localStream;
 let remoteStream;
 let socket;
-let currentFacingMode = 'user'; // デフォルトは内カメ
+let currentFacingMode = 'user'; 
 
 // Googleが提供するパブリックSTUNサーバー
 const stunServers = {
@@ -1673,10 +1701,8 @@ async function startCall() {
     }
 
     socket.onopen = () => {
-        videoStatus.textContent = "サーバーに接続しました。ルームに参加します...";
-        // ▼ ルームID入力欄の値を使用（空ならdefault-room）
-        const roomName = roomIdInput && roomIdInput.value ? roomIdInput.value : 'default-room';
-        socket.send(JSON.stringify({ type: 'join', room: roomName }));
+        // 自動マッチングなのでroom指定なし
+        socket.send(JSON.stringify({ type: 'join' }));
     };
 
     socket.onmessage = async (message) => {
@@ -1686,18 +1712,18 @@ async function startCall() {
         try {
             switch (data.type) {
                 case 'joined':
-                    videoStatus.textContent = "ルームに参加しました。相手を待っています...";
+                    videoStatus.textContent = "待機中... 相手を探しています";
                     createPeerConnection();
                     break;
                 case 'user-joined':
-                    videoStatus.textContent = "相手が参加しました。接続を開始します...";
+                    videoStatus.textContent = "相手が見つかりました！接続中...";
                     createPeerConnection(); 
                     const offer = await peerConnection.createOffer();
                     await peerConnection.setLocalDescription(offer);
                     socket.send(JSON.stringify({ type: 'offer', sdp: peerConnection.localDescription }));
                     break;
                 case 'offer':
-                    videoStatus.textContent = "接続リクエストを受信しました...";
+                    videoStatus.textContent = "接続リクエストを受信...";
                     createPeerConnection(); 
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
                     const answer = await peerConnection.createAnswer();
@@ -1705,7 +1731,7 @@ async function startCall() {
                     socket.send(JSON.stringify({ type: 'answer', sdp: peerConnection.localDescription }));
                     break;
                 case 'answer':
-                    videoStatus.textContent = "接続が確立されました。";
+                    videoStatus.textContent = "接続完了！通話を開始します";
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
                     break;
                 case 'candidate':
