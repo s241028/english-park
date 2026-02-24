@@ -1619,7 +1619,7 @@ document.getElementById('pop-restart-button').addEventListener('click', () => {
 
 
 // =============================================
-//  ビデオチャットロジック (エラーハンドリング強化版)
+//  ビデオチャットロジック (映像真っ黒・無音 問題修正版)
 // =============================================
 const startCallBtn = document.getElementById('start-call-btn');
 const endCallBtn = document.getElementById('end-call-btn');
@@ -1634,6 +1634,10 @@ let remoteStream;
 let socket;
 let currentFacingMode = 'user'; 
 
+// ★追加: 通信経路データ(Candidate)が早すぎた場合に一時保存する箱
+let candidateQueue = [];
+
+// Googleの無料STUNサーバーを使用
 const stunServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
 if(startCallBtn) startCallBtn.addEventListener('click', startCall);
@@ -1681,7 +1685,6 @@ async function startCall() {
     videoStatus.textContent = "サーバーに接続しています...";
 
     try {
-        // ※URLの末尾にスラッシュが入っているとエラーになることがあるので除去
         const cleanUrl = SIGNALING_SERVER_URL.replace(/\/$/, "");
         socket = new WebSocket(cleanUrl); 
     } catch (err) {
@@ -1699,7 +1702,7 @@ async function startCall() {
 
     socket.onmessage = async (message) => {
         const data = JSON.parse(message.data);
-        console.log('Signal:', data);
+        console.log('Signal received:', data.type);
 
         try {
             switch (data.type) {
@@ -1721,22 +1724,25 @@ async function startCall() {
                     const answer = await peerConnection.createAnswer();
                     await peerConnection.setLocalDescription(answer);
                     socket.send(JSON.stringify({ type: 'answer', sdp: peerConnection.localDescription }));
+                    processCandidateQueue(); // ★追加: 溜まっていた通信経路データを処理
                     break;
                 case 'answer':
-                    videoStatus.textContent = "接続完了！通話を開始します";
+                    videoStatus.textContent = "接続完了！映像を繋いでいます...";
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
+                    processCandidateQueue(); // ★追加: 溜まっていた通信経路データを処理
                     break;
                 case 'candidate':
-                    if (peerConnection && data.candidate) {
-                        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+                    // ★修正: 準備ができる前に届いたCandidateは一旦キュー(箱)に保存する
+                    if (peerConnection && peerConnection.remoteDescription && peerConnection.remoteDescription.type) {
+                        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate)).catch(e => console.error(e));
+                    } else {
+                        console.log("Queueing candidate (waiting for remote description)");
+                        candidateQueue.push(data.candidate);
                     }
                     break;
                 case 'user-left':
                     videoStatus.textContent = "相手が退出しました。通話を終了します。";
                     hangUp("相手が退出しました。"); 
-                    break;
-                case 'error':
-                    videoStatus.textContent = `エラー: ${data.message}`;
                     break;
             }
         } catch (err) {
@@ -1744,46 +1750,63 @@ async function startCall() {
         }
     };
     
-    // ▼▼▼ エラーメッセージを詳細化 ▼▼▼
     socket.onclose = (event) => {
-        console.log(`WebSocket closed. Code: ${event.code}, Reason: ${event.reason}`);
         let msg = "通話を終了しました。";
-        
         if (event.code !== 1000 && event.code !== 1005) {
-            if (event.code === 1006) {
-                // 1006は「サーバーが存在しない」「URLが違う」「サーバーが寝ている」のどれか
-                msg = "サーバーに接続できません (Code: 1006)。Replitが起動しているか、URLが正しいか確認してください。";
-            } else {
-                msg = `サーバーから切断されました (Code: ${event.code})`;
-            }
+            if (event.code === 1006) msg = "サーバーに接続できません(1006)。Replitの起動を確認してください。";
+            else msg = `サーバーから切断されました (Code: ${event.code})`;
         }
         hangUp(msg);
-        recordSession();
-    };
-
-    socket.onerror = (err) => {
-        console.error("WebSocket Error:", err);
-        // onerrorは詳細情報を持たないので、直後にoncloseが発火してメッセージを出します
     };
 }
 
-// ... (switchCamera, createPeerConnection, hangUp 等の他の機能は以前のコードをそのまま配置してください) ...
+// ★追加: キューに保存しておいた通信経路データを一気に処理する関数
+function processCandidateQueue() {
+    while (candidateQueue.length > 0) {
+        const candidate = candidateQueue.shift();
+        peerConnection.addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e));
+    }
+}
+
+// ★修正: 映像・音声ストリームを受け取る部分を堅牢にしました
 function createPeerConnection() {
     if (peerConnection) return; 
+    candidateQueue = []; // キューをリセット
+
     try {
         peerConnection = new RTCPeerConnection(stunServers);
+        
+        // ★修正: 相手の映像・音声が届いたときの処理
         peerConnection.ontrack = (event) => {
-            if (!remoteStream) remoteStream = new MediaStream();
-            event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track));
-            remoteVideo.srcObject = remoteStream; 
+            console.log("Track received:", event.track.kind); // "video" か "audio" が届く
+            // htmlの <video id="remote-video"> に直接ストリームを割り当てる
+            if (remoteVideo.srcObject !== event.streams[0]) {
+                remoteVideo.srcObject = event.streams[0];
+                console.log("Remote stream connected to video element.");
+                videoStatus.textContent = "通話中 🟢"; // 映像が繋がったら表示を変える
+            }
         };
+
+        // 自分の通信経路が見つかったら相手に送る
         peerConnection.onicecandidate = (event) => {
             if (event.candidate && socket && socket.readyState === WebSocket.OPEN) {
                 socket.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
             }
         };
+
+        // 通信状態の監視用ログ
+        peerConnection.oniceconnectionstatechange = () => {
+            console.log("ICE Connection State:", peerConnection.iceConnectionState);
+            if (peerConnection.iceConnectionState === 'disconnected') {
+                videoStatus.textContent = "通信が切断されました。";
+            }
+        };
+
+        // 自分の映像・音声を接続にのせる
         if (localStream) {
-            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
         }
     } catch (err) {
         console.error("Error creating PeerConnection:", err);
@@ -1800,6 +1823,7 @@ function hangUp(message) {
     if (socket) { socket.onclose = null; socket.close(); socket = null; }
     localVideo.srcObject = null;
     remoteVideo.srcObject = null;
+    candidateQueue = []; // キューをクリア
     if(startCallBtn) startCallBtn.disabled = false;
     if(endCallBtn) endCallBtn.disabled = true;
     if(switchCameraBtn) switchCameraBtn.disabled = true; 
@@ -1817,15 +1841,6 @@ function showToast(message, type = 'info') {
         setTimeout(() => toast.remove(), 500);
     }, 3000);
 }
-
-function recordSession() {
-    console.log("Session recorded.");
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    // 画面初期化などの処理
-    console.log("App initialized.");
-});
 
 // =============================================
 //  今日のイディオムロジック
