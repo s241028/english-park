@@ -1619,31 +1619,37 @@ document.getElementById('pop-restart-button').addEventListener('click', () => {
 
 
 // =============================================
-//  ビデオチャットロジック (真っ黒・待機中フリーズ 修正版)
+//  ビデオチャットロジック (WebRTC実装)
 // =============================================
 const startCallBtn = document.getElementById('start-call-btn');
 const endCallBtn = document.getElementById('end-call-btn');
-const switchCameraBtn = document.getElementById('switch-camera-btn');
+const switchCameraBtn = document.getElementById('switch-camera-btn'); 
 const localVideo = document.getElementById('local-video');
 const remoteVideo = document.getElementById('remote-video');
 const videoStatus = document.getElementById('video-status');
+const roomIdInput = document.getElementById('room-id-input'); 
 
 let peerConnection;
 let localStream;
 let remoteStream;
 let socket;
-let currentFacingMode = 'user'; 
-let candidateQueue = [];
+let currentFacingMode = 'user'; // デフォルトは内カメ
 
-const stunServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+// Googleが提供するパブリックSTUNサーバー
+const stunServers = {
+    iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' }
+    ]
+};
 
-if(startCallBtn) startCallBtn.addEventListener('click', startCall);
-if(endCallBtn) endCallBtn.addEventListener('click', hangUp);
+startCallBtn.addEventListener('click', startCall);
+endCallBtn.addEventListener('click', hangUp);
 if(switchCameraBtn) switchCameraBtn.addEventListener('click', switchCamera); 
 
 async function startCall() {
+    // 接続先URLが設定されているかチェック
     if (SIGNALING_SERVER_URL.includes("YOUR-REPLIT-URL-HERE")) {
-        showToast("サーバーURLが未設定です。script.jsを確認してください。", 'error');
+        showCustomAlert("サーバーのURLが設定されていません。script.jsの先頭を確認してください。");
         return;
     }
 
@@ -1653,6 +1659,7 @@ async function startCall() {
     videoStatus.textContent = "カメラとマイクを起動中..."; 
 
     try {
+        // ▼▼▼ 映像あり ▼▼▼
         try {
             localStream = await navigator.mediaDevices.getUserMedia({ 
                 video: { facingMode: currentFacingMode }, 
@@ -1664,126 +1671,176 @@ async function startCall() {
                 video: false, 
                 audio: true 
             });
+            videoStatus.textContent = "カメラが見つかりません。音声のみで接続します...";
         }
         
+        // 映像がある場合のみセット
         if(localStream.getVideoTracks().length > 0) {
             localVideo.srcObject = localStream;
         }
     } catch (err) {
         console.error("getUserMedia error:", err);
-        videoStatus.textContent = "カメラ/マイクの許可が必要です。";
-        hangUp();
+        // エラーメッセージをより親切に
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+             showCustomAlert("マイク/カメラが許可されていません。");
+        } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+             showCustomAlert("マイクが見つかりません。");
+        } else {
+             showCustomAlert(`デバイスエラー: ${err.message}`);
+        }
+        startCallBtn.disabled = false;
+        endCallBtn.disabled = true;
+        if(switchCameraBtn) switchCameraBtn.disabled = true;
         return;
     }
 
-    videoStatus.textContent = "サーバーに接続しています...";
+    videoStatus.textContent = "シグナリングサーバーに接続中...";
 
     try {
-        const cleanUrl = SIGNALING_SERVER_URL.replace(/\/$/, "");
-        socket = new WebSocket(cleanUrl); 
+        socket = new WebSocket(SIGNALING_SERVER_URL); 
     } catch (err) {
-        videoStatus.textContent = "サーバー接続URLが不正です。";
-        hangUp();
+        videoStatus.textContent = "サーバー接続エラー。";
+        showCustomAlert("サーバーに接続できません。");
+        startCallBtn.disabled = false;
+        endCallBtn.disabled = true;
+        if(switchCameraBtn) switchCameraBtn.disabled = true;
         return;
     }
 
     socket.onopen = () => {
-        socket.send(JSON.stringify({ type: 'join' }));
+        videoStatus.textContent = "サーバーに接続しました。ルームに参加します...";
+        // ▼ ルームID入力欄の値を使用（空ならdefault-room）
+        const roomName = roomIdInput && roomIdInput.value ? roomIdInput.value : 'default-room';
+        socket.send(JSON.stringify({ type: 'join', room: roomName }));
     };
 
     socket.onmessage = async (message) => {
         const data = JSON.parse(message.data);
+        console.log('シグナリングメッセージ受信:', data);
 
         try {
             switch (data.type) {
                 case 'joined':
-                    videoStatus.textContent = "待機中... 相手を探しています";
+                    videoStatus.textContent = "ルームに参加しました。相手を待っています...";
                     createPeerConnection();
                     break;
-                    
-                // ★追加: 2人揃った時に両方に送られる合図
-                case 'ready':
-                    videoStatus.textContent = "相手が見つかりました！接続中...";
+                case 'user-joined':
+                    videoStatus.textContent = "相手が参加しました。接続を開始します...";
                     createPeerConnection(); 
-                    // 先に待っていた方(initiator)だけが発信する
-                    if (data.initiator) {
-                        const offer = await peerConnection.createOffer();
-                        await peerConnection.setLocalDescription(offer);
-                        socket.send(JSON.stringify({ type: 'offer', sdp: peerConnection.localDescription }));
-                    }
+                    const offer = await peerConnection.createOffer();
+                    await peerConnection.setLocalDescription(offer);
+                    socket.send(JSON.stringify({ type: 'offer', sdp: peerConnection.localDescription }));
                     break;
-
                 case 'offer':
-                    videoStatus.textContent = "映像の受信準備中...";
+                    videoStatus.textContent = "接続リクエストを受信しました...";
                     createPeerConnection(); 
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
                     const answer = await peerConnection.createAnswer();
                     await peerConnection.setLocalDescription(answer);
                     socket.send(JSON.stringify({ type: 'answer', sdp: peerConnection.localDescription }));
-                    processCandidateQueue(); 
                     break;
-
                 case 'answer':
-                    videoStatus.textContent = "映像の接続を確立中...";
+                    videoStatus.textContent = "接続が確立されました。";
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
-                    processCandidateQueue(); 
                     break;
-
                 case 'candidate':
-                    if (peerConnection && peerConnection.remoteDescription && peerConnection.remoteDescription.type) {
-                        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate)).catch(e => console.error(e));
-                    } else {
-                        candidateQueue.push(data.candidate);
+                    if (peerConnection && data.candidate) {
+                        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
                     }
                     break;
-
                 case 'user-left':
-                    hangUp("相手が退出しました。"); 
+                    videoStatus.textContent = "相手が退出しました。";
+                    hangUp("相手が退出したため、通話を終了しました。"); 
+                    break;
+                case 'room-full':
+                    hangUp("エラー: ルームは満室です。");
+                    showCustomAlert("ルームは満室です");
+                    break;
+                case 'error':
+                    videoStatus.textContent = `サーバーエラー: ${data.message}`;
                     break;
             }
         } catch (err) {
             console.error(err);
         }
     };
-    
+
     socket.onclose = (event) => {
+        console.log("WebSocket closed:", event);
+        // 正常終了(1000)以外ならエラーメッセージ
         let msg = "通話を終了しました。";
         if (event.code !== 1000 && event.code !== 1005) {
-            if (event.code === 1006) msg = "サーバーに接続できません(1006)。Replitの起動を確認してください。";
-            else msg = `サーバーから切断されました (Code: ${event.code})`;
+            msg = `サーバーから切断されました (Code: ${event.code})。再接続してください。`;
         }
         hangUp(msg);
+        recordSession();
+    };
+
+    socket.onerror = (err) => {
+        console.error("WebSocket error:", err);
+        videoStatus.textContent = "サーバー接続エラー。URL設定を確認してください。";
     };
 }
 
-function processCandidateQueue() {
-    while (candidateQueue.length > 0) {
-        const candidate = candidateQueue.shift();
-        peerConnection.addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e));
+// カメラ切り替え関数
+async function switchCamera() {
+    if (!localStream) return;
+
+    // 現在のフェーシングモードを反転
+    currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+    
+    // 既存の映像トラックを停止
+    localStream.getVideoTracks().forEach(track => track.stop());
+
+    try {
+        // 新しい制約でストリームを取得
+        const newStream = await navigator.mediaDevices.getUserMedia({
+            audio: true, // 音声も必要
+            video: { facingMode: currentFacingMode }
+        });
+
+        // 映像要素を更新
+        localVideo.srcObject = newStream;
+        
+        // PeerConnectionの送信トラックを置換
+        if (peerConnection) {
+            const videoTrack = newStream.getVideoTracks()[0];
+            const sender = peerConnection.getSenders().find(s => s.track.kind === 'video');
+            if (sender) {
+                sender.replaceTrack(videoTrack);
+            }
+            
+            // 音声トラックも更新（必要であれば）
+            const audioTrack = newStream.getAudioTracks()[0];
+            const audioSender = peerConnection.getSenders().find(s => s.track.kind === 'audio');
+            if (audioSender) {
+                audioSender.replaceTrack(audioTrack);
+            }
+        }
+        
+        // グローバル変数を更新
+        localStream = newStream;
+
+    } catch (err) {
+        console.error("Camera switch error:", err);
+        videoStatus.textContent = "カメラの切り替えに失敗しました。";
     }
 }
 
 function createPeerConnection() {
     if (peerConnection) return; 
-    candidateQueue = []; 
 
     try {
         peerConnection = new RTCPeerConnection(stunServers);
-        
-        // ★修正: 映像を「確実」に画面に出すための書き方
+
         peerConnection.ontrack = (event) => {
-            console.log("Track received:", event.track.kind);
-            
-            // remoteStreamがまだ無ければ作る
             if (!remoteStream) {
                 remoteStream = new MediaStream();
-                remoteVideo.srcObject = remoteStream;
             }
-            
-            // 届いた映像・音声データを追加していく
-            remoteStream.addTrack(event.track);
-            
-            videoStatus.textContent = "通話中 🟢";
+            event.streams[0].getTracks().forEach(track => {
+                remoteStream.addTrack(track);
+            });
+            remoteVideo.srcObject = remoteStream; 
         };
 
         peerConnection.onicecandidate = (event) => {
@@ -1791,10 +1848,12 @@ function createPeerConnection() {
                 socket.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
             }
         };
-
+        
         peerConnection.oniceconnectionstatechange = () => {
-            if (peerConnection.iceConnectionState === 'disconnected') {
-                videoStatus.textContent = "通信が切断されました。";
+            if (peerConnection.iceConnectionState === 'failed' || 
+                peerConnection.iceConnectionState === 'disconnected' || 
+                peerConnection.iceConnectionState === 'closed') {
+                console.log("ICE Connection State:", peerConnection.iceConnectionState);
             }
         };
 
@@ -1805,36 +1864,39 @@ function createPeerConnection() {
         }
     } catch (err) {
         console.error("Error creating PeerConnection:", err);
+        videoStatus.textContent = "接続の作成に失敗しました。";
     }
 }
 
 function hangUp(message) {
-    if (message) videoStatus.textContent = message;
-    else if (videoStatus.textContent !== "通話を終了しました。" && !videoStatus.textContent.includes("エラー")) videoStatus.textContent = "通話を終了しました。";
+    if (message) {
+        videoStatus.textContent = message;
+    } else if (videoStatus.textContent !== "通話を終了しました。" && !videoStatus.textContent.includes("エラー") && !videoStatus.textContent.includes("切断")) {
+         videoStatus.textContent = "通話を終了しました。";
+    }
     
-    if (peerConnection) { peerConnection.close(); peerConnection = null; }
-    if (localStream) { localStream.getTracks().forEach(track => track.stop()); localStream = null; }
-    if (remoteStream) { remoteStream.getTracks().forEach(track => track.stop()); remoteStream = null; }
-    if (socket) { socket.onclose = null; socket.close(); socket = null; }
+    if (peerConnection) {
+        peerConnection.close();
+        peerConnection = null;
+    }
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+    }
+    if (remoteStream) {
+        remoteStream.getTracks().forEach(track => track.stop());
+        remoteStream = null;
+    }
+    if (socket) {
+        socket.onclose = null;
+        socket.close();
+        socket = null;
+    }
     localVideo.srcObject = null;
     remoteVideo.srcObject = null;
-    candidateQueue = []; 
-    if(startCallBtn) startCallBtn.disabled = false;
-    if(endCallBtn) endCallBtn.disabled = true;
+    startCallBtn.disabled = false;
+    endCallBtn.disabled = true;
     if(switchCameraBtn) switchCameraBtn.disabled = true; 
-}
-
-function showToast(message, type = 'info') {
-    const container = document.getElementById('toast-container');
-    if (!container) return;
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-    container.appendChild(toast);
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 500);
-    }, 3000);
 }
 
 // =============================================
