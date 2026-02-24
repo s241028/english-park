@@ -56,12 +56,19 @@ wss.on('connection', (ws) => {
             ws.roomId = targetRoomId;
 
             console.log(`Client ${ws.id} joined ${targetRoomId}. (Total: ${set.size})`);
+            
+            // とりあえず本人に入室完了を通知
             ws.send(JSON.stringify({ type: 'joined', room: targetRoomId }));
 
+            // ★修正: 部屋に2人揃ったら、お互いに「接続開始」の合図を出す
             if (set.size === 2) {
                 for (const client of set) {
-                    if (client !== ws && client.readyState === WebSocket.OPEN) {
-                        client.send(JSON.stringify({ type: 'user-joined' }));
+                    if (client.readyState === WebSocket.OPEN) {
+                        // 先に待っていた人(client !== ws)にだけ電話をかけさせる(initiator: true)
+                        client.send(JSON.stringify({ 
+                            type: 'ready', 
+                            initiator: client !== ws 
+                        }));
                     }
                 }
             }
@@ -85,7 +92,6 @@ wss.on('connection', (ws) => {
             
             if (room.size === 0) {
                 rooms.delete(ws.roomId);
-                console.log(`Room ${ws.roomId} deleted.`);
             } else {
                 for (const client of room) {
                     if (client.readyState === WebSocket.OPEN) {
@@ -97,7 +103,6 @@ wss.on('connection', (ws) => {
     });
 });
 
-// ▼▼▼ 追加：予期せぬエラーでサーバーが落ちるのを防ぐ ▼▼▼
 process.on('uncaughtException', (err) => {
     console.error('Caught exception:', err);
 });

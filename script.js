@@ -3,7 +3,7 @@
 // =============================================
 // Replitで取得したURLをここに貼り付けてください（https:// ではなく wss:// に書き換える）
 // 例: "wss://english-park-server.username.replit.co"
-const SIGNALING_SERVER_URL = "wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev";
+const SIGNALING_SERVER_URL = "wss://https://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev";
 
 
 // =============================================
@@ -1619,7 +1619,7 @@ document.getElementById('pop-restart-button').addEventListener('click', () => {
 
 
 // =============================================
-//  ビデオチャットロジック (映像真っ黒・無音 問題修正版)
+//  ビデオチャットロジック (真っ黒・待機中フリーズ 修正版)
 // =============================================
 const startCallBtn = document.getElementById('start-call-btn');
 const endCallBtn = document.getElementById('end-call-btn');
@@ -1633,11 +1633,8 @@ let localStream;
 let remoteStream;
 let socket;
 let currentFacingMode = 'user'; 
-
-// ★追加: 通信経路データ(Candidate)が早すぎた場合に一時保存する箱
 let candidateQueue = [];
 
-// Googleの無料STUNサーバーを使用
 const stunServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
 if(startCallBtn) startCallBtn.addEventListener('click', startCall);
@@ -1667,7 +1664,6 @@ async function startCall() {
                 video: false, 
                 audio: true 
             });
-            videoStatus.textContent = "カメラが見つかりません。音声のみで接続します...";
         }
         
         if(localStream.getVideoTracks().length > 0) {
@@ -1676,9 +1672,7 @@ async function startCall() {
     } catch (err) {
         console.error("getUserMedia error:", err);
         videoStatus.textContent = "カメラ/マイクの許可が必要です。";
-        startCallBtn.disabled = false;
-        endCallBtn.disabled = true;
-        if(switchCameraBtn) switchCameraBtn.disabled = true;
+        hangUp();
         return;
     }
 
@@ -1689,20 +1683,16 @@ async function startCall() {
         socket = new WebSocket(cleanUrl); 
     } catch (err) {
         videoStatus.textContent = "サーバー接続URLが不正です。";
-        startCallBtn.disabled = false;
-        endCallBtn.disabled = true;
-        if(switchCameraBtn) switchCameraBtn.disabled = true;
+        hangUp();
         return;
     }
 
     socket.onopen = () => {
-        videoStatus.textContent = "サーバーに接続しました！マッチング中...";
         socket.send(JSON.stringify({ type: 'join' }));
     };
 
     socket.onmessage = async (message) => {
         const data = JSON.parse(message.data);
-        console.log('Signal received:', data.type);
 
         try {
             switch (data.type) {
@@ -1710,38 +1700,44 @@ async function startCall() {
                     videoStatus.textContent = "待機中... 相手を探しています";
                     createPeerConnection();
                     break;
-                case 'user-joined':
+                    
+                // ★追加: 2人揃った時に両方に送られる合図
+                case 'ready':
                     videoStatus.textContent = "相手が見つかりました！接続中...";
                     createPeerConnection(); 
-                    const offer = await peerConnection.createOffer();
-                    await peerConnection.setLocalDescription(offer);
-                    socket.send(JSON.stringify({ type: 'offer', sdp: peerConnection.localDescription }));
+                    // 先に待っていた方(initiator)だけが発信する
+                    if (data.initiator) {
+                        const offer = await peerConnection.createOffer();
+                        await peerConnection.setLocalDescription(offer);
+                        socket.send(JSON.stringify({ type: 'offer', sdp: peerConnection.localDescription }));
+                    }
                     break;
+
                 case 'offer':
-                    videoStatus.textContent = "接続リクエストを受信...";
+                    videoStatus.textContent = "映像の受信準備中...";
                     createPeerConnection(); 
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
                     const answer = await peerConnection.createAnswer();
                     await peerConnection.setLocalDescription(answer);
                     socket.send(JSON.stringify({ type: 'answer', sdp: peerConnection.localDescription }));
-                    processCandidateQueue(); // ★追加: 溜まっていた通信経路データを処理
+                    processCandidateQueue(); 
                     break;
+
                 case 'answer':
-                    videoStatus.textContent = "接続完了！映像を繋いでいます...";
+                    videoStatus.textContent = "映像の接続を確立中...";
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
-                    processCandidateQueue(); // ★追加: 溜まっていた通信経路データを処理
+                    processCandidateQueue(); 
                     break;
+
                 case 'candidate':
-                    // ★修正: 準備ができる前に届いたCandidateは一旦キュー(箱)に保存する
                     if (peerConnection && peerConnection.remoteDescription && peerConnection.remoteDescription.type) {
                         await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate)).catch(e => console.error(e));
                     } else {
-                        console.log("Queueing candidate (waiting for remote description)");
                         candidateQueue.push(data.candidate);
                     }
                     break;
+
                 case 'user-left':
-                    videoStatus.textContent = "相手が退出しました。通話を終了します。";
                     hangUp("相手が退出しました。"); 
                     break;
             }
@@ -1760,7 +1756,6 @@ async function startCall() {
     };
 }
 
-// ★追加: キューに保存しておいた通信経路データを一気に処理する関数
 function processCandidateQueue() {
     while (candidateQueue.length > 0) {
         const candidate = candidateQueue.shift();
@@ -1768,41 +1763,41 @@ function processCandidateQueue() {
     }
 }
 
-// ★修正: 映像・音声ストリームを受け取る部分を堅牢にしました
 function createPeerConnection() {
     if (peerConnection) return; 
-    candidateQueue = []; // キューをリセット
+    candidateQueue = []; 
 
     try {
         peerConnection = new RTCPeerConnection(stunServers);
         
-        // ★修正: 相手の映像・音声が届いたときの処理
+        // ★修正: 映像を「確実」に画面に出すための書き方
         peerConnection.ontrack = (event) => {
-            console.log("Track received:", event.track.kind); // "video" か "audio" が届く
-            // htmlの <video id="remote-video"> に直接ストリームを割り当てる
-            if (remoteVideo.srcObject !== event.streams[0]) {
-                remoteVideo.srcObject = event.streams[0];
-                console.log("Remote stream connected to video element.");
-                videoStatus.textContent = "通話中 🟢"; // 映像が繋がったら表示を変える
+            console.log("Track received:", event.track.kind);
+            
+            // remoteStreamがまだ無ければ作る
+            if (!remoteStream) {
+                remoteStream = new MediaStream();
+                remoteVideo.srcObject = remoteStream;
             }
+            
+            // 届いた映像・音声データを追加していく
+            remoteStream.addTrack(event.track);
+            
+            videoStatus.textContent = "通話中 🟢";
         };
 
-        // 自分の通信経路が見つかったら相手に送る
         peerConnection.onicecandidate = (event) => {
             if (event.candidate && socket && socket.readyState === WebSocket.OPEN) {
                 socket.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
             }
         };
 
-        // 通信状態の監視用ログ
         peerConnection.oniceconnectionstatechange = () => {
-            console.log("ICE Connection State:", peerConnection.iceConnectionState);
             if (peerConnection.iceConnectionState === 'disconnected') {
                 videoStatus.textContent = "通信が切断されました。";
             }
         };
 
-        // 自分の映像・音声を接続にのせる
         if (localStream) {
             localStream.getTracks().forEach(track => {
                 peerConnection.addTrack(track, localStream);
@@ -1823,7 +1818,7 @@ function hangUp(message) {
     if (socket) { socket.onclose = null; socket.close(); socket = null; }
     localVideo.srcObject = null;
     remoteVideo.srcObject = null;
-    candidateQueue = []; // キューをクリア
+    candidateQueue = []; 
     if(startCallBtn) startCallBtn.disabled = false;
     if(endCallBtn) endCallBtn.disabled = true;
     if(switchCameraBtn) switchCameraBtn.disabled = true; 
