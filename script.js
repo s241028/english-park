@@ -1619,7 +1619,7 @@ document.getElementById('pop-restart-button').addEventListener('click', () => {
 
 
 // =============================================
-//  ビデオチャットロジック (WebRTC実装 - 自動マッチング版)
+//  ビデオチャットロジック (エラーハンドリング強化版)
 // =============================================
 const startCallBtn = document.getElementById('start-call-btn');
 const endCallBtn = document.getElementById('end-call-btn');
@@ -1636,8 +1636,8 @@ let currentFacingMode = 'user';
 
 const stunServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
-startCallBtn.addEventListener('click', startCall);
-endCallBtn.addEventListener('click', hangUp);
+if(startCallBtn) startCallBtn.addEventListener('click', startCall);
+if(endCallBtn) endCallBtn.addEventListener('click', hangUp);
 if(switchCameraBtn) switchCameraBtn.addEventListener('click', switchCamera); 
 
 async function startCall() {
@@ -1671,18 +1671,21 @@ async function startCall() {
         }
     } catch (err) {
         console.error("getUserMedia error:", err);
+        videoStatus.textContent = "カメラ/マイクの許可が必要です。";
         startCallBtn.disabled = false;
         endCallBtn.disabled = true;
         if(switchCameraBtn) switchCameraBtn.disabled = true;
         return;
     }
 
-    videoStatus.textContent = "マッチング中...";
+    videoStatus.textContent = "サーバーに接続しています...";
 
     try {
-        socket = new WebSocket(SIGNALING_SERVER_URL); 
+        // ※URLの末尾にスラッシュが入っているとエラーになることがあるので除去
+        const cleanUrl = SIGNALING_SERVER_URL.replace(/\/$/, "");
+        socket = new WebSocket(cleanUrl); 
     } catch (err) {
-        videoStatus.textContent = "サーバー接続エラー。";
+        videoStatus.textContent = "サーバー接続URLが不正です。";
         startCallBtn.disabled = false;
         endCallBtn.disabled = true;
         if(switchCameraBtn) switchCameraBtn.disabled = true;
@@ -1690,7 +1693,7 @@ async function startCall() {
     }
 
     socket.onopen = () => {
-        // ▼▼▼ 自動マッチングのため、room指定なしで送信 ▼▼▼
+        videoStatus.textContent = "サーバーに接続しました！マッチング中...";
         socket.send(JSON.stringify({ type: 'join' }));
     };
 
@@ -1701,7 +1704,6 @@ async function startCall() {
         try {
             switch (data.type) {
                 case 'joined':
-                    // 自動で割り当てられた部屋IDが入っている
                     videoStatus.textContent = "待機中... 相手を探しています";
                     createPeerConnection();
                     break;
@@ -1742,47 +1744,30 @@ async function startCall() {
         }
     };
     
-    // ... (onclose, onerror, switchCamera, createPeerConnection, hangUp は変更なし) ...
-    // (省略せず元のコードを使ってください)
+    // ▼▼▼ エラーメッセージを詳細化 ▼▼▼
     socket.onclose = (event) => {
+        console.log(`WebSocket closed. Code: ${event.code}, Reason: ${event.reason}`);
         let msg = "通話を終了しました。";
+        
         if (event.code !== 1000 && event.code !== 1005) {
-            msg = `サーバーから切断されました (Code: ${event.code})`;
+            if (event.code === 1006) {
+                // 1006は「サーバーが存在しない」「URLが違う」「サーバーが寝ている」のどれか
+                msg = "サーバーに接続できません (Code: 1006)。Replitが起動しているか、URLが正しいか確認してください。";
+            } else {
+                msg = `サーバーから切断されました (Code: ${event.code})`;
+            }
         }
         hangUp(msg);
         recordSession();
     };
 
     socket.onerror = (err) => {
-        videoStatus.textContent = "サーバー接続エラー";
+        console.error("WebSocket Error:", err);
+        // onerrorは詳細情報を持たないので、直後にoncloseが発火してメッセージを出します
     };
 }
 
-// ... (残りの関数は以前のまま) ...
-
-async function switchCamera() {
-    if (!localStream) return;
-    currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
-    localStream.getVideoTracks().forEach(track => track.stop());
-    try {
-        const newStream = await navigator.mediaDevices.getUserMedia({
-            audio: true, video: { facingMode: currentFacingMode }
-        });
-        localVideo.srcObject = newStream;
-        if (peerConnection) {
-            const videoTrack = newStream.getVideoTracks()[0];
-            const sender = peerConnection.getSenders().find(s => s.track.kind === 'video');
-            if (sender) sender.replaceTrack(videoTrack);
-            const audioTrack = newStream.getAudioTracks()[0];
-            const audioSender = peerConnection.getSenders().find(s => s.track.kind === 'audio');
-            if (audioSender) audioSender.replaceTrack(audioTrack);
-        }
-        localStream = newStream;
-    } catch (err) {
-        console.error("Camera switch error:", err);
-    }
-}
-
+// ... (switchCamera, createPeerConnection, hangUp 等の他の機能は以前のコードをそのまま配置してください) ...
 function createPeerConnection() {
     if (peerConnection) return; 
     try {
@@ -1795,11 +1780,6 @@ function createPeerConnection() {
         peerConnection.onicecandidate = (event) => {
             if (event.candidate && socket && socket.readyState === WebSocket.OPEN) {
                 socket.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
-            }
-        };
-        peerConnection.oniceconnectionstatechange = () => {
-            if (peerConnection.iceConnectionState === 'failed' || peerConnection.iceConnectionState === 'disconnected' || peerConnection.iceConnectionState === 'closed') {
-                console.log("ICE Connection State:", peerConnection.iceConnectionState);
             }
         };
         if (localStream) {
@@ -1820,56 +1800,12 @@ function hangUp(message) {
     if (socket) { socket.onclose = null; socket.close(); socket = null; }
     localVideo.srcObject = null;
     remoteVideo.srcObject = null;
-    startCallBtn.disabled = false;
-    endCallBtn.disabled = true;
+    if(startCallBtn) startCallBtn.disabled = false;
+    if(endCallBtn) endCallBtn.disabled = true;
     if(switchCameraBtn) switchCameraBtn.disabled = true; 
 }
 
-// ... (displayIdiomOfTheDay, DOMContentLoaded などは省略せずそのまま使用) ...
-function displayIdiomOfTheDay() {
-    try {
-        const idiomDateEl = document.getElementById('idiom-date');
-        const idiomPhraseEl = document.getElementById('idiom-phrase');
-        const idiomMeaningEl = document.getElementById('idiom-meaning');
-        const idiomDescriptionEl = document.getElementById('idiom-description');
-
-        if (!idiomDateEl || !idiomPhraseEl || !idiomMeaningEl || !idiomDescriptionEl) return;
-         if (!idiomsData || idiomsData.length === 0) { idiomPhraseEl.textContent = "データ読込エラー"; return; }
-
-        const today = new Date();
-        const startOfYear = new Date(today.getFullYear(), 0, 1);
-        const dayIndex = Math.floor((today - startOfYear) / (1000 * 60 * 60 * 24));
-        const idiomIndex = dayIndex % idiomsData.length;
-        const dailyIdiom = idiomsData[idiomIndex];
-
-        idiomDateEl.textContent = `${today.getMonth() + 1}月${today.getDate()}日`;
-        idiomPhraseEl.textContent = dailyIdiom.idiom;
-        idiomMeaningEl.textContent = dailyIdiom.meaning;
-        idiomDescriptionEl.textContent = dailyIdiom.description;
-    } catch (e) {
-        console.error("Error in displayIdiomOfTheDay:", e);
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
-    const splashScreen = document.getElementById('splash-screen');
-    if (splashScreen) {
-        splashScreen.style.display = 'flex'; 
-        splashScreen.classList.add('active');
-        setTimeout(() => {
-            if (splashScreen.classList.contains('active')) {
-                splashScreen.style.display = 'none';
-                splashScreen.classList.remove('active');
-                showScreen(homeScreen);
-            }
-        }, 3000);
-    } else { showScreen(homeScreen); }
-    displayIdiomOfTheDay();
-});
-
 function showToast(message, type = 'info') {
-    // ... (省略せずそのまま)
     const container = document.getElementById('toast-container');
     if (!container) return;
     const toast = document.createElement('div');
@@ -1881,6 +1817,15 @@ function showToast(message, type = 'info') {
         setTimeout(() => toast.remove(), 500);
     }, 3000);
 }
+
+function recordSession() {
+    console.log("Session recorded.");
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 画面初期化などの処理
+    console.log("App initialized.");
+});
 
 // =============================================
 //  今日のイディオムロジック
