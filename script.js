@@ -1649,7 +1649,7 @@ if(switchCameraBtn) switchCameraBtn.addEventListener('click', switchCamera);
 async function startCall() {
     // 接続先URLが設定されているかチェック
     if (SIGNALING_SERVER_URL.includes("YOUR-REPLIT-URL-HERE")) {
-        showCustomAlert("サーバーのURLが設定されていません。script.jsの先頭を確認してください。");
+        showToast("サーバーURLが未設定です。script.jsを確認してください。", 'error');
         return;
     }
 
@@ -1682,11 +1682,11 @@ async function startCall() {
         console.error("getUserMedia error:", err);
         // エラーメッセージをより親切に
         if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-             videoStatus.textContent = "エラー: マイク/カメラの使用が許可されていません。ブラウザの設定を確認してください。";
+             showToast("マイク/カメラが許可されていません。", 'error');
         } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-             videoStatus.textContent = "エラー: マイクが見つかりません。接続を確認してください。";
+             showToast("マイクが見つかりません。", 'error');
         } else {
-             videoStatus.textContent = `デバイスエラー: ${err.message}`;
+             showToast(`デバイスエラー: ${err.message}`, 'error');
         }
         startCallBtn.disabled = false;
         endCallBtn.disabled = true;
@@ -1700,6 +1700,7 @@ async function startCall() {
         socket = new WebSocket(SIGNALING_SERVER_URL); 
     } catch (err) {
         videoStatus.textContent = "サーバー接続エラー。";
+        showToast("サーバーに接続できません。", 'error');
         startCallBtn.disabled = false;
         endCallBtn.disabled = true;
         if(switchCameraBtn) switchCameraBtn.disabled = true;
@@ -1749,10 +1750,12 @@ async function startCall() {
                     break;
                 case 'user-left':
                     videoStatus.textContent = "相手が退出しました。";
+                    showToast("相手が退出しました", 'info');
                     hangUp("相手が退出したため、通話を終了しました。"); 
                     break;
                 case 'room-full':
                     hangUp("エラー: ルームは満室です。");
+                    showToast("ルームは満室です", 'error');
                     break;
                 case 'error':
                     videoStatus.textContent = `サーバーエラー: ${data.message}`;
@@ -1769,6 +1772,7 @@ async function startCall() {
         let msg = "通話を終了しました。";
         if (event.code !== 1000 && event.code !== 1005) {
             msg = `サーバーから切断されました (Code: ${event.code})。再接続してください。`;
+            showToast("サーバーから切断されました", 'error');
         }
         hangUp(msg);
         // ▼▼▼ 学習記録保存 ▼▼▼
@@ -1778,6 +1782,7 @@ async function startCall() {
     socket.onerror = (err) => {
         console.error("WebSocket error:", err);
         videoStatus.textContent = "サーバー接続エラー。URL設定を確認してください。";
+        showToast("サーバー接続エラー", 'error');
     };
 }
 
@@ -1823,6 +1828,7 @@ async function switchCamera() {
     } catch (err) {
         console.error("Camera switch error:", err);
         videoStatus.textContent = "カメラの切り替えに失敗しました。";
+        showToast("カメラ切り替えに失敗しました", 'error');
     }
 }
 
