@@ -1623,11 +1623,11 @@ document.getElementById('pop-restart-button').addEventListener('click', () => {
 // =============================================
 const startCallBtn = document.getElementById('start-call-btn');
 const endCallBtn = document.getElementById('end-call-btn');
-const switchCameraBtn = document.getElementById('switch-camera-btn'); 
+const switchCameraBtn = document.getElementById('switch-camera-btn'); // 追加
 const localVideo = document.getElementById('local-video');
 const remoteVideo = document.getElementById('remote-video');
 const videoStatus = document.getElementById('video-status');
-const roomIdInput = document.getElementById('room-id-input'); 
+const roomIdInput = document.getElementById('room-id-input'); // ルームID入力
 
 let peerConnection;
 let localStream;
@@ -1655,7 +1655,7 @@ async function startCall() {
 
     startCallBtn.disabled = true;
     endCallBtn.disabled = false;
-    if(switchCameraBtn) switchCameraBtn.disabled = false; 
+    if(switchCameraBtn) switchCameraBtn.disabled = false; // 通話開始時に有効化
     videoStatus.textContent = "カメラとマイクを起動中..."; 
 
     try {
@@ -1682,11 +1682,11 @@ async function startCall() {
         console.error("getUserMedia error:", err);
         // エラーメッセージをより親切に
         if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-             showCustomAlert("マイク/カメラが許可されていません。");
+             videoStatus.textContent = "エラー: マイク/カメラの使用が許可されていません。ブラウザの設定を確認してください。";
         } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-             showCustomAlert("マイクが見つかりません。");
+             videoStatus.textContent = "エラー: マイクが見つかりません。接続を確認してください。";
         } else {
-             showCustomAlert(`デバイスエラー: ${err.message}`);
+             videoStatus.textContent = `デバイスエラー: ${err.message}`;
         }
         startCallBtn.disabled = false;
         endCallBtn.disabled = true;
@@ -1700,7 +1700,6 @@ async function startCall() {
         socket = new WebSocket(SIGNALING_SERVER_URL); 
     } catch (err) {
         videoStatus.textContent = "サーバー接続エラー。";
-        showCustomAlert("サーバーに接続できません。");
         startCallBtn.disabled = false;
         endCallBtn.disabled = true;
         if(switchCameraBtn) switchCameraBtn.disabled = true;
@@ -1754,7 +1753,6 @@ async function startCall() {
                     break;
                 case 'room-full':
                     hangUp("エラー: ルームは満室です。");
-                    showCustomAlert("ルームは満室です");
                     break;
                 case 'error':
                     videoStatus.textContent = `サーバーエラー: ${data.message}`;
@@ -1773,6 +1771,7 @@ async function startCall() {
             msg = `サーバーから切断されました (Code: ${event.code})。再接続してください。`;
         }
         hangUp(msg);
+        // ▼▼▼ 学習記録保存 ▼▼▼
         recordSession();
     };
 
@@ -1853,6 +1852,7 @@ function createPeerConnection() {
             if (peerConnection.iceConnectionState === 'failed' || 
                 peerConnection.iceConnectionState === 'disconnected' || 
                 peerConnection.iceConnectionState === 'closed') {
+                // ここではメッセージ上書きしない（oncloseに任せる）
                 console.log("ICE Connection State:", peerConnection.iceConnectionState);
             }
         };
@@ -1888,6 +1888,7 @@ function hangUp(message) {
         remoteStream = null;
     }
     if (socket) {
+        // oncloseイベントが再発火しないようにハンドラを削除してから閉じる
         socket.onclose = null;
         socket.close();
         socket = null;
