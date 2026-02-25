@@ -28,9 +28,6 @@
         </div>
     </div>
 
-    <!-- トースト通知コンテナ -->
-    <div id="toast-container"></div>
-
     <!-- ホーム画面 -->
     <main id="home-screen" class="screen">
         <div class="container">
@@ -42,19 +39,18 @@
                     <h2>💡 今日のイディオム</h2>
                     <span id="idiom-date" class="date-display"></span>
                 </div>
-                <h3 id="idiom-phrase">
-                    <span class="loading-spinner small"></span> Loading...
-                </h3>
+                <h3 id="idiom-phrase">Loading...</h3>
                 <p><strong>意味:</strong> <span id="idiom-meaning"></span></p>
                 <p id="idiom-description" class="sentence-meaning"></p>
             </div>
 
-            <!-- ダッシュボードへのボタン -->
+            <!-- ▼▼▼ 追加: ダッシュボードへのボタン ▼▼▼ -->
             <div style="margin-bottom: 30px;">
                 <button id="go-to-dashboard" class="action-button primary" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;">
                     <span style="font-size: 1.5em;">📊</span> マイデータを見る
                 </button>
             </div>
+            <!-- ▲▲▲ 追加ここまで ▲▲▲ -->
 
             <div class="game-selection">
                 <div class="game-card" id="start-speaking-practice">
@@ -81,12 +77,6 @@
                     <h3>読解練習</h3>
                     <p>短い英文を読み、内容に関するクイズに挑戦しよう。</p>
                 </div>
-                <div class="game-card" id="start-pop-culture">
-                    <button class="info-btn" data-feature="popculture">i</button>
-                    <div class="game-icon">🎬</div>
-                    <h3>アニメ・洋楽で学ぶ</h3>
-                    <p>名言や歌詞から生きた英語フレーズを学びます。</p>
-                </div>
                 <div class="game-card" id="start-industry-focus">
                     <button class="info-btn" data-feature="industry">i</button>
                     <div class="game-icon">🚀</div>
@@ -103,11 +93,13 @@
         </div>
     </main>
 
-    <!-- ダッシュボード画面 -->
+    <!-- ▼▼▼ 追加: ダッシュボード画面 ▼▼▼ -->
     <main id="dashboard-screen" class="screen">
         <div class="container">
             <button id="backButtonFromDashboard" class="back-button">🏠 ホームに戻る</button>
             <h1>マイデータ 📊</h1>
+            
+            <!-- ストリーク（連続日数） -->
             <div class="card streak-card">
                 <div class="streak-icon">🔥</div>
                 <div class="streak-info">
@@ -115,14 +107,29 @@
                     <p>連続学習日数</p>
                 </div>
             </div>
+
+            <!-- 統計データ -->
             <div class="stats-grid">
-                <div class="stat-item"><h3>総学習回数</h3><p id="dashboard-total-sessions">0回</p></div>
-                <div class="stat-item"><h3>最終学習日</h3><p id="dashboard-last-date">-</p></div>
+                <div class="stat-item">
+                    <h3>総学習回数</h3>
+                    <p id="dashboard-total-sessions">0回</p>
+                </div>
+                <div class="stat-item">
+                    <h3>最終学習日</h3>
+                    <p id="dashboard-last-date">-</p>
+                </div>
             </div>
+
+            <!-- バッジエリア -->
             <div class="card">
                 <h2>獲得バッジ 🏆</h2>
-                <div id="badges-container" class="badges-grid"><p class="no-badges">まだバッジはありません。</p></div>
+                <div id="badges-container" class="badges-grid">
+                    <!-- JSでバッジが追加されます -->
+                    <p class="no-badges">まだバッジはありません。学習を始めましょう！</p>
+                </div>
             </div>
+
+            <!-- スコア記録 -->
             <div class="card">
                 <h2>ベストスコア 🌟</h2>
                 <ul class="best-scores-list">
@@ -134,187 +141,7 @@
             </div>
         </div>
     </main>
-
-    <!-- ポップカルチャー選択画面 -->
-    <main id="pop-culture-menu-screen" class="screen">
-        <div class="container">
-            <button id="backButtonFromPopMenu" class="back-button">🏠 ホームに戻る</button>
-            <h1>アニメ・洋楽で学ぶ 🎬</h1>
-            <p class="description">好きなジャンルを選んでください。</p>
-            <div class="game-selection">
-                <div class="game-card" onclick="startPopQuiz('anime')">
-                    <div class="game-icon">⚔️</div>
-                    <h3>アニメの名言</h3>
-                    <p>心に響くあのセリフを英語で。</p>
-                </div>
-                <div class="game-card" onclick="startPopQuiz('music')">
-                    <div class="game-icon">🎵</div>
-                    <h3>洋楽フレーズ</h3>
-                    <p>ヒット曲の歌詞から表現を学ぶ。</p>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- ポップカルチャー クイズ画面 -->
-    <main id="pop-culture-quiz-screen" class="screen">
-        <div class="container">
-            <button id="backButtonFromPopQuiz" class="back-button">↩ ジャンル選択に戻る</button>
-            <h1 id="pop-quiz-header">Pop Culture Quiz</h1>
-            <div id="pop-quiz-area">
-                <div class="card quiz-card">
-                    <div id="pop-quiz-hud"><span id="pop-quiz-counter"></span><span id="pop-quiz-score"></span></div>
-                    <div class="quote-display-area"><p id="pop-quiz-question" class="quote-text"></p></div>
-                    <div id="pop-quiz-options" class="quiz-options-grid"></div>
-                    <div id="pop-quiz-feedback" class="pop-feedback hidden">
-                        <h3 id="pop-feedback-title"></h3>
-                        <p id="pop-feedback-source" class="quote-source"></p>
-                        <p id="pop-feedback-note" class="quote-note"></p>
-                        <button id="pop-next-btn" class="action-button primary">次へ</button>
-                    </div>
-                </div>
-            </div>
-            <div id="pop-quiz-end-screen" class="card" style="display: none;">
-                <h2>クイズ終了！</h2>
-                <p class="final-score-text">あなたのスコア</p>
-                <p id="pop-final-score"></p>
-                <button id="pop-restart-button" class="restart-button">もう一度遊ぶ</button>
-            </div>
-        </div>
-    </main>
-
-    <!-- スピーキング練習画面 -->
-    <main id="speaking-practice-screen" class="screen">
-        <div class="container">
-            <button id="backButtonSpeaking" class="back-button">🏠 ホームに戻る</button>
-            <h1>スピーキング練習 🗣️</h1>
-            <p class="description">お手本を聞いてから、マイクに向かって発音してみましょう。</p>
-            <div class="card">
-                <div class="card-header">
-                    <h2>お題</h2>
-                    <button id="nextButton">次のお題へ 🔄</button>
-                </div>
-                <p id="sentence"></p>
-                <p id="sentence-meaning" class="sentence-meaning"></p>
-            </div>
-            <div class="controls">
-                <button id="listenButton" class="listen-btn">お手本を聞く 🎧</button>
-                <button id="startButton">録音開始 🎙️</button>
-                <button id="stopButton" disabled>録音停止 ⏹️</button>
-            </div>
-            <div id="status" class="status"></div>
-            <div class="result-container">
-                <div class="card card-score"><h2>スコア</h2><p id="score">0 <span class="score-unit">/ 100</span></p></div>
-                <div class="card">
-                    <h2>あなたの録音</h2>
-                    <audio id="user-recording-player" controls class="user-audio-player"></audio>
-                </div>
-                <div class="card feedback-card"><h2>フィードバック</h2><p id="feedback">-</p></div>
-            </div>
-        </div>
-    </main>
-
-    <!-- クイズレベル選択画面 -->
-    <main id="quiz-level-screen" class="screen">
-        <div class="container">
-            <button id="backButtonFromLevels" class="back-button">🏠 ホームに戻る</button>
-            <h1>単語クイズ ✍️</h1>
-            <p class="description">挑戦するレベルを選んでください。</p>
-            <div class="level-selection-grid">
-                <div class="level-card" data-level="beginner"><h3>初級編</h3><p>英検3級レベル</p></div>
-                <div class="level-card" data-level="intermediate"><h3>中級編</h3><p>英検準2級・2級レベル</p></div>
-                <div class="level-card" data-level="advanced"><h3>上級編</h3><p>英検準1級レベル</p></div>
-                <div class="level-card" data-level="expert"><h3>最上級編</h3><p>英検1級・TOEIC 800+</p></div>
-            </div>
-        </div>
-    </main>
-
-    <!-- 単語クイズ画面 -->
-    <main id="word-quiz-screen" class="screen">
-        <div class="container">
-            <button id="backButtonFromQuiz" class="back-button">📜 レベル選択に戻る</button>
-            <h1>単語クイズ ✍️</h1>
-            <div id="quiz-game-area">
-                <div class="card quiz-card">
-                    <div id="quiz-hud"><span id="quiz-question-counter"></span><span id="quiz-score"></span></div>
-                    <p id="quiz-question"></p>
-                    <div id="quiz-options" class="quiz-options-grid"></div>
-                    <div id="quiz-feedback"></div>
-                </div>
-            </div>
-            <div id="quiz-end-screen" class="card" style="display: none;">
-                <h2>クイズ終了！</h2>
-                <p class="final-score-text">あなたの最終スコアは...</p>
-                <p id="quiz-final-score"></p>
-                <button id="quiz-restart-button" class="restart-button">もう一度挑戦する</button>
-            </div>
-        </div>
-    </main>
-
-    <!-- リスニングチャレンジ画面 -->
-    <main id="listening-challenge-screen" class="screen">
-        <div class="container">
-            <button id="backButtonFromListening" class="back-button">🏠 ホームに戻る</button>
-            <h1>リスニングチャレンジ 🎧</h1>
-            <p class="description">再生ボタンを押して英語の音声を聞き、下のボックスに書き起こしてください。</p>
-            <div id="listening-game-area">
-                <div class="card listening-card">
-                    <div class="listening-controls">
-                        <button id="play-audio-button" class="play-audio-btn">音声を再生 ▶️</button>
-                        <p id="listening-status" class="status"></p>
-                    </div>
-                    <textarea id="listening-input" class="listening-textarea" placeholder="ここに聞き取った英文を入力..." rows="3"></textarea>
-                    <button id="submit-listening-button" class="submit-btn">答え合わせ</button>
-                </div>
-                <div id="listening-feedback-area" class="card" style="display: none;">
-                    <h2 id="listening-result-title">結果</h2>
-                    <p id="listening-feedback-text"></p>
-                    <p><strong>正解:</strong> <span id="listening-correct-answer"></span></p>
-                    <button id="next-listening-button" class="next-btn">次の問題へ 🔄</button>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- 読解練習画面 -->
-    <main id="reading-quiz-screen" class="screen">
-        <div class="container">
-            <button id="backButtonFromReading" class="back-button">🏠 ホームに戻る</button>
-            <h1>読解練習 📚</h1>
-            <div id="reading-game-area">
-                <div class="card reading-passage-card">
-                    <h2 id="reading-title"></h2>
-                    <p id="reading-passage"></p>
-                </div>
-                <div class="card quiz-card">
-                    <div id="reading-hud"><span id="reading-question-counter"></span><span id="reading-score"></span></div>
-                    <p id="reading-question"></p>
-                    <div id="reading-options" class="quiz-options-grid"></div>
-                    <div id="reading-feedback"></div>
-                </div>
-            </div>
-            <div id="reading-end-screen" class="card" style="display: none;">
-                <h2>読解クイズ終了！</h2>
-                <p class="final-score-text">あなたの最終スコアは...</p>
-                <p id="reading-final-score"></p>
-                
-                <div class="reading-review-area card">
-                    <h3>本文と日本語訳</h3>
-                    <div class="review-content">
-                        <div class="review-section">
-                            <h4>English</h4>
-                            <p id="review-passage-en"></p>
-                        </div>
-                        <div class="review-section">
-                            <h4>日本語</h4>
-                            <p id="review-passage-ja"></p>
-                        </div>
-                    </div>
-                </div>
-                <button id="reading-restart-button" class="restart-button">別の文章に挑戦する</button>
-            </div>
-        </div>
-    </main>
+    <!-- ▲▲▲ 追加ここまで ▲▲▲ -->
 
     <!-- Industry Focus: 業界選択画面 -->
     <main id="industry-selection-screen" class="screen">
@@ -467,6 +294,151 @@
         </div>
     </main>
 
+    <!-- スピーキング練習画面 -->
+    <main id="speaking-practice-screen" class="screen">
+        <div class="container">
+            <button id="backButtonSpeaking" class="back-button">🏠 ホームに戻る</button>
+            <h1>スピーキング練習 🗣️</h1>
+            <p class="description">お手本を聞いてから、マイクに向かって発音してみましょう。発音の正確さ、ペース、聞き比べができます。</p>
+            <div class="card">
+                <div class="card-header">
+                    <h2>お題</h2>
+                    <button id="nextButton">次のお題へ 🔄</button>
+                </div>
+                <p id="sentence"></p>
+                <p id="sentence-meaning" class="sentence-meaning"></p>
+            </div>
+            <div class="controls">
+                <button id="listenButton" class="listen-btn">お手本を聞く 🎧</button>
+                <button id="startButton">録音開始 🎙️</button>
+                <button id="stopButton" disabled>録音停止 ⏹️</button>
+            </div>
+            <div id="status" class="status"></div>
+            <div class="result-container">
+                <div class="card card-score"><h2>スコア</h2><p id="score">0 <span class="score-unit">/ 100</span></p></div>
+                <div class="card">
+                    <h2>あなたの録音</h2>
+                    <audio id="user-recording-player" controls class="user-audio-player"></audio>
+                </div>
+                <div class="card feedback-card"><h2>フィードバック</h2><p id="feedback">-</p></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- クイズレベル選択画面 -->
+    <main id="quiz-level-screen" class="screen">
+        <div class="container">
+            <button id="backButtonFromLevels" class="back-button">🏠 ホームに戻る</button>
+            <h1>単語クイズ ✍️</h1>
+            <p class="description">挑戦するレベルを選んでください。</p>
+            <div class="level-selection-grid">
+                <div class="level-card" data-level="beginner">
+                    <h3>初級編</h3>
+                    <p>英検3級レベル</p>
+                </div>
+                <div class="level-card" data-level="intermediate">
+                    <h3>中級編</h3>
+                    <p>英検準2級・2級レベル</p>
+                </div>
+                <div class="level-card" data-level="advanced">
+                    <h3>上級編</h3>
+                    <p>英検準1級レベル</p>
+                </div>
+                <div class="level-card" data-level="expert">
+                    <h3>最上級編</h3>
+                    <p>英検1級・TOEIC 800+</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 単語クイズ画面 -->
+    <main id="word-quiz-screen" class="screen">
+        <div class="container">
+            <button id="backButtonFromQuiz" class="back-button">📜 レベル選択に戻る</button>
+            <h1>単語クイズ ✍️</h1>
+            <div id="quiz-game-area">
+                <div class="card quiz-card">
+                    <div id="quiz-hud"><span id="quiz-question-counter"></span><span id="quiz-score"></span></div>
+                    <p id="quiz-question"></p>
+                    <div id="quiz-options" class="quiz-options-grid"></div>
+                    <div id="quiz-feedback"></div>
+                </div>
+            </div>
+            <div id="quiz-end-screen" class="card" style="display: none;">
+                <h2>クイズ終了！</h2>
+                <p class="final-score-text">あなたの最終スコアは...</p>
+                <p id="quiz-final-score"></p>
+                <button id="quiz-restart-button" class="restart-button">もう一度挑戦する</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- リスニングチャレンジ画面 -->
+    <main id="listening-challenge-screen" class="screen">
+        <div class="container">
+            <button id="backButtonFromListening" class="back-button">🏠 ホームに戻る</button>
+            <h1>リスニングチャレンジ 🎧</h1>
+            <p class="description">再生ボタンを押して英語の音声を聞き、下のボックスに書き起こしてください。</p>
+            <div id="listening-game-area">
+                <div class="card listening-card">
+                    <div class="listening-controls">
+                        <button id="play-audio-button" class="play-audio-btn">音声を再生 ▶️</button>
+                        <p id="listening-status" class="status"></p>
+                    </div>
+                    <textarea id="listening-input" class="listening-textarea" placeholder="ここに聞き取った英文を入力..." rows="3"></textarea>
+                    <button id="submit-listening-button" class="submit-btn">答え合わせ</button>
+                </div>
+                <div id="listening-feedback-area" class="card" style="display: none;">
+                    <h2 id="listening-result-title">結果</h2>
+                    <p id="listening-feedback-text"></p>
+                    <p><strong>正解:</strong> <span id="listening-correct-answer"></span></p>
+                    <button id="next-listening-button" class="next-btn">次の問題へ 🔄</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 読解練習画面 -->
+    <main id="reading-quiz-screen" class="screen">
+        <div class="container">
+            <button id="backButtonFromReading" class="back-button">🏠 ホームに戻る</button>
+            <h1>読解練習 📚</h1>
+            <div id="reading-game-area">
+                <div class="card reading-passage-card">
+                    <h2 id="reading-title"></h2>
+                    <p id="reading-passage"></p>
+                </div>
+                <div class="card quiz-card">
+                    <div id="reading-hud"><span id="reading-question-counter"></span><span id="reading-score"></span></div>
+                    <p id="reading-question"></p>
+                    <div id="reading-options" class="quiz-options-grid"></div>
+                    <div id="reading-feedback"></div>
+                </div>
+            </div>
+            <div id="reading-end-screen" class="card" style="display: none;">
+                <h2>読解クイズ終了！</h2>
+                <p class="final-score-text">あなたの最終スコアは...</p>
+                <p id="reading-final-score"></p>
+                
+                <div class="reading-review-area card">
+                    <h3>本文と日本語訳</h3>
+                    <div class="review-content">
+                        <div class="review-section">
+                            <h4>English</h4>
+                            <p id="review-passage-en"></p>
+                        </div>
+                        <div class="review-section">
+                            <h4>日本語</h4>
+                            <p id="review-passage-ja"></p>
+                        </div>
+                    </div>
+                </div>
+                <button id="reading-restart-button" class="restart-button">別の文章に挑戦する</button>
+            </div>
+        </div>
+    </main>
+
     <!-- ビデオチャット画面 -->
     <main id="video-chat-screen" class="screen">
         <div class="container">
@@ -477,7 +449,11 @@
                 <p id="video-topic">What is the most interesting place you have ever visited?</p>
             </div>
             
-            <p class="description" style="margin-bottom: 20px;">「Start Call」を押すと、自動的に空いている相手とマッチングします。</p>
+            <div class="room-input-container card" style="text-align: center;">
+                <label for="room-id-input" style="font-weight: bold; color: var(--light-text);">ルーム名:</label>
+                <input type="text" id="room-id-input" value="room1" class="room-input" placeholder="例: apple, 1234">
+                <p style="font-size: 0.9em; color: #888; margin-top: 5px;">※相手と同じルーム名を入力して「Start Call」を押してください。</p>
+            </div>
 
             <!-- 映像表示エリア -->
             <div class="video-container">
