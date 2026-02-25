@@ -3,11 +3,11 @@
 // =============================================
 // Replitで取得したURLをここに貼り付けてください（https:// ではなく wss:// に書き換える）
 // 例: "wss://english-park-server.username.replit.co"
-const SIGNALING_SERVER_URL = "wss://f00d6303-4040-4e99-8cdd-390efd78e32e-00-3kvfiz4bkxlz4.pike.replit.dev";
+const SIGNALING_SERVER_URL = "wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev:8080";
 
 
 // =============================================
-//  全体で使用するデータ (完全版・大幅拡充)
+//  全体で使用するデータ (完全版)
 // =============================================
 const pronunciationSentences = [
     { en: "How are you doing?", ja: "調子はどうですか？" },
@@ -395,10 +395,6 @@ const featureDescriptions = {
     industry: {
         title: "専門分野別 (Industry Focus)",
         description: "特定の業界（IT, ビジネス, 医療, 金融）に特化した専門用語やフレーズを学習できます。\n\n・フラッシュカード: 重要単語の暗記\n・キーフレーズ: 実践的な例文\n・ミニ記事: 業界ニュースの読解\n\n自分のキャリアや興味に合わせた英語力を身につけましょう。"
-    },
-    popculture: {
-        title: "アニメ・洋楽で学ぶ",
-        description: "世界中で愛される日本のアニメや、有名な洋楽の歌詞から英語を学びます。\n\n教科書には載っていない「生きた表現」や「感情のこもった言い回し」を楽しく身につけることができます。"
     }
 };
 const idiomsData = [
@@ -571,45 +567,7 @@ const industryData = {
 };
 
 // =============================================
-//  Pop Culture Data (NEW & EXPANDED)
-// =============================================
-const popCultureData = {
-    anime: [
-        // Original
-        { en: "I'm gonna be the Pirate King!", ja: "海賊王に俺はなる！", source: "One Piece", note: "'gonna' は 'going to' の口語的な省略形です。" },
-        { en: "I am the bone of my sword.", ja: "体は剣で出来ている。", source: "Fate/stay night", note: "詩的な表現。'bone' はここでは「骨子」「本質」といった意味合い。" },
-        { en: "If you give up, that's when the game is over.", ja: "あきらめたらそこで試合終了ですよ。", source: "Slam Dunk", note: "条件節(If...)を使った有名な格言。" },
-        { en: "I'm not gonna run away, I never go back on my word!", ja: "逃げたりしねぇ…！俺は自分の言葉を曲げねぇ！", source: "Naruto", note: "'go back on one's word' で「約束を破る」「前言撤回する」という意味。" },
-        { en: "In the name of the moon, I will punish you!", ja: "月にかわっておしおきよ！", source: "Sailor Moon", note: "'In the name of ~' は「〜の名において」という決まり文句。" },
-        // Added
-        { en: "Set your heart ablaze.", ja: "心を燃やせ。", source: "Demon Slayer: Mugen Train", note: "'ablaze' は「燃え上がって」「輝いて」という意味の形容詞。" },
-        { en: "If you don't fight, you can't win.", ja: "戦わなければ勝てない。", source: "Attack on Titan", note: "シンプルな条件文。戦う意志の強さを表しています。" },
-        { en: "Once you've met someone you never really forget them.", ja: "一度あったことは忘れないものさ。", source: "Spirited Away", note: "記憶の奥底には残っているという、千と千尋の神隠しの名言。" },
-        { en: "Try laughing. Then whatever scares you will go away.", ja: "笑ってみな。そうすれば怖いものは消えていくよ。", source: "My Neighbor Totoro", note: "'whatever' は「〜するものは何でも」という意味の関係代名詞。" },
-        { en: "A lesson without pain is meaningless.", ja: "痛みを伴わない教訓には意義がない。", source: "Fullmetal Alchemist", note: "等価交換の法則を説く深いセリフ。" },
-        { en: "I want to change the world.", ja: "僕は新世界の神になる。", source: "Death Note", note: "意訳ですが、英語ではシンプルに「世界を変えたい」と表現されることが多いです。" },
-        { en: "It's over 9000!", ja: "戦闘力たったの5か…ゴミめ。（※英語圏では9000以上！）", source: "Dragon Ball Z", note: "英語圏のネットミームとして有名な誤訳（原作は8000）。" }
-    ],
-    music: [
-        // Original
-        { en: "Let it be.", ja: "あるがままに / なすがままに", source: "The Beatles - Let It Be", note: "使役動詞 let + 目的語 + 原形不定詞。「それを（it）あるがままの状態（be）にさせておけ」という意味。" },
-        { en: "I will always love you.", ja: "いつまでもあなたを愛し続けるでしょう", source: "Whitney Houston - I Will Always Love You", note: "未来の意志を表す 'will' と頻度を表す副詞 'always' の組み合わせ。" },
-        { en: "We are the champions, my friends.", ja: "私たちはチャンピオンだ、友よ", source: "Queen - We Are The Champions", note: "勝利のアンセムとして世界中で歌われるフレーズ。" },
-        { en: "Shake it off.", ja: "気にしない / 振り払う", source: "Taylor Swift - Shake It Off", note: "嫌なことや批判を「振り払う」という意味のスラング。" },
-        { en: "Imagine there's no heaven.", ja: "想像してごらん、天国なんてないんだと", source: "John Lennon - Imagine", note: "仮定法ではなく、命令形で「想像してごらん」と語りかけています。" },
-        // Added
-        { en: "If you want to make the world a better place, take a look at yourself.", ja: "世界を良くしたいなら、まず自分自身を見つめ直せ", source: "Michael Jackson - Man in the Mirror", note: "変革は自分から、という強いメッセージ。" },
-        { en: "Let it go, let it go. Can't hold it back anymore.", ja: "ありのままで。もうこれ以上抑えられない", source: "Disney - Frozen", note: "'hold back' で「抑える」「隠す」という意味。" },
-        { en: "All you need is love.", ja: "愛こそすべて", source: "The Beatles - All You Need Is Love", note: "文法的には「あなたが必要とするすべては、愛である」。" },
-        { en: "I'm in love with the shape of you.", ja: "君のその姿に恋してるんだ", source: "Ed Sheeran - Shape of You", note: "'be in love with' で「〜に恋している」。" },
-        { en: "Hello from the other side.", ja: "向こう側から、ハロー", source: "Adele - Hello", note: "別れた相手への電話。「向こう側」は物理的な距離や心理的な距離を表します。" },
-        { en: "Don't stop believin'.", ja: "信じることをやめないで", source: "Journey - Don't Stop Believin'", note: "否定命令文。希望を持ち続けることの大切さを歌っています。" },
-        { en: "Just the way you are.", ja: "そのままの君でいて", source: "Bruno Mars - Just the Way You Are", note: "「君のありのままの姿」という意味。" }
-    ]
-};
-
-// =============================================
-//  学習記録 & ダッシュボード機能
+//  学習記録 & ダッシュボード機能 (New!)
 // =============================================
 const STORAGE_KEY = 'englishParkData';
 
@@ -641,6 +599,7 @@ function recordSession(scoreData) {
     let data = loadLearningData();
     const today = new Date().toDateString();
 
+    // ストリーク更新
     if (data.lastStudyDate !== today) {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
@@ -648,25 +607,30 @@ function recordSession(scoreData) {
         if (data.lastStudyDate === yesterday.toDateString()) {
             data.streak++;
         } else {
-            data.streak = 1;
+            data.streak = 1; // 途切れたらリセット（または1からスタート）
         }
         data.lastStudyDate = today;
     }
 
+    // 回数カウント
     data.totalSessions++;
 
+    // スコア更新 (もしあれば)
     if (scoreData && scoreData.type === 'wordquiz') {
         if (scoreData.score > (data.scores[scoreData.level] || 0)) {
             data.scores[scoreData.level] = scoreData.score;
         }
     }
 
+    // バッジ判定
     checkBadges(data);
+
     saveLearningData(data);
 }
 
 function checkBadges(data) {
     const newBadges = [];
+    
     if (data.totalSessions >= 1 && !data.badges.includes('first_step')) {
         newBadges.push('first_step');
         alert("🎉 バッジ獲得: はじめの一歩！");
@@ -675,6 +639,8 @@ function checkBadges(data) {
         newBadges.push('streak_3');
         alert("🔥 バッジ獲得: 3日連続学習！");
     }
+    // 他にも条件追加可能
+    
     if (newBadges.length > 0) {
         data.badges.push(...newBadges);
     }
@@ -682,16 +648,21 @@ function checkBadges(data) {
 
 function updateDashboardUI() {
     const data = loadLearningData();
+    
     document.getElementById('dashboard-streak').textContent = `${data.streak} Day Streak`;
     document.getElementById('dashboard-total-sessions').textContent = `${data.totalSessions}回`;
     document.getElementById('dashboard-last-date').textContent = data.lastStudyDate || '未実施';
+    
+    // スコア表示
     document.getElementById('best-score-beginner').textContent = data.scores.beginner || '-';
     document.getElementById('best-score-intermediate').textContent = data.scores.intermediate || '-';
     document.getElementById('best-score-advanced').textContent = data.scores.advanced || '-';
     document.getElementById('best-score-expert').textContent = data.scores.expert || '-';
 
+    // バッジ表示
     const badgeContainer = document.getElementById('badges-container');
     badgeContainer.innerHTML = '';
+    
     const badgeDefinitions = {
         'first_step': { icon: '🌱', name: 'はじめの一歩' },
         'streak_3': { icon: '🔥', name: '三日坊主卒業' },
@@ -712,7 +683,6 @@ function updateDashboardUI() {
         });
     }
 }
-
 
 // =============================================
 //  Audio Context & Speech Synthesis Setup
@@ -760,14 +730,17 @@ function speak(text, callback) {
 // =============================================
 const splashScreen = document.getElementById('splash-screen');
 const enterAppButton = document.getElementById('enter-app-button');
+
+// モーダル要素
 const infoModal = document.getElementById('info-modal');
 const modalTitle = document.getElementById('modal-title');
 const modalDescription = document.getElementById('modal-description');
 const closeModalBtn = document.querySelector('.close-modal');
 
+// 情報ボタンのイベント設定
 document.querySelectorAll('.info-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-        e.stopPropagation();
+        e.stopPropagation(); // 親要素(カード)のクリックイベントを防止
         const featureKey = btn.dataset.feature;
         const data = featureDescriptions[featureKey];
         if (data) {
@@ -778,9 +751,11 @@ document.querySelectorAll('.info-btn').forEach(btn => {
     });
 });
 
+// モーダルを閉じる処理
 closeModalBtn.addEventListener('click', () => {
     infoModal.classList.add('hidden');
 });
+
 window.addEventListener('click', (e) => {
     if (e.target === infoModal) {
         infoModal.classList.add('hidden');
@@ -795,16 +770,12 @@ const quizLevelScreen = document.getElementById('quiz-level-screen');
 const listeningChallengeScreen = document.getElementById('listening-challenge-screen');
 const readingQuizScreen = document.getElementById('reading-quiz-screen');
 const videoChatScreen = document.getElementById('video-chat-screen');
-const dashboardScreen = document.getElementById('dashboard-screen');
 // Industry Focus Screens
 const industrySelectionScreen = document.getElementById('industry-selection-screen');
 const industryModuleScreen = document.getElementById('industry-module-screen');
 const industryFlashcardScreen = document.getElementById('industry-flashcard-screen');
 const industryPhraseScreen = document.getElementById('industry-phrase-screen');
 const industryArticleScreen = document.getElementById('industry-article-screen');
-// Pop Culture Screens
-const popCultureMenuScreen = document.getElementById('pop-culture-menu-screen');
-const popCultureQuizScreen = document.getElementById('pop-culture-quiz-screen');
 
 
 const startSpeakingPracticeButton = document.getElementById('start-speaking-practice');
@@ -813,8 +784,6 @@ const startListeningChallengeButton = document.getElementById('start-listening-c
 const startReadingQuizButton = document.getElementById('start-reading-quiz');
 const startVideoChatButton = document.getElementById('start-video-chat');
 const startIndustryFocusButton = document.getElementById('start-industry-focus');
-const goToDashboardButton = document.getElementById('go-to-dashboard');
-const startPopCultureButton = document.getElementById('start-pop-culture');
 
 const backButtonSpeaking = document.getElementById('backButtonSpeaking');
 const backButtonFromLevels = document.getElementById('backButtonFromLevels');
@@ -822,14 +791,12 @@ const backButtonFromQuiz = document.getElementById('backButtonFromQuiz');
 const backButtonFromListening = document.getElementById('backButtonFromListening');
 const backButtonFromReading = document.getElementById('backButtonFromReading');
 const backButtonFromVideo = document.getElementById('backButtonFromVideo');
-const backButtonFromDashboard = document.getElementById('backButtonFromDashboard');
+// Industry Focus Back Buttons
 const backButtonFromIndustry = document.getElementById('backButtonFromIndustry');
 const backButtonFromModule = document.getElementById('backButtonFromModule');
 const backButtonFromIndFlashcard = document.getElementById('backButtonFromIndFlashcard');
 const backButtonFromIndPhrase = document.getElementById('backButtonFromIndPhrase');
 const backButtonFromIndArticle = document.getElementById('backButtonFromIndArticle');
-const backButtonFromPopMenu = document.getElementById('backButtonFromPopMenu');
-const backButtonFromPopQuiz = document.getElementById('backButtonFromPopQuiz');
 
 
 function showScreen(screenToShow) {
@@ -842,9 +809,6 @@ function showScreen(screenToShow) {
 
     if (screenToShow === homeScreen) {
         displayIdiomOfTheDay();
-    }
-    if (screenToShow === dashboardScreen) {
-        updateDashboardUI();
     }
 }
 
@@ -881,11 +845,6 @@ startIndustryFocusButton.addEventListener('click', (e) => {
     if(e.target.classList.contains('info-btn')) return;
     showScreen(industrySelectionScreen);
 });
-goToDashboardButton.addEventListener('click', () => showScreen(dashboardScreen));
-startPopCultureButton.addEventListener('click', (e) => {
-    if(e.target.classList.contains('info-btn')) return;
-    showScreen(popCultureMenuScreen);
-});
 
 backButtonSpeaking.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromLevels.addEventListener('click', () => showScreen(homeScreen));
@@ -893,14 +852,12 @@ backButtonFromQuiz.addEventListener('click', () => showScreen(quizLevelScreen));
 backButtonFromListening.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromReading.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromVideo.addEventListener('click', () => { if (typeof peerConnection !== 'undefined' && peerConnection) { hangUp(); } showScreen(homeScreen); });
-backButtonFromDashboard.addEventListener('click', () => showScreen(homeScreen));
+// Industry Focus Back Actions
 backButtonFromIndustry.addEventListener('click', () => showScreen(homeScreen));
 backButtonFromModule.addEventListener('click', () => showScreen(industrySelectionScreen));
 backButtonFromIndFlashcard.addEventListener('click', () => showScreen(industryModuleScreen));
 backButtonFromIndPhrase.addEventListener('click', () => showScreen(industryModuleScreen));
 backButtonFromIndArticle.addEventListener('click', () => showScreen(industryModuleScreen));
-backButtonFromPopMenu.addEventListener('click', () => showScreen(homeScreen));
-backButtonFromPopQuiz.addEventListener('click', () => showScreen(popCultureMenuScreen));
 
 
 // =============================================
@@ -996,7 +953,6 @@ function handleRecognitionResult(event) {
     userSpeechEndTime = performance.now();
     const transcript = event.results[0][0].transcript;
     generateCombinedFeedback(transcript);
-    recordSession(); 
     if (mediaRecorder && mediaRecorder.state === 'recording') {
         mediaRecorder.stop();
     }
@@ -1106,21 +1062,15 @@ stopButton.addEventListener('click', () => {
 
 function generateCombinedFeedback(transcript) {
     const originalText = pronunciationSentences[currentSentenceIndex].en;
-    const cleanOriginal = originalText.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/); 
-    const cleanUser = transcript.toLowerCase().replace(/[.,!?]/g, '').trim().split(/\s+/); 
-
+    const cleanOriginal = originalText.toLowerCase().replace(/[.,!?]/g, '').split(' ');
+    const cleanUser = transcript.toLowerCase().replace(/[.,!?]/g, '').split(' ');
     let correctWords = 0;
     const feedbackHtml = cleanOriginal.map((word, index) => {
-        if (cleanUser[index] === word) { 
-            correctWords++; 
-            return `<span class="correct">${word}</span>`; 
-        } else { 
-            const userWord = cleanUser[index] ? `<span class="your-speech">${cleanUser[index]}</span>` : '<span class="your-speech">×</span>';
-            return `<span class="incorrect" data-word="${word}">${word}</span> (${userWord})`; 
-        }
+        if (cleanUser[index] === word) { correctWords++; return `<span class="correct">${word}</span>`; }
+        else { return `<span class="incorrect" data-word="${word}">${word}</span> (<span class="your-speech">${cleanUser[index] || '×'}</span>)`; }
     }).join(' ');
-    
-    const score = cleanOriginal.length > 0 ? Math.round((correctWords / cleanOriginal.length) * 100) : 0; 
+
+    const score = Math.round((correctWords / cleanOriginal.length) * 100);
     scoreElement.innerHTML = `${score} <span class="score-unit">/ 100</span>`;
     scoreElement.className = score >= 80 ? 'score-high' : score >= 50 ? 'score-mid' : 'score-low';
     
@@ -1240,7 +1190,6 @@ function endQuiz() {
     quizGameArea.style.display = 'none';
     quizEndScreen.style.display = 'block';
     quizFinalScore.textContent = `${questionsForCurrentQuiz.length}問中 ${quizScore}問 正解！`;
-    recordSession({ type: 'wordquiz', level: currentQuizLevel, score: quizScore });
 }
 quizRestartButton.addEventListener('click', startNewQuizSet);
 
@@ -1297,7 +1246,6 @@ submitListeningButton.addEventListener('click', () => {
         listeningResultTitle.textContent = "素晴らしい！正解です！";
         listeningResultTitle.className = 'correct';
         listeningFeedbackText.textContent = '完璧に聞き取れています。';
-        recordSession();
     } else {
         listeningResultTitle.textContent = "おしい！不正解です";
         listeningResultTitle.className = 'incorrect';
@@ -1328,24 +1276,32 @@ let readingScore = 0;
 function startNewReadingQuiz() {
     const newIndex = Math.floor(Math.random() * readingQuizData.length);
     currentReadingData = readingQuizData[newIndex];
+    
     currentReadingQuestionIndex = 0;
     readingScore = 0;
+
     readingTitle.textContent = currentReadingData.title;
     readingPassage.textContent = currentReadingData.passage;
+
     readingGameArea.style.display = 'block';
     readingEndScreen.style.display = 'none';
+    
     showNextReadingQuestion();
 }
+
 function showNextReadingQuestion() {
     if (!currentReadingData || !currentReadingData.questions || currentReadingQuestionIndex >= currentReadingData.questions.length) {
         endReadingQuiz();
         return;
     }
+
     readingQuestionCounter.textContent = `Question ${currentReadingQuestionIndex + 1} / ${currentReadingData.questions.length}`;
     readingScoreDisplay.textContent = `Score: ${readingScore}`;
     readingFeedback.textContent = '';
+
     const questionData = currentReadingData.questions[currentReadingQuestionIndex];
     readingQuestion.textContent = questionData.q;
+    
     readingOptionsGrid.innerHTML = '';
     const options = shuffleArray([questionData.correct, ...questionData.incorrect]);
     options.forEach(optionText => {
@@ -1356,10 +1312,13 @@ function showNextReadingQuestion() {
         readingOptionsGrid.appendChild(button);
     });
 }
+
 function handleReadingOptionClick(event) {
     const selectedButton = event.target;
     if (currentReadingQuestionIndex >= currentReadingData.questions.length) return; 
+
     const correctAnswer = currentReadingData.questions[currentReadingQuestionIndex].correct;
+
     document.querySelectorAll('#reading-options .quiz-option-btn').forEach(btn => {
         btn.disabled = true;
         if (btn.textContent === correctAnswer) {
@@ -1388,7 +1347,6 @@ function endReadingQuiz() {
         readingFinalScore.textContent = `${currentReadingData.questions.length}問中 ${readingScore}問 正解！`;
         document.getElementById('review-passage-en').textContent = currentReadingData.passage;
         document.getElementById('review-passage-ja').textContent = currentReadingData.translation;
-        recordSession();
     } else {
         readingFinalScore.textContent = "スコアの計算に問題がありました。"; // Fallback message
     }
@@ -1407,7 +1365,7 @@ function selectIndustry(key) {
     indCurrentCategoryKey = key;
     const data = industryData[key];
     document.getElementById('industry-title-display').textContent = data.title;
-    showScreen(industryModuleScreen);
+    showScreen(document.getElementById('industry-module-screen'));
 }
 
 function startIndustryModule(moduleType) {
@@ -1417,15 +1375,15 @@ function startIndustryModule(moduleType) {
     if (moduleType === 'flashcards') {
         document.getElementById('ind-flashcard-header').textContent = `${data.title} - Flashcards`;
         updateIndFlashcardUI();
-        showScreen(industryFlashcardScreen);
+        showScreen(document.getElementById('industry-flashcard-screen'));
     } else if (moduleType === 'phrases') {
         document.getElementById('ind-phrase-header').textContent = `${data.title} - Key Phrases`;
         updateIndPhraseUI();
-        showScreen(industryPhraseScreen);
+        showScreen(document.getElementById('industry-phrase-screen'));
     } else if (moduleType === 'articles') {
         document.getElementById('ind-article-header').textContent = `${data.title} - Mini Articles`;
         updateIndArticleUI();
-        showScreen(industryArticleScreen);
+        showScreen(document.getElementById('industry-article-screen'));
     }
 }
 
@@ -1511,323 +1469,275 @@ function nextIndArticle() {
 
 
 // =============================================
-//  Pop Culture Logic (New)
+//  ビデオチャットロジック (WebRTC実装)
 // =============================================
-let popQuizGenre = null;
-let popQuizIndex = 0;
-let popQuizScore = 0;
-let popQuizQuestions = [];
-
-function startPopQuiz(genre) {
-    popQuizGenre = genre;
-    popQuizIndex = 0;
-    popQuizScore = 0;
-    
-    const sourceData = popCultureData[genre];
-    if(!sourceData) return;
-    
-    popQuizQuestions = shuffleArray(sourceData).slice(0, 5); 
-    
-    showScreen(popCultureQuizScreen);
-    document.getElementById('pop-quiz-end-screen').style.display = 'none';
-    document.getElementById('pop-quiz-area').style.display = 'block';
-    document.getElementById('pop-quiz-feedback').classList.add('hidden');
-    
-    showPopQuestion();
-}
-
-function showPopQuestion() {
-    if (popQuizIndex >= popQuizQuestions.length) {
-        endPopQuiz();
-        return;
-    }
-    
-    const qData = popQuizQuestions[popQuizIndex];
-    document.getElementById('pop-quiz-counter').textContent = `Question ${popQuizIndex + 1} / ${popQuizQuestions.length}`;
-    document.getElementById('pop-quiz-score').textContent = `Score: ${popQuizScore}`;
-    document.getElementById('pop-quiz-question').textContent = `"${qData.en}"`;
-    
-    const feedbackArea = document.getElementById('pop-quiz-feedback');
-    feedbackArea.classList.add('hidden');
-    
-    const optionsContainer = document.getElementById('pop-quiz-options');
-    optionsContainer.innerHTML = '';
-    
-    const allData = popCultureData[popQuizGenre];
-    const dummies = allData.filter(d => d.ja !== qData.ja).map(d => d.ja);
-    const shuffledDummies = shuffleArray(dummies).slice(0, 3);
-    const options = shuffleArray([qData.ja, ...shuffledDummies]);
-    
-    options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'quiz-option-btn';
-        btn.textContent = opt;
-        btn.onclick = () => handlePopAnswer(opt, qData);
-        optionsContainer.appendChild(btn);
-    });
-}
-
-function handlePopAnswer(selected, qData) {
-    const isCorrect = selected === qData.ja;
-    const btns = document.querySelectorAll('#pop-quiz-options .quiz-option-btn');
-    
-    btns.forEach(btn => {
-        btn.disabled = true;
-        if (btn.textContent === qData.ja) btn.classList.add('correct-answer');
-        if (!isCorrect && btn.textContent === selected) btn.classList.add('incorrect-answer');
-    });
-
-    const feedbackArea = document.getElementById('pop-quiz-feedback');
-    const title = document.getElementById('pop-feedback-title');
-    
-    if (isCorrect) {
-        popQuizScore++;
-        title.textContent = "Correct! 🎉";
-        title.className = "correct-feedback";
-    } else {
-        title.textContent = "Nice try!";
-        title.className = "incorrect-feedback";
-    }
-
-    document.getElementById('pop-feedback-source').textContent = `Source: ${qData.source}`;
-    document.getElementById('pop-feedback-note').textContent = qData.note;
-    feedbackArea.classList.remove('hidden');
-
-    document.getElementById('pop-next-btn').onclick = () => {
-        popQuizIndex++;
-        showPopQuestion();
-    };
-}
-
-function endPopQuiz() {
-    document.getElementById('pop-quiz-area').style.display = 'none';
-    document.getElementById('pop-quiz-end-screen').style.display = 'block';
-    document.getElementById('pop-final-score').textContent = `${popQuizQuestions.length}問中 ${popQuizScore}問 正解！`;
-    recordSession();
-}
-
-document.getElementById('pop-restart-button').addEventListener('click', () => {
-    startPopQuiz(popQuizGenre);
-});
-
-
-// =============================================
-//  ビデオチャットロジック (WebRTC実装 - 安定修正版)
-// =============================================
-
 const startCallBtn = document.getElementById('start-call-btn');
 const endCallBtn = document.getElementById('end-call-btn');
 const switchCameraBtn = document.getElementById('switch-camera-btn');
 const localVideo = document.getElementById('local-video');
 const remoteVideo = document.getElementById('remote-video');
 const videoStatus = document.getElementById('video-status');
+const roomIdInput = document.getElementById('room-id-input'); // ルームID入力
 
-let peerConnection = null;
-let localStream = null;
-let socket = null;
-let currentFacingMode = 'user';
+let peerConnection;
+let localStream;
+let remoteStream;
+let socket;
+let currentFacingMode = 'user'; 
 
+// Googleが提供するパブリックSTUNサーバー
 const stunServers = {
-    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+    iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' }
+    ]
 };
 
 startCallBtn.addEventListener('click', startCall);
 endCallBtn.addEventListener('click', hangUp);
-if (switchCameraBtn) switchCameraBtn.addEventListener('click', switchCamera);
+if(switchCameraBtn) switchCameraBtn.addEventListener('click', switchCamera); 
 
-
-// =============================
-// 通話開始
-// =============================
 async function startCall() {
-
-    startCallBtn.disabled = true;
-    endCallBtn.disabled = false;
-    if (switchCameraBtn) switchCameraBtn.disabled = false;
-
-    videoStatus.textContent = "カメラとマイクを起動中...";
-
-    try {
-        localStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: currentFacingMode },
-            audio: true
-        });
-
-        localVideo.srcObject = localStream;
-
-    } catch (err) {
-        console.error("getUserMedia error:", err);
-        videoStatus.textContent = "カメラ・マイクにアクセスできません";
-        startCallBtn.disabled = false;
-        endCallBtn.disabled = true;
+    // 接続先URLが設定されているかチェック
+    if (SIGNALING_SERVER_URL.includes("YOUR-REPLIT-URL-HERE")) {
+        showCustomAlert("サーバーのURLが設定されていません。script.jsの先頭を確認してください。");
         return;
     }
 
-    videoStatus.textContent = "マッチング中...";
+    startCallBtn.disabled = true;
+    endCallBtn.disabled = false;
+    if(switchCameraBtn) switchCameraBtn.disabled = false; 
+    videoStatus.textContent = "カメラとマイクを起動中..."; 
 
-    socket = new WebSocket(SIGNALING_SERVER_URL);
+    try {
+        // ▼▼▼ 映像あり ▼▼▼
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: currentFacingMode }, 
+                audio: true 
+            });
+        } catch(e) {
+            console.warn("Camera failed, trying audio only");
+             localStream = await navigator.mediaDevices.getUserMedia({ 
+                video: false, 
+                audio: true 
+            });
+            videoStatus.textContent = "カメラが見つかりません。音声のみで接続します...";
+        }
+        
+        // 映像がある場合のみセット
+        if(localStream.getVideoTracks().length > 0) {
+            localVideo.srcObject = localStream;
+        }
+    } catch (err) {
+        console.error("getUserMedia error:", err);
+        // エラーメッセージをより親切に
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+             videoStatus.textContent = "エラー: マイク/カメラの使用が許可されていません。ブラウザの設定を確認してください。";
+        } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+             videoStatus.textContent = "エラー: マイクが見つかりません。接続を確認してください。";
+        } else {
+             videoStatus.textContent = `デバイスエラー: ${err.message}`;
+        }
+        startCallBtn.disabled = false;
+        endCallBtn.disabled = true;
+        if(switchCameraBtn) switchCameraBtn.disabled = true;
+        return;
+    }
+
+    videoStatus.textContent = "シグナリングサーバーに接続中...";
+
+    try {
+        socket = new WebSocket(SIGNALING_SERVER_URL); 
+    } catch (err) {
+        videoStatus.textContent = "サーバー接続エラー。";
+        startCallBtn.disabled = false;
+        endCallBtn.disabled = true;
+        if(switchCameraBtn) switchCameraBtn.disabled = true;
+        return;
+    }
 
     socket.onopen = () => {
-        socket.send(JSON.stringify({ type: 'join' }));
+        videoStatus.textContent = "サーバーに接続しました。ルームに参加します...";
+        // ▼ ルームID入力欄の値を使用（空ならdefault-room）
+        const roomName = roomIdInput && roomIdInput.value ? roomIdInput.value : 'default-room';
+        socket.send(JSON.stringify({ type: 'join', room: roomName }));
     };
 
     socket.onmessage = async (message) => {
-
         const data = JSON.parse(message.data);
-        console.log("Signal:", data);
+        console.log('シグナリングメッセージ受信:', data);
 
-        switch (data.type) {
-
-            case 'joined':
-                videoStatus.textContent = "待機中... 相手を探しています";
-                createPeerConnection();
-                break;
-
-            case 'user-joined':
-                videoStatus.textContent = "相手が見つかりました！接続中...";
-                createPeerConnection();
-
-                const offer = await peerConnection.createOffer();
-                await peerConnection.setLocalDescription(offer);
-
-                socket.send(JSON.stringify({
-                    type: 'offer',
-                    sdp: peerConnection.localDescription
-                }));
-                break;
-
-            case 'offer':
-                videoStatus.textContent = "接続リクエスト受信...";
-                createPeerConnection();
-
-                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
-
-                const answer = await peerConnection.createAnswer();
-                await peerConnection.setLocalDescription(answer);
-
-                socket.send(JSON.stringify({
-                    type: 'answer',
-                    sdp: peerConnection.localDescription
-                }));
-                break;
-
-            case 'answer':
-                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
-                videoStatus.textContent = "接続完了！通話開始";
-                break;
-
-            case 'candidate':
-                if (peerConnection && data.candidate) {
-                    await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
-                }
-                break;
-
-            case 'user-left':
-                hangUp("相手が退出しました");
-                break;
+        try {
+            switch (data.type) {
+                case 'joined':
+                    videoStatus.textContent = "ルームに参加しました。相手を待っています...";
+                    createPeerConnection();
+                    break;
+                case 'user-joined':
+                    videoStatus.textContent = "相手が参加しました。接続を開始します...";
+                    createPeerConnection(); 
+                    const offer = await peerConnection.createOffer();
+                    await peerConnection.setLocalDescription(offer);
+                    socket.send(JSON.stringify({ type: 'offer', sdp: peerConnection.localDescription }));
+                    break;
+                case 'offer':
+                    videoStatus.textContent = "接続リクエストを受信しました...";
+                    createPeerConnection(); 
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
+                    const answer = await peerConnection.createAnswer();
+                    await peerConnection.setLocalDescription(answer);
+                    socket.send(JSON.stringify({ type: 'answer', sdp: peerConnection.localDescription }));
+                    break;
+                case 'answer':
+                    videoStatus.textContent = "接続が確立されました。";
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
+                    break;
+                case 'candidate':
+                    if (peerConnection && data.candidate) {
+                        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+                    }
+                    break;
+                case 'user-left':
+                    videoStatus.textContent = "相手が退出しました。";
+                    hangUp("相手が退出したため、通話を終了しました。"); 
+                    break;
+                case 'room-full':
+                    hangUp("エラー: ルームは満室です。");
+                    break;
+                case 'error':
+                    videoStatus.textContent = `サーバーエラー: ${data.message}`;
+                    break;
+            }
+        } catch (err) {
+            console.error(err);
         }
     };
 
-    socket.onclose = () => {
-        hangUp("通話終了");
-    };
-
-    socket.onerror = () => {
-        videoStatus.textContent = "サーバー接続エラー";
-    };
-}
-
-
-// =============================
-// PeerConnection 作成
-// =============================
-function createPeerConnection() {
-
-    if (peerConnection) return;
-
-    peerConnection = new RTCPeerConnection(stunServers);
-
-    // 相手の映像・音声受信（シンプル版）
-    peerConnection.ontrack = (event) => {
-        console.log("Remote stream received");
-        remoteVideo.srcObject = event.streams[0];
-    };
-
-    // ICE送信
-    peerConnection.onicecandidate = (event) => {
-        if (event.candidate && socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify({
-                type: 'candidate',
-                candidate: event.candidate
-            }));
+    socket.onclose = (event) => {
+        console.log("WebSocket closed:", event);
+        // 正常終了(1000)以外ならエラーメッセージ
+        let msg = "通話を終了しました。";
+        if (event.code !== 1000 && event.code !== 1005) {
+            msg = `サーバーから切断されました (Code: ${event.code})。再接続してください。`;
         }
+        hangUp(msg);
     };
 
-    // 自分の映像・音声を送信
-    if (localStream) {
-        localStream.getTracks().forEach(track => {
-            peerConnection.addTrack(track, localStream);
-        });
-    }
+    socket.onerror = (err) => {
+        console.error("WebSocket error:", err);
+        videoStatus.textContent = "サーバー接続エラー。URL設定を確認してください。";
+    };
 }
 
-
-// =============================
-// カメラ切り替え
-// =============================
+// カメラ切り替え関数
 async function switchCamera() {
-
     if (!localStream) return;
 
+    // 現在のフェーシングモードを反転
     currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+    
+    // 既存の映像トラックを停止
+    localStream.getVideoTracks().forEach(track => track.stop());
 
-    localStream.getTracks().forEach(track => track.stop());
+    try {
+        // 新しい制約でストリームを取得
+        const newStream = await navigator.mediaDevices.getUserMedia({
+            audio: true, // 音声も必要
+            video: { facingMode: currentFacingMode }
+        });
 
-    const newStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: currentFacingMode },
-        audio: true
-    });
+        // 映像要素を更新
+        localVideo.srcObject = newStream;
+        
+        // PeerConnectionの送信トラックを置換
+        if (peerConnection) {
+            const videoTrack = newStream.getVideoTracks()[0];
+            const sender = peerConnection.getSenders().find(s => s.track.kind === 'video');
+            if (sender) {
+                sender.replaceTrack(videoTrack);
+            }
+        }
+        
+        // グローバル変数を更新
+        localStream = newStream;
 
-    localVideo.srcObject = newStream;
-
-    if (peerConnection) {
-        const videoTrack = newStream.getVideoTracks()[0];
-        const sender = peerConnection.getSenders().find(s => s.track.kind === 'video');
-        if (sender) sender.replaceTrack(videoTrack);
+    } catch (err) {
+        console.error("Camera switch error:", err);
+        videoStatus.textContent = "カメラの切り替えに失敗しました。";
     }
-
-    localStream = newStream;
 }
 
+function createPeerConnection() {
+    if (peerConnection) return; 
 
-// =============================
-// 通話終了
-// =============================
+    try {
+        peerConnection = new RTCPeerConnection(stunServers);
+
+        peerConnection.ontrack = (event) => {
+            if (!remoteStream) {
+                remoteStream = new MediaStream();
+            }
+            event.streams[0].getTracks().forEach(track => {
+                remoteStream.addTrack(track);
+            });
+            remoteVideo.srcObject = remoteStream; 
+        };
+
+        peerConnection.onicecandidate = (event) => {
+            if (event.candidate && socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
+            }
+        };
+        
+        peerConnection.oniceconnectionstatechange = () => {
+            if (peerConnection.iceConnectionState === 'failed' || 
+                peerConnection.iceConnectionState === 'disconnected' || 
+                peerConnection.iceConnectionState === 'closed') {
+                // ここではメッセージ上書きしない（oncloseに任せる）
+                console.log("ICE Connection State:", peerConnection.iceConnectionState);
+            }
+        };
+
+        if (localStream) {
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
+        }
+    } catch (err) {
+        console.error("Error creating PeerConnection:", err);
+        videoStatus.textContent = "接続の作成に失敗しました。";
+    }
+}
+
 function hangUp(message) {
-
-    if (message) videoStatus.textContent = message;
-
+    if (message) {
+        videoStatus.textContent = message;
+    } else if (videoStatus.textContent !== "通話を終了しました。" && !videoStatus.textContent.includes("エラー") && !videoStatus.textContent.includes("切断")) {
+         videoStatus.textContent = "通話を終了しました。";
+    }
+    
     if (peerConnection) {
         peerConnection.close();
         peerConnection = null;
     }
-
     if (localStream) {
         localStream.getTracks().forEach(track => track.stop());
         localStream = null;
     }
-
+    if (remoteStream) {
+        remoteStream.getTracks().forEach(track => track.stop());
+        remoteStream = null;
+    }
     if (socket) {
+        socket.onclose = null;
         socket.close();
         socket = null;
     }
-
     localVideo.srcObject = null;
     remoteVideo.srcObject = null;
-
     startCallBtn.disabled = false;
     endCallBtn.disabled = true;
-    if (switchCameraBtn) switchCameraBtn.disabled = true;
+    if(switchCameraBtn) switchCameraBtn.disabled = true; 
 }
 
 // =============================================
@@ -1835,7 +1745,7 @@ function hangUp(message) {
 // =============================================
 function displayIdiomOfTheDay() {
     try {
-        console.log("Updating idiom of the day..."); 
+        console.log("Updating idiom of the day..."); // ログ追加
         const idiomDateEl = document.getElementById('idiom-date');
         const idiomPhraseEl = document.getElementById('idiom-phrase');
         const idiomMeaningEl = document.getElementById('idiom-meaning');
@@ -1861,7 +1771,7 @@ function displayIdiomOfTheDay() {
         idiomPhraseEl.textContent = dailyIdiom.idiom;
         idiomMeaningEl.textContent = dailyIdiom.meaning;
         idiomDescriptionEl.textContent = dailyIdiom.description;
-        console.log("Idiom updated:", dailyIdiom.idiom);
+        console.log("Idiom updated:", dailyIdiom.idiom); // ログ追加
     } catch (e) {
         console.error("Error in displayIdiomOfTheDay:", e);
     }
