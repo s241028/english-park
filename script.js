@@ -1623,24 +1623,19 @@ document.getElementById('pop-restart-button').addEventListener('click', () => {
 // =============================================
 const startCallBtn = document.getElementById('start-call-btn');
 const endCallBtn = document.getElementById('end-call-btn');
-const switchCameraBtn = document.getElementById('switch-camera-btn'); // 追加
+const switchCameraBtn = document.getElementById('switch-camera-btn');
 const localVideo = document.getElementById('local-video');
 const remoteVideo = document.getElementById('remote-video');
 const videoStatus = document.getElementById('video-status');
-const roomIdInput = document.getElementById('room-id-input'); // ルームID入力
+const roomIdInput = document.getElementById('room-id-input'); 
 
 let peerConnection;
 let localStream;
 let remoteStream;
 let socket;
-let currentFacingMode = 'user'; // デフォルトは内カメ
+let currentFacingMode = 'user'; 
 
-// Googleが提供するパブリックSTUNサーバー
-const stunServers = {
-    iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' }
-    ]
-};
+const stunServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
 startCallBtn.addEventListener('click', startCall);
 endCallBtn.addEventListener('click', hangUp);
@@ -1655,7 +1650,7 @@ async function startCall() {
 
     startCallBtn.disabled = true;
     endCallBtn.disabled = false;
-    if(switchCameraBtn) switchCameraBtn.disabled = false; // 通話開始時に有効化
+    if(switchCameraBtn) switchCameraBtn.disabled = false; 
     videoStatus.textContent = "カメラとマイクを起動中..."; 
 
     try {
