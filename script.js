@@ -3,7 +3,7 @@
 // =============================================
 // Replitで取得したURLをここに貼り付けてください（https:// ではなく wss:// に書き換える）
 // 例: "wss://english-park-server.username.replit.co"
-const SIGNALING_SERVER_URL = "wss://cb656587-9d49-4834-9b6c-589b9b965620-00-q0kp69353xlj.sisko.replit.dev";
+const SIGNALING_SERVER_URL = "wss://d3d09ea0-3b2c-4695-92df-c578bf0d0ee4-00-16jcgj5b32n67.pike.replit.dev:8080";
 
 
 // =============================================
@@ -403,7 +403,6 @@ const idiomsData = [
     { idiom: "Piece of cake.", meaning: "朝飯前", description: "とても簡単なこと。" },
     { idiom: "Hit the road.", meaning: "出発する", description: "旅に出る、帰る。" },
     { idiom: "Under the weather.", meaning: "体調が悪い", description: "気分が優れないこと。" },
-    // イディオム追加
     { idiom: "Spill the beans", meaning: "秘密を漏らす", description: "豆をこぼす＝秘密をばらす。" },
     { idiom: "Once in a blue moon", meaning: "ごくまれに", description: "めったにないこと。" },
     { idiom: "The ball is in your court", meaning: "次は君の番だ", description: "決定権は相手にある。" },
@@ -775,11 +774,14 @@ const backButtonFromIndArticle = document.getElementById('backButtonFromIndArtic
 
 function showScreen(screenToShow) {
     document.querySelectorAll('.screen').forEach(s => {
-        s.classList.remove('active');
-        s.style.display = 'none'; 
+        s.style.display = 'none';
+        s.classList.remove('active'); // activeクラスも削除
     });
     screenToShow.style.display = 'block'; 
+    // 少し遅延させてactiveを追加することでCSS transitionなどが効く場合があるが、
+    // 今回はシンプルに即時追加でOK（ちらつき防止）
     screenToShow.classList.add('active'); 
+
     if (screenToShow === homeScreen) { displayIdiomOfTheDay(); }
     if (screenToShow === dashboardScreen) { updateDashboardUI(); }
 }
@@ -876,7 +878,6 @@ function handleRecognitionResult(event) {
     userSpeechEndTime = performance.now();
     const transcript = event.results[0][0].transcript;
     generateCombinedFeedback(transcript);
-    // ▼▼▼ 学習記録保存 ▼▼▼
     recordSession(); 
     if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); }
 }
@@ -1071,7 +1072,6 @@ function endQuiz() {
     quizGameArea.style.display = 'none';
     quizEndScreen.style.display = 'block';
     quizFinalScore.textContent = `${questionsForCurrentQuiz.length}問中 ${quizScore}問 正解！`;
-    // ▼▼▼ 学習記録保存 ▼▼▼
     recordSession({ type: 'wordquiz', level: currentQuizLevel, score: quizScore });
 }
 quizRestartButton.addEventListener('click', startNewQuizSet);
@@ -1129,7 +1129,6 @@ submitListeningButton.addEventListener('click', () => {
         listeningResultTitle.textContent = "素晴らしい！正解です！";
         listeningResultTitle.className = 'correct';
         listeningFeedbackText.textContent = '完璧に聞き取れています。';
-        // ▼▼▼ 学習記録保存 ▼▼▼
         recordSession();
     } else {
         listeningResultTitle.textContent = "おしい！不正解です";
@@ -1220,7 +1219,6 @@ function endReadingQuiz() {
         readingFinalScore.textContent = `${currentReadingData.questions.length}問中 ${readingScore}問 正解！`;
         document.getElementById('review-passage-en').textContent = currentReadingData.passage;
         document.getElementById('review-passage-ja').textContent = currentReadingData.translation;
-        // ▼▼▼ 学習記録保存 ▼▼▼
         recordSession();
     } else {
         readingFinalScore.textContent = "スコアの計算に問題がありました。";
@@ -1239,7 +1237,7 @@ function selectIndustry(key) {
     indCurrentCategoryKey = key;
     const data = industryData[key];
     document.getElementById('industry-title-display').textContent = data.title;
-    showScreen(document.getElementById('industry-module-screen'));
+    showScreen(industryModuleScreen);
 }
 function startIndustryModule(moduleType) {
     indCurrentIndex = 0;
@@ -1247,15 +1245,15 @@ function startIndustryModule(moduleType) {
     if (moduleType === 'flashcards') {
         document.getElementById('ind-flashcard-header').textContent = `${data.title} - Flashcards`;
         updateIndFlashcardUI();
-        showScreen(document.getElementById('industry-flashcard-screen'));
+        showScreen(industryFlashcardScreen);
     } else if (moduleType === 'phrases') {
         document.getElementById('ind-phrase-header').textContent = `${data.title} - Key Phrases`;
         updateIndPhraseUI();
-        showScreen(document.getElementById('industry-phrase-screen'));
+        showScreen(industryPhraseScreen);
     } else if (moduleType === 'articles') {
         document.getElementById('ind-article-header').textContent = `${data.title} - Mini Articles`;
         updateIndArticleUI();
-        showScreen(document.getElementById('industry-article-screen'));
+        showScreen(industryArticleScreen);
     }
 }
 function updateIndFlashcardUI() {
@@ -1328,7 +1326,7 @@ function nextIndArticle() {
 // =============================================
 const startCallBtn = document.getElementById('start-call-btn');
 const endCallBtn = document.getElementById('end-call-btn');
-const switchCameraBtn = document.getElementById('switch-camera-btn');
+const switchCameraBtn = document.getElementById('switch-camera-btn'); // 追加
 const localVideo = document.getElementById('local-video');
 const remoteVideo = document.getElementById('remote-video');
 const videoStatus = document.getElementById('video-status');
@@ -1338,7 +1336,7 @@ let peerConnection;
 let localStream;
 let remoteStream;
 let socket;
-let currentFacingMode = 'user'; 
+let currentFacingMode = 'user'; // デフォルトは内カメ
 
 // Googleが提供するパブリックSTUNサーバー
 const stunServers = {
@@ -1360,7 +1358,7 @@ async function startCall() {
 
     startCallBtn.disabled = true;
     endCallBtn.disabled = false;
-    if(switchCameraBtn) switchCameraBtn.disabled = false; 
+    if(switchCameraBtn) switchCameraBtn.disabled = false; // 通話開始時に有効化
     videoStatus.textContent = "カメラとマイクを起動中..."; 
 
     try {
